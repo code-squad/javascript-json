@@ -30,14 +30,23 @@ console.log(JSON.stringify(result, null, 2));
 
 ## 3. 설계
 
-### 3.1. 데이터 설계
+### 3.1. 데이터
 
 * 입력 문자열 분석 결과 데이터
   - type, child, value 로 이루어진 객체
   - depth 가 존재할 땐 child, 아닐 땐 value
   - 결과 예시 참고
 
-### 3.2. 기능 설계
+### 3.2. 알고리즘
+
+1. 입력받은 문자열의 공백을 제거
+2. 아래 내용을 문자열 끝까지 반복
+3. `[` 일 때, 결과에 `type:array`, `child:[]`를 추가
+4. `[`, `]`, `,` 가 아닌 다른 것이면 token 변수에 추가
+5. `,`, `]` 일 때, token 변수의 값을 결과 `child`에 `{ type:number, value:token` 추가
+6. `child`에 token 값 추가 후 token 초기화
+
+### 3.3. 기능
 
 - ArrayParser 함수
 
