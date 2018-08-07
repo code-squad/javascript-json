@@ -26,7 +26,7 @@ console.log(JSON.stringify(result, null, 2));
 
 ## 2. 계획
 
-- [] ArrayParser 함수 만들기
+- [x] ArrayParser 함수 만들기
 
 ## 3. 설계
 
