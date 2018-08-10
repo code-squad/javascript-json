@@ -5,9 +5,11 @@
 - ArrayParser 함수를 만든다.
 - 배열 안에는 숫자 데이터만 존재한다.
 - 결과값은 배열 형태의 문자열을 분석한 자료구조이다.
+- 배열 안에 배열이 있는 경우도 분석한다.
 
 ```javascript
-var str = "[123, 22, 33]";
+var str1 = "[123, 22, 33]";
+var str2 = "[123,[22],33, [1,2,3,4,5]]";
 var result = ArrayParser(str);
 console.log(JSON.stringify(result, null, 2));
 ```
@@ -27,6 +29,7 @@ console.log(JSON.stringify(result, null, 2));
 ## 2. 계획
 
 - [x] ArrayParser 함수 만들기
+- [] ArrayParser 함수 쪼개기
 
 ## 3. 설계
 
