@@ -29,7 +29,7 @@ console.log(JSON.stringify(result, null, 2));
 ## 2. 계획
 
 - [x] ArrayParser 함수 만들기
-- [] ArrayParser 함수 쪼개고 리팩토링
+- [x] ArrayParser 함수 쪼개고 리팩토링
 
 ## 3. 설계
 

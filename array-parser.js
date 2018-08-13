@@ -1,25 +1,37 @@
 function ArrayParser(str) {
-  const result = {};
+  const trimmedStr = getTrimmedStr(str);
+  const arrayData = parseStr(trimmedStr);
+  const childArray = arrayData.map(getObjForNum);
+  const resultObj = getObjForArr(childArray);
+  return resultObj;
+}
+
+function getTrimmedStr(str) {
+  return str.split(' ').join('');
+}
+
+function parseStr(str) {
+  let result;
   let token = '';
 
-  const trimmedStr = str.split(' ').join('');
-
-  for (let char of trimmedStr) {
-    if (char === '[') {
-      result.type = 'array';
-      result.child = [];
-      continue;
-    }
-    if (char === ',' || char === ']') {
-      let childObj = { type: 'number', value: token };
-      result.child.push(childObj);
+  for (let char of str) {
+    if (char === '[') result = [];
+    else if (char === ',' || char === ']') {
+      result.push(+token);
       token = '';
-      continue;
     }
     else token += char;
   }
 
   return result;
+}
+
+function getObjForNum(num) {
+  return { type: 'number', value: num };
+}
+
+function getObjForArr(arr) {
+  return { type: 'array', child: arr }
 }
 
 const str1 = '[123, 22, 33]';
