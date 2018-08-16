@@ -82,3 +82,13 @@ function parseStr(str) {
 return result;
 }
 ```
+
+- 토큰값에 따라 child 객체를 만드는 함수
+
+```javascript
+function getChildObj(token) {
+  // 1. 토큰 타입이 객체일 때, 그대로 사용한다.
+  // 2. 토큰 타입이 문자열일 때, 결과 객체 형태로 변경한다.
+  return childObj;  
+}
+```
