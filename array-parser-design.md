@@ -30,7 +30,7 @@ console.log(JSON.stringify(result, null, 2));
 
 - [x] ArrayParser 함수 만들기
 - [x] ArrayParser 함수 쪼개고 리팩토링
-- [] 중첩 배열 문자열 분석할 수 있도록 프로그램 변경
+- [x] 중첩 배열 문자열 분석할 수 있도록 프로그램 변경
 
 ## 3. 설계
 
