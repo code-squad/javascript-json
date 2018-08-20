@@ -1,10 +1,10 @@
 function ArrayParser(str) {
-  const trimmedStr = getTrimmedStr(str);
+  const trimmedStr = trimStr(str);
   const resultObj = parseStr(trimmedStr)[0];
   return resultObj;
 }
 
-function getTrimmedStr(str) {
+function trimStr(str) {
   return str.split(' ').join('');
 }
 
@@ -55,5 +55,6 @@ function getChildObj(token) {
 
 const str1 = '[123, 22, 33]';
 const str2 = '[123,[22],33, [1,2,3,4,5]]';
-const result = ArrayParser(str2);
+const str3 = '[123,[22,23,[11,[112233],112],55],33]';
+const result = ArrayParser(str3);
 console.log(JSON.stringify(result, null, 2));
