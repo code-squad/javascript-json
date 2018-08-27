@@ -12,8 +12,9 @@ function parseStr(str) {
   let result;
   let token = '';
   let i = 0;
+  const strLen = str.length;
 
-  while (i < str.length) {
+  while (i < strLen) {
     if (str[i] === '[') {
       if (result) {
         [token, diffIdx] = parseStr(str.slice(i));
