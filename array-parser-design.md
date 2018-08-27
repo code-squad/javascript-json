@@ -36,7 +36,7 @@ console.log(JSON.stringify(result, null, 2));
 - [x] ArrayParser 함수 만들기
 - [x] ArrayParser 함수 쪼개고 리팩토링
 - [x] 중첩 배열 문자열 분석할 수 있도록 프로그램 변경
-- [] 무한 중첩 배열 문자열 분석할 수 있도록 프로그램 변경
+- [x] 무한 중첩 배열 문자열 분석할 수 있도록 프로그램 변경
 
 ## 3. 설계
 
@@ -74,7 +74,7 @@ function ArrayParser(str) {
 - 공백 제거하는 함수
 
 ```javascript
-function getTrimmedStr(str) {
+function trimStr(str) {
   // 1. 입력받은 문자열의 앞, 뒤, 중간 모든 공백을 제거한다.
   return trimmedStr;
 }
