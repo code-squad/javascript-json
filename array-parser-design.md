@@ -83,3 +83,22 @@ console.log(JSON.stringify(result, null, 2));
 5. 2, 3, 4번에 해당되지 않을 때, 현재 글자를 토큰 변수에 이어붙인다.
 
 ### 3.3. 기능
+
+- 문자열을 토큰으로 나눈다.
+
+```javascript
+function tokenizer(str) {
+  // 1. [3.2. 알고리즘]의 [토크나이저 알고리즘] 내용을 수행한다.
+  return tokens;
+}
+```
+
+- 토큰을 토큰 배열에 추가한다.
+
+```javascript
+function pushToken(token, tokens) {
+  // 1. 토큰이 있으면,
+  // 2. 토큰 앞, 뒤 공백을 제거하고
+  // 3. 토큰 결과 배열에 추가한다.
+}
+```
