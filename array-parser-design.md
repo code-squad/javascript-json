@@ -41,7 +41,7 @@ console.log(JSON.stringify(result, null, 2));
 - [x] 전체 코드 classes로 변경
 - [] 문자열 분석 기능 쪼개기
   - [x] 토크나이저 기능 구현
-  - [] 파서1 기능 구현
+  - [x] 파서1 기능 구현
   - [] 파서2 기능 구현
 
 ## 3. 설계
