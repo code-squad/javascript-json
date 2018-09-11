@@ -6,7 +6,7 @@ class ArrayParser {
     this.result;
   }
 
-  tokenizer() {
+  tokenize() {
     const tokens = [];
     let token = '';
 
@@ -44,5 +44,5 @@ const str2 = '[123,[22],33, [1,2,3,4,5]]';
 const str3 = '[123,[22,23,[11,[112233],112],55],33]';
 
 const arrayParser = new ArrayParser(str3);
-const tokens = arrayParser.tokenizer();
+const tokens = arrayParser.tokenize();
 console.log(tokens);

@@ -87,7 +87,7 @@ console.log(JSON.stringify(result, null, 2));
 - 문자열을 토큰으로 나눈다.
 
 ```javascript
-function tokenizer(str) {
+function tokenize(str) {
   // 1. [3.2. 알고리즘]의 [토크나이저 알고리즘] 내용을 수행한다.
   return tokens;
 }
