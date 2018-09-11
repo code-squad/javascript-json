@@ -41,7 +41,8 @@ console.log(JSON.stringify(result, null, 2));
 - [x] 전체 코드 classes로 변경
 - [] 문자열 분석 기능 쪼개기
   - [x] 토크나이저 기능 구현
-  - [] 파서 기능 구현
+  - [] 파서1 기능 구현
+  - [] 파서2 기능 구현
 
 ## 3. 설계
 
@@ -66,7 +67,7 @@ console.log(JSON.stringify(result, null, 2));
 1. 입력 문자열을 토큰화하여 배열로 만든다. (tokenizer)
     - `'[123]'` -> `['[', '123', ']']`
 2. 토큰화된 배열을 분석한다. (parser1)
-    - `['[', '123', ']']` -> `['startArray', { type: number, value: 123 }, 'endArray']`
+    - `['[', '123', ']']` -> `['[', { type: number, value: 123 }, ']']`
 3. 분석된 토큰을 최종 결과 데이터로 만든다. (parser2)
 
 #### 3.2.2. 토크나이저 알고리즘
@@ -100,5 +101,103 @@ function pushToken(token, tokens) {
   // 1. 토큰이 있으면,
   // 2. 토큰 앞, 뒤 공백을 제거하고
   // 3. 토큰 결과 배열에 추가한다.
+}
+```
+
+- 토큰화된 배열을 분석하여 중간 결과 형태로 만든다.
+
+```javascript
+function parseTokens(tokens) {
+  // 1. 토큰 중 괄호를 제외한 토큰들을 결과 객체 형태로 변환하여
+  // 2. 새로운 배열을 만들어 반환한다.
+  return parsedTokens;
+}
+```
+
+- 토큰이 괄호인지 아닌지 판별한다.
+
+```javascript
+function isBracket(token) {
+  // 1. 토큰이 [, ] 중 하나이면 true, 아니면 false
+  return boolean;
+}
+```
+
+- 토큰을 Child Object의 형태로 만든다.
+
+```javascript
+function getChildObject(token) {
+  // 1. 토큰의 타입을 확인하여 { type: 'number', value: 123 }과 같이 만들어 반환한다.
+  return childObject;
+}
+```
+
+- 토큰의 타입을 판별한다.
+
+```javascript
+function getTokenType(token) {
+  // 1. 토큰의 타입을 판별하여 반환한다.
+  // 2. 토큰이 그 어떤 타입에도 해당되지 않으면 에러를 발생시킨다.
+  return tokenType;
+}
+```
+
+- 토큰이 number 타입인지 확인한다.
+
+```javascript
+function isNumber(token) {
+  // 1. 토큰이 숫자로만 이루어진 문자열인지 확인하고
+  // 2. true 또는 false를 반환한다.
+  return boolean;
+}
+```
+
+- 토큰이 boolean 타입인지 확인한다.
+
+```javascript
+function isBoolean(token) {
+  // 1. 토큰이 true 또는 false로 된 문자열인지 확인하고
+  // 2. true 또는 false를 반환한다.
+  return boolean;
+}
+```
+
+- 토큰이 string 타입인지 확인한다.
+
+```javascript
+function isString(token) {
+  // 1. 토큰이 따옴표('또는")로 감싸져 있는지
+  // 2. 따옴표가 2개인지 확인하고
+  // 3. true 또는 false를 반환한다.
+  return boolean;
+}
+```
+
+- 토큰이 따옴표로 감싸져 있는지 확인한다.
+
+```javascript
+function surroundedWithQuotes(token) {
+  // 1. 토큰이 '나 "로 앞, 뒤로 감싸져 있는지 확인하고
+  // 2. true 또는 false를 반환한다.
+  return boolean;
+}
+```
+
+- 토큰이 2개의 따옴표로만 이루어져 있는지 확인한다.
+
+```javascript
+function hasTwoQuotes(token) {
+  // 1. 토큰에 '나 "가 2개인지 확인하고
+  // 2. true 또는 false를 반환한다.
+  return boolean;
+}
+```
+
+- 토큰의 에러 타입을 판별한다.
+
+```javascript
+function getErrorType(token) {
+  // 1. 토큰의 에러타입을 판별하여 반환한다.
+  return errorType;
 }
 ```
