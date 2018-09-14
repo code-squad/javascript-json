@@ -1,16 +1,12 @@
 'use strict';
 
 class ArrayParser {
-  constructor(targetStr) {
-    this.targetStr = targetStr;
-    this.result;
-  }
 
-  tokenize() {
+  tokenize(str) {
     const tokens = [];
     let token = '';
 
-    for (const char of this.targetStr) {
+    for (const char of str) {
       switch (char) {
         case '[':
           tokens.push(char);
@@ -124,7 +120,7 @@ const error1 = `['1a'3',[22,23,[11,[112233],112],55],33]`;
 const error2 = `['1a3',[22,23,[11,[112233],112],55],3d3]`;
 
 // Run
-const arrayParser = new ArrayParser(str4);
-const tokens = arrayParser.tokenize();
+const arrayParser = new ArrayParser();
+const tokens = arrayParser.tokenize(str4);
 const parsedTokens = arrayParser.parseTokens(tokens);
 console.log(parsedTokens);
