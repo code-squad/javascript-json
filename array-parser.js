@@ -34,14 +34,48 @@ class ArrayParser {
     }
   }
 
-  parseTokens(tokens) {
-    return tokens.map(token => (
-      this.isBracket(token) ? token : this.getChildObject(token)
-    ));
+  parse(tokens) {
+    const parentStack = [];
+    let currentParent;
+
+    for (const token of tokens) {
+      if (token === '[') {
+        currentParent = this.getNewParent();
+        parentStack.push(currentParent);
+        this.linkToParent(parentStack);
+      }
+      else if (token === ']') {
+        currentParent = this.getPreviousParent(parentStack);
+      }
+      else {
+        currentParent.child.push(this.getChildObject(token));
+      }
+    }
+    return parentStack;
   }
 
-  isBracket(token) {
-    return ['[', ']'].includes(token);
+  getNewParent() {
+    return {
+      type: 'array',
+      child: []
+    }
+  }
+
+  linkToParent(parentStack) {
+    const lastIndex = parentStack.length - 1;
+    const childNode = parentStack[lastIndex];
+    const parentNode = parentStack[lastIndex - 1];
+
+    if (parentNode) {
+      parentNode.child.push(childNode);
+    }
+  }
+
+  getPreviousParent(parentStack) {
+    if (parentStack.length > 1) {
+      parentStack.pop();
+    }
+    return parentStack[parentStack.length - 1];
   }
 
   getChildObject(token) {
@@ -122,5 +156,5 @@ const error2 = `['1a3',[22,23,[11,[112233],112],55],3d3]`;
 // Run
 const arrayParser = new ArrayParser();
 const tokens = arrayParser.tokenize(str4);
-const parsedTokens = arrayParser.parseTokens(tokens);
-console.log(parsedTokens);
+const result = arrayParser.parse(tokens);
+console.log(JSON.stringify(result, null, 2));
