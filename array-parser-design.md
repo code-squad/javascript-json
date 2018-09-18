@@ -118,22 +118,39 @@ function pushToken(token, tokens) {
 }
 ```
 
-- 토큰화된 배열을 분석하여 중간 결과 형태로 만든다.
+- 토큰화된 배열을 분석하여 최종 결과 데이터로 만든다.
 
 ```javascript
-function parseTokens(tokens) {
-  // 1. 토큰 중 괄호를 제외한 토큰들을 결과 객체 형태로 변환하여
-  // 2. 새로운 배열을 만들어 반환한다.
-  return parsedTokens;
+function parse(tokens) {
+  // 1. [3.2. 알고리즘]의 [파서 알고리즘] 내용을 수행한다.
+  return result;
 }
 ```
 
-- 토큰이 괄호인지 아닌지 판별한다.
+- 새로운 부모 객체를 만든다.
 
 ```javascript
-function isBracket(token) {
-  // 1. 토큰이 [, ] 중 하나이면 true, 아니면 false
-  return boolean;
+function getNewParent() {
+  // 1. { type: 'array', child: [] } 형태의 객체를 만들어 반환한다.
+  return parentObject;
+}
+```
+
+- 스택에서 현재 부모 노드의 부모를 찾아 연결한다.
+
+```javascript
+function linkToParent(parentStack) {
+  // 1. 스택의 가장 마지막 요소를 두 번째 마지막 요소의 child에 push한다.
+}
+```
+
+- 스택에서 이전 부모 노드를 찾아 가져온다.
+
+```javascript
+function getPreviousParent(parentStack) {
+  // 1. 스택에서 현재 부모 노드인 마지막 요소를 삭제하고
+  // 2. 이전 부모 노드이자 새로운 현재 부모 노드인 스택 마지막 요소를 반환한다.
+  return previousParent;
 }
 ```
 
