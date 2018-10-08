@@ -2,17 +2,31 @@
 
 function arrayParser(arrStr) { // take array in string form, return structured data in string using given array
     
-    // Tokenize
-    const arr = strLexer(arrStr)
+    // Parse string into basic Array
+    const arr = basicArrParser(arrStr);
 
-    // Give proper format to parsed Array
-    // const result = arr.map(`do something`);
+    // Parse above array into formatted data
+    function analyzeItem (el) {
+            const elementAnalysisObj = {
+                'type': typeof el,
+                'child': []
+            };
+            
+            if (elementAnalysisObj.type === 'object' && el.length) { // If element is an array with elements inside
+                elementAnalysisObj.type = 'array';
+                elementAnalysisObj.child = el.map( analyzeItem );
+            } else {
+                elementAnalysisObj.value = el;
+            }
+
+            return elementAnalysisObj
+    }
     
-    return arr
+    return analyzeItem(arr)
 }
 
-function strLexer(arrStr) { // take array in string form, return the array as Array    
-    const updateDataStreamWithToken = {
+function basicArrParser(arrStr) { // take array in string form, return the array as Array    
+    const lexer = {
         '[': (dataStreamArr) => {
             //console.log(`Array stream is opened - DO NOTHING`)
             return dataStreamArr
@@ -60,7 +74,7 @@ function strLexer(arrStr) { // take array in string form, return the array as Ar
             tokenType = 'elemUpdator'
         }
         
-        return updateDataStreamWithToken[tokenType](dataStreamArr, token);
+        return lexer[tokenType](dataStreamArr, token);
     }
 
     return arrStr.split('').reduce(dataStreamUpdator, [])
