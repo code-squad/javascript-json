@@ -1,31 +1,15 @@
 'use strict'
 
-function arrayParser(arrStr) { // take array in string form, return structured data in string using given array
-    
-    // Parse string into basic Array
+// convert array in string form => return given array data in structured Object form
+function arrayParser(arrStr) { 
     const arr = basicArrParser(arrStr);
+    const result = prettifyDataInJSON(arr);
 
-    // Parse above array into formatted data
-    function analyzeItem (el) {
-            const elementAnalysisObj = {
-                'type': typeof el,
-                'child': []
-            };
-            
-            if (elementAnalysisObj.type === 'object' && el.length) { // If element is an array with elements inside
-                elementAnalysisObj.type = 'array';
-                elementAnalysisObj.child = el.map( analyzeItem );
-            } else {
-                elementAnalysisObj.value = el;
-            }
-
-            return elementAnalysisObj
-    }
-    
-    return analyzeItem(arr)
+    return result
 }
 
-function basicArrParser(arrStr) { // take array in string form, return the array as Array    
+// Take array in string form, return the array as Array    
+function basicArrParser(arrStr) { 
     const lexer = {
         '[': (dataStreamArr) => {
             //console.log(`Array stream is opened - DO NOTHING`)
@@ -80,6 +64,22 @@ function basicArrParser(arrStr) { // take array in string form, return the array
     return arrStr.split('').reduce(dataStreamUpdator, [])
 }
 
+// Return analysis data of input in JSON format
+function prettifyDataInJSON (el) {
+    const elementAnalysisObj = {
+        'type': typeof el,
+        'child': []
+    };
+    
+    if (elementAnalysisObj.type === 'object' && el.length) { // If element is an array with elements inside
+        elementAnalysisObj.type = 'array';
+        elementAnalysisObj.child = el.map( prettifyDataInJSON );
+    } else {
+        elementAnalysisObj.value = el;
+    }
+
+    return elementAnalysisObj
+}
 
 // Export to tester.js 
 module.exports.arrayParser = arrayParser;
