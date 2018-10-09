@@ -11,20 +11,17 @@ console.log(JSON.stringify(result, null, 2));
 // {
 //     "type": "array",
 //     "child": [
-//       {
+//         {
 //         "type": "number",
-//         "child": [],
 //         "value": 488
-//       },
-//       {
+//         },
+//         {
 //         "type": "number",
-//         "child": [],
 //         "value": 2573
-//       },
-//       {
+//         },
+//         {
 //         "type": "number",
-//         "child": [],
-//         "value": 13
-//       }
+//         "value": "13"
+//         }
 //     ]
-//   }
+// }
