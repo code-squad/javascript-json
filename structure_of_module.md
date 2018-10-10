@@ -14,12 +14,12 @@
 
 작업 | 담당 메서드
 ---|---
-  1. 배열의 시작을 알리는 토큰 '['을 받아 새 자료구조를 dataBranchQueue에 추가한다. | rules.charProcessing.array['[']
-  2. 숫자타입 자료 토큰이 입력되면 임시 저장소 arrLexer.tempMemory에 저장한다. 저장소가 비어있다면 새 자료구조로서, 비어있지 않다면 기존 자료구조의 값을 갱신한다. | rules.charProcessing.array['number']
-  3. 요소의 입력이 끝났음을 알리는 토큰 ','이 입력되면, → 임시 저장소에 있던 자료구조를 가져오고, 해당 저장소는 비운다 → 가져온 자료구조의 value 속성을 type 속성에 맞게 변환하고 → 요소를 추가중인 배열 자료구조에 자녀 요소로서 입력한다. | rules.charProcessing.array['updateItem']
-  4. 2와 3을 반복한다. | 
-  5. 배열의 종료를 알리는 토큰 ']'이 입력되면 → 3번의 임시 저장 자료구조 추가 동작을 수행하고 → 현재 작업중인 자료구조를 dataBranchQueue에서 빼낸 뒤 → 임시 저장소 arrLexer.tempMemory에 저장한다. | rules.charProcessing.array[']']
-  6. 만약 2번 동작 중에 새로운 '[' 토큰이 입력되면, 1번 동작부터 반복해 자녀 배열을 추가한다. | rules.charProcessing.array['[']
+배열의 시작을 알리는 토큰 '['을 받아 새 자료구조를 dataBranchQueue에 추가한다. | rules.charProcessing.array['[']
+숫자타입 자료 토큰이 입력되면 임시 저장소 arrLexer.tempMemory에 저장한다. 저장소가 비어있다면 새 자료구조로서, 비어있지 않다면 기존 자료구조의 값을 갱신한다. | rules.charProcessing.array['number']
+요소의 입력이 끝났음을 알리는 토큰 ','이 입력되면, → 임시 저장소에 있던 자료구조를 가져오고, 해당 저장소는 비운다 → 가져온 자료구조의 value 속성을 type 속성에 맞게 변환하고 → 요소를 추가중인 배열 자료구조에 자녀 요소로서 입력한다. | rules.charProcessing.array['updateItem']
+2와 3을 반복한다. | 
+배열의 종료를 알리는 토큰 ']'이 입력되면 → 3번의 임시 저장 자료구조 추가 동작을 수행하고 → 현재 작업중인 자료구조를 dataBranchQueue에서 빼낸 뒤 → 임시 저장소 arrLexer.tempMemory에 저장한다. | rules.charProcessing.array[']']
+만약 2번 동작 중에 새로운 '[' 토큰이 입력되면, 1번 동작부터 반복해 자녀 배열을 추가한다. | rules.charProcessing.array['[']
 
 ### 3. 생성된 자료구조 출력
 
