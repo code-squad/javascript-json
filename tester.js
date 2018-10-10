@@ -3,25 +3,53 @@ const main = require('./arrayParser');
 
 
 
-const str = "[488, 2573, 13]";
+const str = "[488, [2573, 369], 13, [1,2,3]]";
 const result = main.arrayParser(str);
-console.log(JSON.stringify(result, null, 2));
+console.log(JSON.stringify(result, null, 4));
 
-// 실행결과
+// Output
 // {
 //     "type": "array",
 //     "child": [
 //         {
-//         "type": "number",
-//         "value": 488
+//             "type": "number",
+//             "value": 488
 //         },
 //         {
-//         "type": "number",
-//         "value": 2573
+//             "type": "array",
+//             "child": [
+//                 {
+//                     "type": "number",
+//                     "value": 2573
+//                 },
+//                 {
+//                     "type": "number",
+//                     "value": 369
+//                 }
+//             ],
+//             "value": "arrayObject"
 //         },
 //         {
-//         "type": "number",
-//         "value": "13"
+//             "type": "number",
+//             "value": 13
+//         },
+//         {
+//             "type": "array",
+//             "child": [
+//                 {
+//                     "type": "number",
+//                     "value": 1
+//                 },
+//                 {
+//                     "type": "number",
+//                     "value": 2
+//                 },
+//                 {
+//                     "type": "number",
+//                     "value": 3
+//                 }
+//             ],
+//             "value": "arrayObject"
 //         }
 //     ]
 // }

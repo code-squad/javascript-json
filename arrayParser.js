@@ -17,12 +17,15 @@ const arrLexer = {
                 tokenType = 'number';
             } else if (token.match(/\s/)) {
                 tokenType = 'whiteSpace';
-            } 
+            } else if (token.match(/,/)) {
+                tokenType = 'updateItem';
+            }
             rules.charProcessing.array[tokenType].call(this, token);
         });
+        this.dataTree.push(this.tempMemory.pop());
         
         return this.dataTree.pop();
-    }
+    },
 };
 
 const rules = {
@@ -43,35 +46,29 @@ const rules = {
                 
                 this.tempMemory.push(newTempItem);
             },
-            ',': function() { // append child object on temporary memory to parent array
-                const currentDataBranch = util.getLastItemOfArr(this.dataBranchQueue);
+            'updateItem': function() { // append child object on temporary memory to parent array
+                const currentDataBranch = rules.getLastItemOfArr(this.dataBranchQueue);
                 let childToAdd = this.tempMemory.pop();
                 
                 if (!childToAdd) { 
                     childToAdd = {type: 'undefined', value: undefined};
                 } else if(childToAdd.type !== 'object' && childToAdd.type !== 'array') { 
-                    childToAdd = Object.assign( childToAdd, {value: util.assignDataType(childToAdd)} );
+                    childToAdd = Object.assign( childToAdd, {value: rules.assignDataType(childToAdd)} );
+                } else if(childToAdd.type === 'array') {
+                    childToAdd = Object.assign( childToAdd, {value: 'arrayObject'} );
                 }
                 
                 currentDataBranch.child.push(childToAdd);
             },
             'whiteSpace': () => undefined, // do nothing
             ']': function() { // append last child object on temporary memory. Close data branch
-                const currentDataBranch = util.getLastItemOfArr(this.dataBranchQueue);
-                const childToAdd = this.tempMemory.pop();
-
-                if (childToAdd) {
-                    currentDataBranch.child.push(childToAdd);
-                }
+                rules.charProcessing.array.updateItem.bind(this)();
                 
                 const arrayLexeme = this.dataBranchQueue.pop();
-                this.dataTree.push(arrayLexeme);
-            }
-        }
-    }
-};
-
-const util = {
+                this.tempMemory.push(arrayLexeme);
+            },
+        },
+    },
     getLastItemOfArr(arr) {
         return arr[arr.length-1]
     },
@@ -79,11 +76,11 @@ const util = {
         const processingRulesTo = {
             'number': function(value) {
                 return Number(value)
-            }
+            },
         };
         return processingRulesTo[targetType](value)
-    }
-}
+    },
+};
 
 // Export to tester.js 
 module.exports.arrayParser = arrayParser;
