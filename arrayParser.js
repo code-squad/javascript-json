@@ -14,7 +14,7 @@ const arrLexer = {
         arrStr.split('').forEach( (token) => { 
             const tokenType = this.tagTokenType(token);
 
-            rules.charProcessing.array[tokenType].call(this, token);
+            rules.charProcessing.array[tokenType]({token: token, queue: this.dataBranchQueue, memory: this.tempMemory});
         });
         
         this.dataTree.push(this.tempMemory.pop());
@@ -39,28 +39,28 @@ const arrLexer = {
 const rules = {
     charProcessing: {
         array: {
-            '[': function () { //open new data branch
+            '[': function ({queue}) { //open new data branch
                 const newArrayTree = {type: 'array', child: []};
-                this.dataBranchQueue.push(newArrayTree);
+                queue.push(newArrayTree);
             },
-            'number': function(token) { // append or update last child object on temporary memory
-                const currentTempItem = this.tempMemory.pop();
+            'number': function({token, memory}) { // append or update last child object on temporary memory
+                const currentTempItem = memory.pop();
                 const updatedTempItem = rules.updateLexeme('number', token, currentTempItem);
                 
-                this.tempMemory.push(updatedTempItem);
+                memory.push(updatedTempItem);
             },
-            'updateItem': function() { // append child object on temporary memory to parent array
-                const currentDataBranch = rules.getLastItemOfArr(this.dataBranchQueue);
-                const childToAdd = rules.updateItemValue( this.tempMemory.pop() );
+            'updateItem': function({queue, memory}) { // append child object on temporary memory to parent array
+                const currentDataBranch = rules.getLastItemOfArr(queue);
+                const childToAdd = rules.updateItemValue( memory.pop() );
                 
                 currentDataBranch.child.push(childToAdd);
             },
             'whiteSpace': () => undefined, // do nothing
-            ']': function() { // append last child object on temporary memory. Close data branch
-                rules.charProcessing.array.updateItem.call(this);
+            ']': function({queue, memory}) { // append last child object on temporary memory. Close data branch
+                this.updateItem(arguments[0]);
                 
-                const arrayLexeme = this.dataBranchQueue.pop();
-                this.tempMemory.push(arrayLexeme);
+                const arrayLexeme = queue.pop();
+                memory.push(arrayLexeme);
             },
         },
     },
