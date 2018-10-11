@@ -77,15 +77,14 @@ const rules = {
         return tempItem
     },
     updateItemValue(dataObj) {
-        if (!dataObj) { 
-            dataObj = {type: 'undefined', value: undefined};
-        } else if(dataObj.type !== 'object' && dataObj.type !== 'array') { 
-            dataObj = Object.assign( dataObj, {value: this.assignDataType(dataObj)} );
-        } else if(dataObj.type === 'array') {
-            dataObj = Object.assign( dataObj, {value: 'arrayObject'} );
-        }
+        const dataType = (dataObj) ? dataObj.type : noObj;
+        const updateRule = {
+            noObj: () => { return {type: 'undefined', value: undefined} },
+            array: () => Object.assign( dataObj, {value: 'arrayObject'} ),
+            number: () => Object.assign( dataObj, {value: this.assignDataType(dataObj)} ),
+        };
 
-        return dataObj
+        return updateRule[dataType]()
     },
     assignDataType({type: targetType, value}) {
         const processingRulesTo = {

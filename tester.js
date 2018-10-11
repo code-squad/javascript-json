@@ -1,79 +1,18 @@
 // import arrayParser.js through Node.js
 const main = require('./arrayParser');
 
+var s = "[12,[2,[4,5],3]]";
+var result = main.arrayParser(s);
+console.log(JSON.stringify(result, null, 2)); 
 
+// var s = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+// var result = main.arrayParser(s);
+// console.log(JSON.stringify(result, null, 2)); 
 
-const str = "[488, [2573, [48, [1577, 1577]], 369], 13, [1,2,3]]";
-const result = main.arrayParser(str);
-console.log(JSON.stringify(result, null, 4));
+// var s = "['1a'3',[22,23,[11,[112233],112],55],33]";
+// var result = main.arrayParser(s);
+// //'1a'3'은 올바른 문자열이 아닙니다.
 
-// Output
-// {
-//     "type": "array",
-//     "child": [
-//         {
-//             "type": "number",
-//             "value": 488
-//         },
-//         {
-//             "type": "array",
-//             "child": [
-//                 {
-//                     "type": "number",
-//                     "value": 2573
-//                 },
-//                 {
-//                     "type": "array",
-//                     "child": [
-//                         {
-//                             "type": "number",
-//                             "value": 48
-//                         },
-//                         {
-//                             "type": "array",
-//                             "child": [
-//                                 {
-//                                     "type": "number",
-//                                     "value": 1577
-//                                 },
-//                                 {
-//                                     "type": "number",
-//                                     "value": 1577
-//                                 }
-//                             ],
-//                             "value": "arrayObject"
-//                         }
-//                     ],
-//                     "value": "arrayObject"
-//                 },
-//                 {
-//                     "type": "number",
-//                     "value": 369
-//                 }
-//             ],
-//             "value": "arrayObject"
-//         },
-//         {
-//             "type": "number",
-//             "value": 13
-//         },
-//         {
-//             "type": "array",
-//             "child": [
-//                 {
-//                     "type": "number",
-//                     "value": 1
-//                 },
-//                 {
-//                     "type": "number",
-//                     "value": 2
-//                 },
-//                 {
-//                     "type": "number",
-//                     "value": 3
-//                 }
-//             ],
-//             "value": "arrayObject"
-//         }
-//     ]
-// }
+// var s = "['1a3',[22,23,[11,[112233],112],55],3d3]";
+// var result = main.arrayParser(s);
+// 3d3은 알수 없는 타입입니다
