@@ -37,7 +37,7 @@ const rules = {
                 
                 memory.push(updatedTempItem);
             },
-            'stringInput': ({queue}) => {rules.charProcessing.string.stringInput({queue})},
+            'stringInput': ({queue, memory}) => {rules.charProcessing.string.stringInput({queue, memory})},
             'string': function({token, queue, memory}) {
                 if (!memory[0] && rules.getLastItemOfArr(queue).type !== 'string' ) { // If string token appears out of nowhere, process it as keyword
                     rules.process('keyword', arguments[0], 'keywordInput');
@@ -74,6 +74,7 @@ const rules = {
 
                 // It there are none, create new one.
                 const newStrTree = {type: 'string', value: ''};
+                memory.push(newStrTree);
                 queue.push(newStrTree);
             },
             'strToken': function({token, memory}) { // append or update last child object on temporary memory
@@ -113,7 +114,15 @@ const rules = {
         const updateRule = {
             noObj: () => ( {type: 'undefined', value: undefined} ),
             array: () => Object.assign( dataObj, {value: 'arrayObject'} ),
-            number: () => Object.assign( dataObj, {value: this.assignDataType(dataObj)} ),
+            number: () => {
+                try {
+                    this.assignDataType(dataObj)
+                }
+                catch(e) {
+                    console.log(e);
+                }
+                return Object.assign( dataObj, {value: this.assignDataType(dataObj)} )
+            },
             string: () => dataObj, // No update for string Object as it was initially given the value as string
             keyword: () => {
                 queue.length--; // Notify queue that keyword stream is closed.
@@ -126,7 +135,11 @@ const rules = {
     assignDataType({type: targetType, value}) {
         const convertTypeTo = {
             'number': function(value) {
-                return Number(value)
+                const val = Number(value);
+                if(isNaN(val)) {
+                    throw `${value}는 알 수 없는 타입입니다!`;
+                }
+                return val
             },
         };
         return convertTypeTo[targetType](value)
