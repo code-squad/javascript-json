@@ -1,7 +1,7 @@
 // import arrayParser.js through Node.js
 const main = require('./arrayParser');
 
-var s = "[12,[2,[4,5],3]]";
+var s = "['ab12',[2,['bbc4',5],3]]";
 var result = main.arrayParser(s);
 console.log(JSON.stringify(result, null, 2)); 
 
