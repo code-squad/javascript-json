@@ -12,7 +12,13 @@ const arrLexer = {
     lexer(arrStr) {
         // create array data branch & add chilren information
         arrStr.split('').forEach( (token) => { 
-            rules.process('array', {token: token, queue: this.dataBranchQueue, memory: this.tempMemory})
+            const tokenObj = {token: token, queue: this.dataBranchQueue, memory: this.tempMemory};
+            const tokenType = rules.tagTokenType(token);
+            if(!rules.charProcessing.array[tokenType]) { // if incoming string is not predefined, process it as string character
+                rules.process('string', tokenObj, 'strToken');
+                return
+            }
+            rules.process('array', tokenObj, tokenType);
         });
         
         this.dataTree.push(this.tempMemory.pop());
@@ -27,7 +33,13 @@ const rules = {
     },
     charProcessing: {
         array: {
-            '[': function ({queue}) { //open new data branch
+            '[': function ({token, queue,memory}) { //open new data branch
+                // if current stream is on string element, work as normal token
+                if(memory[0] && memory[0].type === 'string') { 
+                    rules.process('string',{token: token, queue, memory}, 'strToken');
+                    return
+                }
+
                 const newArrayTree = {type: 'array', child: []};
                 queue.push(newArrayTree);
             },
@@ -37,7 +49,7 @@ const rules = {
                 
                 memory.push(updatedTempItem);
             },
-            'stringInput': ({queue, memory}) => {rules.charProcessing.string.stringInput({queue, memory})},
+            'stringInput': ({token, queue, memory}) => {rules.charProcessing.string.stringInput({token, queue, memory})},
             'string': function({token, queue, memory}) {
                 if (!memory[0] && rules.getLastItemOfArr(queue).type !== 'string' ) { // If string token appears out of nowhere, process it as keyword
                     rules.process('keyword', arguments[0], 'keywordInput');
@@ -46,16 +58,39 @@ const rules = {
                 rules.charProcessing.string.strToken({token, memory});
             },
             'updateItem': function({token, queue, memory}) { // append child object on temporary memory to parent array
-                const childToAdd = rules.updateItemValue( memory.pop(), queue);
-                const currentDataBranch = rules.getLastItemOfArr(queue);
-                if(currentDataBranch.type === 'string') { // if current stream is on string element, work as normal token
-                    rules.process('strToken',{token: token, queue, memory});
-                }
+                //Update queue before update data stream with certain dataType
+                const itemInMemory = memory.pop();
+                rules.adjustQueue(itemInMemory, queue);
                 
+                const currentDataBranch = rules.getLastItemOfArr(queue);
+                // if current stream is on string element, work as normal token
+                if(currentDataBranch.type === 'string') { 
+                    memory.push(itemInMemory);
+                    rules.process('string',{token: token, queue, memory}, 'strToken');
+                    return
+                }
+
+                const childToAdd = rules.updateItemValue(itemInMemory);
                 currentDataBranch.child.push(childToAdd);
             },
-            'whiteSpace': () => undefined, // do nothing
-            ']': function({queue, memory}) { // append last child object on temporary memory. Close data branch
+            'whiteSpace': ({token, queue, memory}) => {
+                const currentDataBranch = rules.getLastItemOfArr(queue);
+                // if current stream is on string or number element, work as normal token
+                if(memory[0] && ( memory[0].type === 'string' || memory[0].type === 'number') ) { 
+                    rules.process('string',{token: token, queue, memory}, 'strToken');
+                    return
+                }
+
+                return // Other than that, do nothing
+            }, 
+            ']': function({token, queue, memory}) { // append last child object on temporary memory. Close data branch
+                // if current stream is on string element, work as normal token
+                const currentDataBranch = rules.getLastItemOfArr(queue);
+                if(currentDataBranch.type === 'string') { 
+                    rules.process('string',{token: token, queue, memory}, 'strToken');
+                    return
+                }
+
                 this.updateItem(arguments[0]);
                 
                 const arrayLexeme = queue.pop();
@@ -63,17 +98,19 @@ const rules = {
             },
         },
         string: {
-            'stringInput': function ({queue, memory}) { //open new data branch
+            'stringInput': function ({token, queue, memory}) { //open new data branch
                 const currentDataBranch = rules.getLastItemOfArr(queue);
                 
                 // if there are ongoing string stream on queue, close it
                 if ( currentDataBranch.type === 'string' ) {
+                    memory[0].value += token;
                     queue.length--; // Notify queue that string stream is closed.
                     return
                 }
 
-                // It there are none, create new one.
-                const newStrTree = {type: 'string', value: ''};
+                // If there are string stream left on memory and yet this function called, assign this lexeme as errorString to log error later when update lexeme to data tree
+                // if it's all clear, create new clean data tree
+                const newStrTree = (memory[0] && memory[0].type === 'string') ? {type: 'errorString', value: memory.pop().value + token} : {type: 'string', value: token};
                 memory.push(newStrTree);
                 queue.push(newStrTree);
             },
@@ -109,24 +146,45 @@ const rules = {
 
         return tempItem
     },
-    updateItemValue(dataObj, queue) {
+    updateItemValue(dataObj) {
         const dataType = (dataObj) ? dataObj.type : noObj;
         const updateRule = {
             noObj: () => ( {type: 'undefined', value: undefined} ),
             array: () => Object.assign( dataObj, {value: 'arrayObject'} ),
             number: () => {
+                const updatedValueWithType = this.assignDataType(dataObj);
+                if(isNaN(updatedValueWithType)) {
+                    try {
+                        throw `${dataObj.value} : 알 수 없는 타입입니다!`;
+                    }
+                    catch(e) {
+                        console.log(e);
+                    }
+                }
+                return Object.assign( dataObj, {value: updatedValueWithType} )
+            },
+            string: () => dataObj, // No update for string Object as it was initially given the value as string
+            keyword: () => {
+                const keywordObj = rules.charProcessing.keyword.dictionary[dataObj.value];
+                
+                if (!keywordObj) { // If given keyword lexeme doesn't exist on dictionary, log error
+                    try {
+                        throw `${dataObj.value} : 존재하지 않는 명령어입니다!`;
+                    }
+                    catch(e) {
+                        console.log(e);
+                    }
+                }
+
+                return keywordObj
+            },
+            errorString: () => {
                 try {
-                    this.assignDataType(dataObj)
+                    throw `${dataObj.value} : 올바른 문자열이 아닙니다!`
                 }
                 catch(e) {
                     console.log(e);
                 }
-                return Object.assign( dataObj, {value: this.assignDataType(dataObj)} )
-            },
-            string: () => dataObj, // No update for string Object as it was initially given the value as string
-            keyword: () => {
-                queue.length--; // Notify queue that keyword stream is closed.
-                return rules.charProcessing.keyword.dictionary[dataObj.value]
             },
         };
 
@@ -134,15 +192,18 @@ const rules = {
     },
     assignDataType({type: targetType, value}) {
         const convertTypeTo = {
-            'number': function(value) {
-                const val = Number(value);
-                if(isNaN(val)) {
-                    throw `${value}는 알 수 없는 타입입니다!`;
-                }
-                return val
-            },
+            'number': (value) => Number(value),
         };
         return convertTypeTo[targetType](value)
+    },
+    adjustQueue(dataObj, queue) {
+        const dataTypesRequireQueueAdjust = {
+            'keyword': true,
+            'errorString': true,
+        }
+        if (dataTypesRequireQueueAdjust[dataObj.type]) {
+            queue.length--;
+        }
     },
     tagTokenType(token) {
         let tokenType = token;
