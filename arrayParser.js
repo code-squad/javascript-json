@@ -22,9 +22,7 @@ const arrLexer = {
 };
 
 const rules = {
-    process(dataType, {token, queue, memory}) {
-        const tokenType = this.tagTokenType(token);
-
+    process(dataType, {token, queue, memory}, tokenType = this.tagTokenType(token)) {
         this.charProcessing[dataType][tokenType](arguments[1]);
     },
     charProcessing: {
@@ -40,13 +38,19 @@ const rules = {
                 memory.push(updatedTempItem);
             },
             'stringInput': ({queue}) => {rules.charProcessing.string.stringInput({queue})},
-            'string': ({token, memory}) => {rules.charProcessing.string.string({token, memory})},
+            'string': function({token, queue, memory}) {
+                if (!memory[0] && rules.getLastItemOfArr(queue).type !== 'string' ) { // If string token appears out of nowhere, process it as keyword
+                    rules.process('keyword', arguments[0], 'keywordInput');
+                    return
+                }
+                rules.charProcessing.string.strToken({token, memory});
+            },
             'updateItem': function({token, queue, memory}) { // append child object on temporary memory to parent array
+                const childToAdd = rules.updateItemValue( memory.pop(), queue);
                 const currentDataBranch = rules.getLastItemOfArr(queue);
                 if(currentDataBranch.type === 'string') { // if current stream is on string element, work as normal token
-                    rules.process('string',{token: token, queue, memory});
+                    rules.process('strToken',{token: token, queue, memory});
                 }
-                const childToAdd = rules.updateItemValue( memory.pop() );
                 
                 currentDataBranch.child.push(childToAdd);
             },
@@ -72,12 +76,24 @@ const rules = {
                 const newStrTree = {type: 'string', value: ''};
                 queue.push(newStrTree);
             },
-            'string': function({token, memory}) { // append or update last child object on temporary memory
+            'strToken': function({token, memory}) { // append or update last child object on temporary memory
                 const currentTempItem = memory.pop();
                 const updatedTempItem = rules.updateLexeme('string', token, currentTempItem);
                 
                 memory.push(updatedTempItem);
             },
+        },
+        keyword: {
+            'keywordInput': function ({token, queue, memory}) { //open new data branch
+                const newKeywordTree = {type: 'keyword', value: token};
+                queue.push(newKeywordTree);
+                memory.push(newKeywordTree);
+            },
+            dictionary: {
+                'true': {type: 'boolean', value: true},
+                'false': {type: 'boolean', value: false},
+                'null': {type: 'object', value: null},
+            }
         },
     },
     getLastItemOfArr(arr) {
@@ -92,24 +108,28 @@ const rules = {
 
         return tempItem
     },
-    updateItemValue(dataObj) {
+    updateItemValue(dataObj, queue) {
         const dataType = (dataObj) ? dataObj.type : noObj;
         const updateRule = {
-            noObj: () => { return {type: 'undefined', value: undefined} },
+            noObj: () => ( {type: 'undefined', value: undefined} ),
             array: () => Object.assign( dataObj, {value: 'arrayObject'} ),
             number: () => Object.assign( dataObj, {value: this.assignDataType(dataObj)} ),
-            string: () => dataObj // No update for string Object as it was initially given the value as string,
+            string: () => dataObj, // No update for string Object as it was initially given the value as string
+            keyword: () => {
+                queue.length--; // Notify queue that keyword stream is closed.
+                return rules.charProcessing.keyword.dictionary[dataObj.value]
+            },
         };
 
         return updateRule[dataType]()
     },
     assignDataType({type: targetType, value}) {
-        const processingRulesTo = {
+        const convertTypeTo = {
             'number': function(value) {
                 return Number(value)
             },
         };
-        return processingRulesTo[targetType](value)
+        return convertTypeTo[targetType](value)
     },
     tagTokenType(token) {
         let tokenType = token;
