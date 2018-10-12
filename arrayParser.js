@@ -12,13 +12,14 @@ const arrLexer = {
     lexer(arrStr) {
         // create array data branch & add chilren information
         arrStr.split('').forEach( (token) => { 
-            const tokenObj = {token: token, queue: this.dataBranchQueue, memory: this.tempMemory};
+            const tokenDataObj = {token: token, queue: this.dataBranchQueue, memory: this.tempMemory};
             const tokenType = rules.tagTokenType(token);
-            if(!rules.charProcessing.array[tokenType]) { // if incoming string is not predefined, process it as string character
-                rules.process('string', tokenObj, 'strToken');
+            // if incoming string is not predefined, process it as string token
+            if(!rules.charProcessing.array[tokenType]) { 
+                rules.process('string', tokenDataObj, 'strToken', tokenType);
                 return
             }
-            rules.process('array', tokenObj, tokenType);
+            rules.process('array', tokenDataObj, tokenType);
         });
         
         this.dataTree.push(this.tempMemory.pop());
@@ -29,6 +30,7 @@ const arrLexer = {
 
 const rules = {
     process(dataType, {token, queue, memory}, tokenType = this.tagTokenType(token)) {
+        // Call proper token processing method following submitted dataType info
         this.charProcessing[dataType][tokenType](arguments[1]);
     },
     charProcessing: {
@@ -45,7 +47,7 @@ const rules = {
             },
             'number': function({token, memory}) { // append or update last child object on temporary memory
                 const currentTempItem = memory.pop();
-                const updatedTempItem = rules.updateLexeme('number', token, currentTempItem);
+                const updatedTempItem = rules.concatLexeme('number', token, currentTempItem);
                 
                 memory.push(updatedTempItem);
             },
@@ -116,7 +118,7 @@ const rules = {
             },
             'strToken': function({token, memory}) { // append or update last child object on temporary memory
                 const currentTempItem = memory.pop();
-                const updatedTempItem = rules.updateLexeme('string', token, currentTempItem);
+                const updatedTempItem = rules.concatLexeme('string', token, currentTempItem);
                 
                 memory.push(updatedTempItem);
             },
@@ -137,7 +139,7 @@ const rules = {
     getLastItemOfArr(arr) {
         return arr[arr.length-1]
     },
-    updateLexeme(type, token, tempItem) {
+    concatLexeme(type, token, tempItem) {
         if (!tempItem){
             tempItem = {type: type, value: token};
         } else {
@@ -147,19 +149,13 @@ const rules = {
         return tempItem
     },
     updateItemValue(dataObj) {
-        const dataType = (dataObj) ? dataObj.type : noObj;
         const updateRule = {
             noObj: () => ( {type: 'undefined', value: undefined} ),
             array: () => Object.assign( dataObj, {value: 'arrayObject'} ),
             number: () => {
                 const updatedValueWithType = this.assignDataType(dataObj);
                 if(isNaN(updatedValueWithType)) {
-                    try {
-                        throw `${dataObj.value} : 알 수 없는 타입입니다!`;
-                    }
-                    catch(e) {
-                        console.log(e);
-                    }
+                    logError(`${dataObj.value} : 알 수 없는 타입입니다!`);
                 }
                 return Object.assign( dataObj, {value: updatedValueWithType} )
             },
@@ -168,25 +164,17 @@ const rules = {
                 const keywordObj = rules.charProcessing.keyword.dictionary[dataObj.value];
                 
                 if (!keywordObj) { // If given keyword lexeme doesn't exist on dictionary, log error
-                    try {
-                        throw `${dataObj.value} : 존재하지 않는 명령어입니다!`;
-                    }
-                    catch(e) {
-                        console.log(e);
-                    }
+                    logError(`${dataObj.value} : 존재하지 않는 명령어입니다!`);
                 }
 
                 return keywordObj
             },
             errorString: () => {
-                try {
-                    throw `${dataObj.value} : 올바른 문자열이 아닙니다!`
-                }
-                catch(e) {
-                    console.log(e);
-                }
+                logError(`${dataObj.value} : 올바른 문자열이 아닙니다!`);
             },
         };
+        
+        const dataType = (dataObj) ? dataObj.type : noObj;
 
         return updateRule[dataType]()
     },
@@ -223,6 +211,15 @@ const rules = {
         return tokenType
     },
 };
+
+function logError(msgStr) {
+    try {
+        throw msgStr
+    }
+    catch(e) {
+        console.log(e);
+    }
+}
 
 // Export to tester.js 
 module.exports.arrayParser = arrayParser;

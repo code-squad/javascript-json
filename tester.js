@@ -2,7 +2,7 @@
 const main = require('./arrayParser');
 
 console.log(`\n========== 정상 시나리오 1 ==========\n`);
-var s = "['ab12',[25 80,['bbc4',5],null], [true, false, 'kbs2'], 595]";
+var s = "['ab12',[2580,['bbc4',5],null], [true, false, 'kbs2'], 595]";
 var result = main.arrayParser(s);
 console.log(JSON.stringify(result, null, 2)); 
 
