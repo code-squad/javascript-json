@@ -27,6 +27,6 @@ var result = main.arrayParser(s);
 // truethy : 존재하지 않는 명령어입니다!
 
 console.log(`\n========== 오류 시나리오 2 - 2 : 숫자열 안의 공백문자 처리 ==========\n`);
-var s = "['1a,3',[22,23,[11,[112  233],112],55], true ]";
+var s = "['1a,3',[22,23,[11,[112  233],112],55], true    ]";
 var result = main.arrayParser(s);
 // 112  233 : 알 수 없는 타입입니다!

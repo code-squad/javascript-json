@@ -64,6 +64,10 @@ const rules = {
             },
             'updateItem': function({token, stack, memory}) { // Append item on memory to parent array
                 const itemInMemory = memory.pop();
+                // if item to update is keyword / string / number, remove all trailing whitespaces
+                if (itemInMemory && itemInMemory.value) {
+                    itemInMemory.value = itemInMemory.value.slice(0, itemInMemory.value.match(/\S\s*$/).index + 1);
+                }
                 // Close current stack item for dataTypes opening temporary stream (i.e keywords, strings...)
                 rules.adjustStack(itemInMemory, stack);
                 
@@ -79,9 +83,8 @@ const rules = {
                 currentDataBranch.child.push(childToAdd);
             },
             'whiteSpace': ({token, stack, memory}) => {
-                const currentDataBranch = rules.getLastItemOfArr(stack);
-                // if current stream is on string or number element, work as normal token
-                if(memory[0] && ( memory[0].type === 'string' || memory[0].type === 'number') ) { 
+                // if current stream is not for object/array element, work as normal token
+                if(memory[0] && ( memory[0].type !== 'object' || memory[0].type !== 'array') ) { 
                     rules.process('string',{token: token, stack, memory}, 'strToken');
                     return
                 }
