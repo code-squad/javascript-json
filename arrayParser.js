@@ -56,7 +56,7 @@ const rules = {
             },
             'string': function({token, stack, memory}) {
                 // If string token appears out of nowhere, process it as opening token for keyword stream 
-                if (!memory[0] && rules.getLastItemOfArr(stack).type !== 'string' ) {
+                if (!memory[0]) {
                     rules.process('keyword', arguments[0], 'keywordInput');
                     return
                 }
@@ -64,14 +64,12 @@ const rules = {
             },
             'updateItem': function({token, stack, memory}) { // Append item on memory to parent array
                 const itemInMemory = memory.pop();
-                // if item to update is keyword / string / number, remove all trailing whitespaces
-                if (itemInMemory && itemInMemory.value) {
-                    itemInMemory.value = itemInMemory.value.slice(0, itemInMemory.value.match(/\S\s*$/).index + 1);
-                }
-                // Close current stack item for dataTypes opening temporary stream (i.e keywords, strings...)
-                rules.adjustStack(itemInMemory, stack);
-                
-                const currentDataBranch = rules.getLastItemOfArr(stack);
+                const currentDataBranch = (() => {
+                    // Close temporary stack for dataTypes opening temporary stream (i.e keywords, errorStrings...)
+                    rules.adjustStack(itemInMemory, stack);
+                    return rules.getLastItemOfArr(stack);
+                })();
+
                 // if current stream is on string element, work as normal token
                 if(currentDataBranch.type === 'string') { 
                     memory.push(itemInMemory);
@@ -79,11 +77,16 @@ const rules = {
                     return
                 }
 
+                // if item to update is keyword / string / number, remove all trailing whitespaces
+                if (itemInMemory && itemInMemory.value) {
+                    itemInMemory.value = itemInMemory.value.slice(0, itemInMemory.value.match(/\S\s*$/).index + 1);
+                }
+
                 const childToAdd = rules.updateItemValue(itemInMemory);
                 currentDataBranch.child.push(childToAdd);
             },
             'whiteSpace': ({token, stack, memory}) => {
-                // if current stream is not for object/array element, work as normal token
+                // if current stream is not for object/array element, work as normal string token
                 if(memory[0] && ( memory[0].type !== 'object' || memory[0].type !== 'array') ) { 
                     rules.process('string',{token: token, stack, memory}, 'strToken');
                     return
@@ -91,7 +94,7 @@ const rules = {
 
                 return // Other than that, do nothing
             }, 
-            ']': function({token, stack, memory}) { // append last child object on temporary memory. Close data branch
+            ']': function({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
                 // if current stream is on string element, work as normal token
                 const currentDataBranch = rules.getLastItemOfArr(stack);
                 if(currentDataBranch.type === 'string') { 
@@ -117,8 +120,8 @@ const rules = {
                 }
 
                 // If there are string stream left on memory and yet this function called, assign this lexeme as errorString to log error later when update lexeme to data tree
-                // if it's all clear, create new clean data tree
                 const newStrTree = (memory[0] && memory[0].type === 'string') ? {type: 'errorString', value: memory.pop().value + token} : {type: 'string', value: token};
+                // if it's all clear, create new clean data tree
                 memory.push(newStrTree);
                 stack.push(newStrTree);
             },
