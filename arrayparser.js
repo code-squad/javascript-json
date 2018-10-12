@@ -60,7 +60,6 @@ const tokenizer = function (str) {
     if (str[idx].match(/[0-9]/)) {
         return number();
     }
-
 }
 
 const dataFormat = function (data) {
