@@ -25,7 +25,6 @@ const tokenizer = function (str) {
         idx += 1;
         while (idx < str.length) {
             if (str[idx] === ']') {
-                idx += 1;
                 return newArr;
             }
             if (str[idx] === '[') {
@@ -61,6 +60,7 @@ const tokenizer = function (str) {
     if (str[idx].match(/[0-9]/)) {
         return number();
     }
+
 }
 
 const dataFormat = function (data) {
