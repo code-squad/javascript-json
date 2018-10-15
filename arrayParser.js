@@ -33,123 +33,6 @@ const rules = {
         // Call proper token processing method following submitted dataType info
         this.charProcessing[dataType][tokenType](arguments[1]);
     },
-    charProcessing: {
-        array: {
-            '[': function ({token, stack, memory}) { //open new data branch
-                // if current stream is string element, process token as pure string
-                if(memory[0] && memory[0].type === 'string') { 
-                    rules.process('string',{token: token, stack, memory}, 'strToken');
-                    return
-                }
-
-                const newArrayTree = {type: 'array', child: []};
-                stack.push(newArrayTree);
-            },
-            'number': function({token, memory}) { // append or update last child object on temporary memory
-                const currentTempItem = memory.pop();
-                const updatedTempItem = rules.concatLexeme('number', token, currentTempItem);
-                
-                memory.push(updatedTempItem);
-            },
-            'stringInput': function({token, stack, memory}) {
-                rules.charProcessing.string.stringInput(arguments[0]);
-            },
-            'string': function({token, stack, memory}) {
-                // If string token appears out of nowhere, process it as opening token for keyword stream 
-                if (!memory[0]) {
-                    rules.process('keyword', arguments[0], 'keywordInput');
-                    return
-                }
-                rules.charProcessing.string.strToken({token, memory});
-            },
-            'updateItem': function({token, stack, memory}) { // Append item on memory to parent array
-                const itemInMemory = memory.pop();
-                const currentDataBranch = (() => {
-                    // Close temporary stack for dataTypes opening temporary stream (i.e keywords, errorStrings...)
-                    rules.adjustStack(itemInMemory, stack);
-                    return rules.getLastItemOfArr(stack);
-                })();
-
-                // if current stream is on string element, process token as pure string
-                if(currentDataBranch.type === 'string') { 
-                    memory.push(itemInMemory);
-                    rules.process('string',{token: token, stack, memory}, 'strToken');
-                    return
-                }
-
-                // if item to update is keyword / string / number, remove all trailing whitespaces
-                if (itemInMemory && itemInMemory.value) {
-                    itemInMemory.value = itemInMemory.value.slice(0, itemInMemory.value.match(/\S\s*$/).index + 1);
-                }
-
-                const childToAdd = rules.updateItemValue(itemInMemory);
-                currentDataBranch.child.push(childToAdd);
-            },
-            'whiteSpace': ({token, stack, memory}) => {
-                // if current stream is not for object/array element, work as normal string token
-                if(memory[0] && ( memory[0].type !== 'object' || memory[0].type !== 'array') ) { 
-                    rules.process('string',{token: token, stack, memory}, 'strToken');
-                    return
-                }
-
-                return // Other than that, do nothing
-            }, 
-            ']': function({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
-                // if current stream is on string element, work as normal token
-                const currentDataBranch = rules.getLastItemOfArr(stack);
-                if(currentDataBranch.type === 'string') { 
-                    rules.process('string',{token: token, stack, memory}, 'strToken');
-                    return
-                }
-
-                this.updateItem(arguments[0]);
-                
-                const arrayLexeme = stack.pop();
-                memory.push(arrayLexeme);
-            },
-        },
-        string: {
-            'stringInput': function ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
-                const currentDataBranch = rules.getLastItemOfArr(stack);
-                
-                // if there are ongoing string stream on stack, close it
-                if ( currentDataBranch.type === 'string' ) {
-                    memory[0].value += token;
-                    stack.length--; // Notify stack that string stream is closed.
-                    return
-                }
-
-                // If there are string stream left on memory and yet this function called, assign this lexeme as errorString to log error later when update lexeme to data tree
-                const newStrTree = ( () => {
-                    if (memory[0] && memory[0].type === 'string') {
-                        return {type: 'errorString', value: memory.pop().value + token}
-                    }
-                     return {type: 'string', value: token}
-                }) ();
-                // if it's all clear, create new clean data tree
-                memory.push(newStrTree);
-                stack.push(newStrTree);
-            },
-            'strToken': function({token, memory}) { // append or update last child object on temporary memory
-                const currentTempItem = memory.pop();
-                const updatedTempItem = rules.concatLexeme('string', token, currentTempItem);
-                
-                memory.push(updatedTempItem);
-            },
-        },
-        keyword: {
-            'keywordInput': function ({token, stack, memory}) { //open new data branch
-                const newKeywordTree = {type: 'keyword', value: token};
-                stack.push(newKeywordTree);
-                memory.push(newKeywordTree);
-            },
-            dictionary: {
-                'true': {type: 'boolean', value: true},
-                'false': {type: 'boolean', value: false},
-                'null': {type: 'object', value: null},
-            }
-        },
-    },
     getLastItemOfArr(arr) {
         return arr[arr.length-1]
     },
@@ -223,11 +106,137 @@ const rules = {
             tokenType = 'stringInput';
         } else if (token.match(/[a-zA-Z]/)) {
             tokenType = 'string';
+        } else if (token.match(/\[/)) {
+            tokenType = 'arrayOpen';
+        } else if (token.match(/\]/)) {
+            tokenType = 'arrayClose';
         }
 
         return tokenType
     },
 };
+
+/* ============================
+    Token processing rules 
+=============================== */
+rules.charProcessing = {};
+rules.charProcessing.array = {
+    arrayOpen({token, stack, memory}) { //open new data branch
+        // if current stream is string element, process token as pure string
+        if(memory[0] && memory[0].type === 'string') { 
+            rules.process('string',{token: token, stack, memory}, 'strToken');
+            return
+        }
+
+        const newArrayTree = {type: 'array', child: []};
+        stack.push(newArrayTree);
+    },
+    number({token, memory}) { // append or update last child object on temporary memory
+        const currentTempItem = memory.pop();
+        const updatedTempItem = rules.concatLexeme('number', token, currentTempItem);
+        
+        memory.push(updatedTempItem);
+    },
+    stringInput({token, stack, memory}) {
+        rules.charProcessing.string.stringInput(arguments[0]);
+    },
+    string({token, stack, memory}) {
+        // If string token appears out of nowhere, process it as opening token for keyword stream 
+        if (!memory[0]) {
+            rules.process('keyword', arguments[0], 'keywordInput');
+            return
+        }
+        rules.charProcessing.string.strToken({token, memory});
+    },
+    updateItem({token, stack, memory}) { // Append item on memory to parent array
+        const itemInMemory = memory.pop();
+        const currentDataBranch = (() => {
+            // Close temporary stack for dataTypes opening temporary stream (i.e keywords, errorStrings...)
+            rules.adjustStack(itemInMemory, stack);
+            return rules.getLastItemOfArr(stack);
+        })();
+
+        // if current stream is on string element, process token as pure string
+        if(currentDataBranch.type === 'string') { 
+            memory.push(itemInMemory);
+            rules.process('string',{token: token, stack, memory}, 'strToken');
+            return
+        }
+
+        // if item to update is keyword / string / number, remove all trailing whitespaces
+        if (itemInMemory && itemInMemory.value) {
+            itemInMemory.value = itemInMemory.value.slice(0, itemInMemory.value.match(/\S\s*$/).index + 1);
+        }
+
+        const childToAdd = rules.updateItemValue(itemInMemory);
+        currentDataBranch.child.push(childToAdd);
+    },
+    whiteSpace({token, stack, memory}) {
+        // if current stream is not for object/array element, work as normal string token
+        if(memory[0] && ( memory[0].type !== 'object' || memory[0].type !== 'array') ) { 
+            rules.process('string',{token: token, stack, memory}, 'strToken');
+            return
+        }
+
+        return // Other than that, do nothing
+    }, 
+    arrayClose({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
+        // if current stream is on string element, work as normal token
+        const currentDataBranch = rules.getLastItemOfArr(stack);
+        if(currentDataBranch.type === 'string') { 
+            rules.process('string',{token: token, stack, memory}, 'strToken');
+            return
+        }
+
+        this.updateItem(arguments[0]);
+        
+        const arrayLexeme = stack.pop();
+        memory.push(arrayLexeme);
+    },
+};
+rules.charProcessing.string = {
+    stringInput ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
+        const currentDataBranch = rules.getLastItemOfArr(stack);
+        
+        // if there are ongoing string stream on stack, close it
+        if ( currentDataBranch.type === 'string' ) {
+            memory[0].value += token;
+            stack.length--; // Notify stack that string stream is closed.
+            return
+        }
+
+        // If there are string stream left on memory and yet this function called, assign this lexeme as errorString to log error later when update lexeme to data tree
+        const newStrTree = ( () => {
+            if (memory[0] && memory[0].type === 'string') {
+                return {type: 'errorString', value: memory.pop().value + token}
+            }
+             return {type: 'string', value: token}
+        }) ();
+        // if it's all clear, create new clean data tree
+        memory.push(newStrTree);
+        stack.push(newStrTree);
+    },
+    strToken({token, memory}) { // append or update last child object on temporary memory
+        const currentTempItem = memory.pop();
+        const updatedTempItem = rules.concatLexeme('string', token, currentTempItem);
+        
+        memory.push(updatedTempItem);
+    },
+};
+
+rules.charProcessing.keyword = {
+    keywordInput ({token, stack, memory}) { //open new data branch
+        const newKeywordTree = {type: 'keyword', value: token};
+        stack.push(newKeywordTree);
+        memory.push(newKeywordTree);
+    },
+    dictionary: {
+        'true': {type: 'boolean', value: true},
+        'false': {type: 'boolean', value: false},
+        'null': {type: 'object', value: null},
+    },
+};
+
 
 function logError(msgStr) {
     try {
