@@ -16,7 +16,7 @@ const arrLexer = {
             const tokenType = rules.tagTokenType(token);
             // if incoming string is not predefined, process it as string token
             if(!rules.charProcessing.array[tokenType]) { 
-                rules.process('string', tokenDataObj, 'strToken', tokenType);
+                rules.process('string', tokenDataObj, 'strToken');
                 return
             }
             rules.process('array', tokenDataObj, tokenType);
@@ -35,8 +35,8 @@ const rules = {
     },
     charProcessing: {
         array: {
-            '[': function ({token, stack,memory}) { //open new data branch
-                // if current stream is string element, work as normal token
+            '[': function ({token, stack, memory}) { //open new data branch
+                // if current stream is string element, process token as pure string
                 if(memory[0] && memory[0].type === 'string') { 
                     rules.process('string',{token: token, stack, memory}, 'strToken');
                     return
@@ -70,7 +70,7 @@ const rules = {
                     return rules.getLastItemOfArr(stack);
                 })();
 
-                // if current stream is on string element, work as normal token
+                // if current stream is on string element, process token as pure string
                 if(currentDataBranch.type === 'string') { 
                     memory.push(itemInMemory);
                     rules.process('string',{token: token, stack, memory}, 'strToken');
@@ -109,7 +109,7 @@ const rules = {
             },
         },
         string: {
-            'stringInput': function ({token, stack, memory}) { //open new data branch
+            'stringInput': function ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
                 const currentDataBranch = rules.getLastItemOfArr(stack);
                 
                 // if there are ongoing string stream on stack, close it
