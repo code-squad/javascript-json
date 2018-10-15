@@ -120,7 +120,12 @@ const rules = {
                 }
 
                 // If there are string stream left on memory and yet this function called, assign this lexeme as errorString to log error later when update lexeme to data tree
-                const newStrTree = (memory[0] && memory[0].type === 'string') ? {type: 'errorString', value: memory.pop().value + token} : {type: 'string', value: token};
+                const newStrTree = ( () => {
+                    if (memory[0] && memory[0].type === 'string') {
+                        return {type: 'errorString', value: memory.pop().value + token}
+                    }
+                     return {type: 'string', value: token}
+                }) ();
                 // if it's all clear, create new clean data tree
                 memory.push(newStrTree);
                 stack.push(newStrTree);

@@ -30,8 +30,3 @@ console.log(`\n========== 오류 시나리오 2 - 2 : 숫자열 안의 공백문
 var s = "['1a,3',[22,23,[11,[112  233],112],55], true    ]";
 var result = main.arrayParser(s);
 // 112  233 : 알 수 없는 타입입니다!
-
-console.log(`\n========== 정상 시나리오 3 : 객체 처리 ==========\n`);
-var s = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
-var result = main.arrayParser(s);
-console.log(JSON.stringify(result, null, 2));
