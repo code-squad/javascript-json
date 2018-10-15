@@ -2,12 +2,12 @@
 const main = require('./arrayParser');
 
 console.log(`\n========== 정상 시나리오 1 ==========\n`);
-var s = "['ab,12',[2580,['bbc4',5],null]       , [true, false, 'kbs2'], 595]";
+var s = "['ab,12',[2580,['bbc4',5],null]       , [true, false, 'kbs2'], 595,]";
 var result = main.arrayParser(s);
 console.log(JSON.stringify(result, null, 2)); 
 
 console.log(`\n========== 정상 시나리오 2 - 문자열 내 특수문자 처리 ==========\n`);
-var s = "[',[]{}!@#$%^&*(1a3',[null,false,['11',[112233]],55, '99'],33, true]";
+var s = "[',[]{}!@#$%^&*(1a3',[null,false,['11',[112233]],55, '99'],33, ,true]";
 var result = main.arrayParser(s);
 console.log(JSON.stringify(result, null, 2)); 
 

@@ -79,7 +79,7 @@ const rules = {
             },
         };
         
-        const dataType = (dataObj) ? dataObj.type : noObj;
+        const dataType = (dataObj) ? dataObj.type : 'noObj';
 
         return updateRule[dataType]()
     },
@@ -191,7 +191,9 @@ rules.charProcessing.array = {
             return rules.charProcessing.string.strToken({token, stack, memory});
         }
 
-        rules.process('array', {token, stack, memory}, 'appendElem');
+        if(memory[0]) { // append leftover element if exists
+            rules.process('array', {token, stack, memory}, 'appendElem');
+        }
         
         const arrayLexeme = stack.pop();
         return [memory, arrayLexeme]
