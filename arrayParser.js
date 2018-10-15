@@ -31,7 +31,11 @@ const arrLexer = {
 const rules = {
     process(dataType, {token, stack, memory}, tokenType = this.tagTokenType(token)) {
         // Call proper token processing method following submitted dataType info
-        this.charProcessing[dataType][tokenType](arguments[1]);
+        const [targetLocation, objToPush] = this.charProcessing[dataType][tokenType](arguments[1]);
+        
+        if(objToPush) {
+            targetLocation.push(objToPush);
+        }
     },
     getLastItemOfArr(arr) {
         return arr[arr.length-1]
@@ -102,7 +106,7 @@ const rules = {
         } else if (token.match(/\s/)) {
             tokenType = 'whiteSpace';
         } else if (token.match(/,/)) {
-            tokenType = 'updateItem';
+            tokenType = 'appendElem';
         } else if (token.match(/['"`]/)) {
             tokenType = 'stringInput';
         } else if (token.match(/[a-zA-Z]/)) {
@@ -115,6 +119,9 @@ const rules = {
 
         return tokenType
     },
+    removeAdditionalWhiteSpace(string) {
+        return string.slice(0, string.match(/\S\s*$/).index + 1)
+    },
 };
 
 /* ============================
@@ -123,50 +130,45 @@ const rules = {
 rules.charProcessing = {};
 rules.charProcessing.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
-        // if current stream is string element, process token as pure string
-        if(memory[0] && memory[0].type === 'openString') { 
-            rules.process('string',{token: token, stack, memory}, 'strToken');
-            return
+        if(memory[0] && memory[0].type === 'openString') {
+            return rules.charProcessing.string.strToken({token, stack, memory})
         }
 
         const newArrayTree = {type: 'array', child: []};
-        stack.push(newArrayTree);
+        return [stack, newArrayTree]
     },
     number({token, memory}) { // append or update last child object on temporary memory
         const currentTempItem = memory.pop();
         const updatedTempItem = rules.concatLexeme('number', token, currentTempItem);
         
-        memory.push(updatedTempItem);
+        return [memory, updatedTempItem]
     },
     stringInput({token, stack, memory}) {
-        rules.process('string', arguments[0], 'stringInput');
+        return rules.charProcessing.string.stringInput({token, stack, memory})
     },
     string({token, stack, memory}) {
         // If string token appears out of nowhere, process it as opening token for keyword stream 
         if (!memory[0]) {
-            rules.process('keyword', arguments[0], 'keywordInput');
-            return
+            return rules.charProcessing.keyword.keywordInput({token, stack, memory});
         }
-        rules.process('string', arguments[0], 'strToken');
+        return rules.charProcessing.string.strToken({token, stack, memory})
     },
-    updateItem({token, stack, memory}) { // Append item on memory to parent array
+    appendElem({token, stack, memory}) { // Append item in memory to parent array
+        // if current stream is on string element, process token as pure string
+        if(memory[0] && memory[0].type === 'openString') {
+            return rules.charProcessing.string.strToken({token, stack, memory})
+        }
+        
         const itemInMemory = memory.pop();
         const currentDataBranch = rules.getLastItemOfArr(stack);
-
-        // if current stream is on string element, process token as pure string
-        if(itemInMemory && itemInMemory.type === 'openString') { 
-            memory.push(itemInMemory);
-            rules.process('string', arguments[0], 'strToken');
-            return
-        }
-
         // if item to update is keyword / string / number, remove all trailing whitespaces
         if (itemInMemory && itemInMemory.value) {
-            itemInMemory.value = itemInMemory.value.slice(0, itemInMemory.value.match(/\S\s*$/).index + 1);
+            itemInMemory.value = rules.removeAdditionalWhiteSpace(itemInMemory.value);
         }
 
         const childToAdd = rules.updateItemValue(itemInMemory);
-        currentDataBranch.child.push(childToAdd);
+        
+        return [currentDataBranch.child, childToAdd]
     },
     whiteSpace({token, stack, memory}) {
         // if current stream is object or array element, do nothing
@@ -178,57 +180,55 @@ rules.charProcessing.array = {
         };
         
         if( isNotObjectNorArray(memory[0]) ) { 
-            rules.process('string',{token: token, stack, memory}, 'strToken');
-            return
+            return rules.charProcessing.string.strToken({token, stack, memory});
         }
         
-        return // do nothing
+        return []// Nothing will happen
     }, 
     arrayClose({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
         // if current stream is on string element, work as normal token
-        const currentDataBranch = rules.getLastItemOfArr(stack);
         if(memory[0] && memory[0].type === 'openString') { 
-            rules.process('string',{token: token, stack, memory}, 'strToken');
-            return
+            return rules.charProcessing.string.strToken({token, stack, memory});
         }
 
-        this.updateItem(arguments[0]);
+        rules.process('array', {token, stack, memory}, 'appendElem');
         
         const arrayLexeme = stack.pop();
-        memory.push(arrayLexeme);
+        return [memory, arrayLexeme]
     },
 };
 rules.charProcessing.string = {
     stringInput ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
         // if there are ongoing string stream on stack, close it
         if ( memory[0] && memory[0].type === 'openString' ) {
-            memory[0] = rules.concatLexeme('string', token, memory[0]);
-            memory[0] = rules.updateItemValue(memory[0]);
-            return
+            const concatedToken = rules.concatLexeme('string', token, memory.pop());
+            return [memory, rules.updateItemValue(concatedToken)];
         }
 
-        // If there are string stream left on memory and yet this function called, assign this lexeme as errorString to log error later when update lexeme to data tree
+        // If there are string stream left on memory and yet this function was called, 
+        // assign current lexeme as errorString to log error later when update lexeme to parent array
         const newStrTree = ( () => {
             if (memory[0] && memory[0].type === 'string') {
                 return {type: 'errorString', value: memory.pop().value + token}
             }
              return {type: 'openString', value: token}
         }) ();
-        // if it's all clear, create new clean data tree
-        memory.push(newStrTree);
+
+        return [memory, newStrTree]
     },
     strToken({token, memory}) { // append or update last child object on temporary memory
         const currentTempItem = memory.pop();
         const updatedTempItem = rules.concatLexeme('string', token, currentTempItem);
         
-        memory.push(updatedTempItem);
+        return [memory, updatedTempItem]
     },
 };
 
 rules.charProcessing.keyword = {
     keywordInput ({token, stack, memory}) { //open new data branch
         const newKeywordTree = {type: 'keyword', value: token};
-        memory.push(newKeywordTree);
+        
+        return [memory, newKeywordTree]
     },
     dictionary: {
         'true': {type: 'boolean', value: true},
