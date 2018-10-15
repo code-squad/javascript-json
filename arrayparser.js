@@ -24,7 +24,7 @@ class Tokenizer {
         let numValue = '';
 
         while (this.index < tokens.length) {
-            if (tokens[this.index].match(/[0-9]/)) {
+            if (tokens[this.index].match(/\.|[0-9]/)) {
                 numValue += tokens[this.index];
                 this.index += 1;
             }
@@ -32,6 +32,7 @@ class Tokenizer {
                 return Number(numValue);
             }
         }
+        return Number(numValue);
     }
 
     array() { // 인자 type이 array일 경우
@@ -39,7 +40,7 @@ class Tokenizer {
         const tokens = this.tokens;
 
         this.index += 1;
-
+        debugger;
         while (this.index < tokens.length) {
             if (tokens[this.index].match(/\]/)) {
                 this.index += 1;
@@ -80,9 +81,9 @@ function dataFormat(data) {
     if (data instanceof Array) {
         result = new Data('array');
         data.forEach(element => {
-            const type = typeof element;
-            type === 'number'
-                ? result.child.push(new Data(type, element)) : data instanceof Array
+            const dataType = typeof element;
+            dataType === 'number'
+                ? result.child.push(new Data(dataType, element)) : element instanceof Array
                     ? result.child.push(dataFormat(element)) : '';
         });
     }
