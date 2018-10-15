@@ -40,7 +40,7 @@ class Tokenizer {
         const tokens = this.tokens;
 
         this.index += 1;
-        debugger;
+
         while (this.index < tokens.length) {
             if (tokens[this.index].match(/\]/)) {
                 this.index += 1;
@@ -62,7 +62,7 @@ class Tokenizer {
         const tokens = this.tokens;
 
         if (tokens.match(/^\[/)) return this.array();
-        if (tokens.match(/^[0-9]/)) return this.number();
+        else if (tokens.match(/^[0-9]/)) return this.number();
     }
 }
 
@@ -89,3 +89,10 @@ function dataFormat(data) {
     }
     return result;
 }
+
+/*
+Test Case
+const str = '[123, [22, 45, [26, 89], 78], 33]';
+const result = arrayParser(str);
+console.log(JSON.stringify(result, null, 2));
+*/
