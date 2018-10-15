@@ -172,16 +172,19 @@ rules.charProcessing.array = {
         currentDataBranch.child.push(childToAdd);
     },
     whiteSpace({token, stack, memory}) {
-        // if current stream is not for object/array element, work as normal string token
-        const elemToIgnore = {object: true, array: true};
-        const isNotObjectNorArray = ( dataObj = {} ) => elemToIgnore[dataObj.type];
+        // if current stream is object or array element, do nothing
+        const isObjectOrArray = ( dataObj ) => {
+            if (dataObj) {
+                return (dataObj.type === 'object' || dataObj.type === 'array') ? true : false
+            }
+            return false
+        };
         
-        if( isNotObjectNorArray(memory[0]) ) { 
-            rules.process('string',{token: token, stack, memory}, 'strToken');
-            return
+        if( isObjectOrArray(memory[0]) ) { 
+            return // do nothing
         }
-
-        return // Other than that, do nothing
+        
+        rules.process('string',{token: token, stack, memory}, 'strToken');
     }, 
     arrayClose({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
         // if current stream is on string element, work as normal token
@@ -203,7 +206,7 @@ rules.charProcessing.string = {
         
         // if there are ongoing string stream on stack, close it
         if ( currentDataBranch.type === 'string' ) {
-            memory[0].value += token;
+            memory[0] = rules.concatLexeme('string', token, memory[0]);
             stack.length--; // Notify stack that string stream is closed.
             return
         }
