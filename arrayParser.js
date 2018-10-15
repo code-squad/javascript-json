@@ -58,7 +58,8 @@ const rules = {
 
                 return Object.assign( dataObj, {value: updatedValueWithType} )
             },
-            string: () => dataObj, // No update for string Object as it was initially given the value as string
+            string: () => dataObj, // Do nothing
+            openString: () => Object.assign( dataObj, {type: 'string'} ), 
             keyword: () => {
                 const keywordObj = rules.charProcessing.keyword.dictionary[dataObj.value];
                 
@@ -123,7 +124,7 @@ rules.charProcessing = {};
 rules.charProcessing.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
         // if current stream is string element, process token as pure string
-        if(memory[0] && memory[0].type === 'string') { 
+        if(memory[0] && memory[0].type === 'openString') { 
             rules.process('string',{token: token, stack, memory}, 'strToken');
             return
         }
@@ -150,14 +151,10 @@ rules.charProcessing.array = {
     },
     updateItem({token, stack, memory}) { // Append item on memory to parent array
         const itemInMemory = memory.pop();
-        const currentDataBranch = (() => {
-            // Close temporary stack for dataTypes opening temporary stream (i.e keywords, errorStrings...)
-            rules.adjustStack(itemInMemory, stack);
-            return rules.getLastItemOfArr(stack);
-        })();
+        const currentDataBranch = rules.getLastItemOfArr(stack);
 
         // if current stream is on string element, process token as pure string
-        if(currentDataBranch.type === 'string') { 
+        if(itemInMemory && itemInMemory.type === 'openString') { 
             memory.push(itemInMemory);
             rules.process('string', arguments[0], 'strToken');
             return
@@ -173,23 +170,24 @@ rules.charProcessing.array = {
     },
     whiteSpace({token, stack, memory}) {
         // if current stream is object or array element, do nothing
-        const isObjectOrArray = ( dataObj ) => {
+        const isNotObjectNorArray = ( dataObj ) => {
             if (dataObj) {
-                return (dataObj.type === 'object' || dataObj.type === 'array') ? true : false
+                return (dataObj.type !== 'object' || dataObj.type !== 'array') ? true : false
             }
             return false
         };
         
-        if( isObjectOrArray(memory[0]) ) { 
-            return // do nothing
+        if( isNotObjectNorArray(memory[0]) ) { 
+            rules.process('string',{token: token, stack, memory}, 'strToken');
+            return
         }
         
-        rules.process('string',{token: token, stack, memory}, 'strToken');
+        return // do nothing
     }, 
     arrayClose({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
         // if current stream is on string element, work as normal token
         const currentDataBranch = rules.getLastItemOfArr(stack);
-        if(currentDataBranch.type === 'string') { 
+        if(memory[0] && memory[0].type === 'openString') { 
             rules.process('string',{token: token, stack, memory}, 'strToken');
             return
         }
@@ -202,12 +200,10 @@ rules.charProcessing.array = {
 };
 rules.charProcessing.string = {
     stringInput ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
-        const currentDataBranch = rules.getLastItemOfArr(stack);
-        
         // if there are ongoing string stream on stack, close it
-        if ( currentDataBranch.type === 'string' ) {
+        if ( memory[0] && memory[0].type === 'openString' ) {
             memory[0] = rules.concatLexeme('string', token, memory[0]);
-            stack.length--; // Notify stack that string stream is closed.
+            memory[0] = rules.updateItemValue(memory[0]);
             return
         }
 
@@ -216,11 +212,10 @@ rules.charProcessing.string = {
             if (memory[0] && memory[0].type === 'string') {
                 return {type: 'errorString', value: memory.pop().value + token}
             }
-             return {type: 'string', value: token}
+             return {type: 'openString', value: token}
         }) ();
         // if it's all clear, create new clean data tree
         memory.push(newStrTree);
-        stack.push(newStrTree);
     },
     strToken({token, memory}) { // append or update last child object on temporary memory
         const currentTempItem = memory.pop();
@@ -233,7 +228,6 @@ rules.charProcessing.string = {
 rules.charProcessing.keyword = {
     keywordInput ({token, stack, memory}) { //open new data branch
         const newKeywordTree = {type: 'keyword', value: token};
-        stack.push(newKeywordTree);
         memory.push(newKeywordTree);
     },
     dictionary: {
