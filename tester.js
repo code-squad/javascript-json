@@ -30,3 +30,15 @@ console.log(`\n========== 오류 시나리오 2 - 2 : 숫자열 안의 공백문
 var s = "['1a,3',[22,23,[11,[112  233],112],55], true    ]";
 var result = main.arrayParser(s);
 // 112  233 : 알 수 없는 타입입니다!
+
+
+
+
+
+arrayOpen({token, stack, memory}) { //open new data branch
+    // if current stream is string element, process token as pure string
+    if(memory[0] && memory[0].type === 'string') { 
+        rules.process('string',{token: token, stack, memory}, 'strToken');
+        return
+
+        

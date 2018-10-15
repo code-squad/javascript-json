@@ -173,7 +173,10 @@ rules.charProcessing.array = {
     },
     whiteSpace({token, stack, memory}) {
         // if current stream is not for object/array element, work as normal string token
-        if(memory[0] && ( memory[0].type !== 'object' || memory[0].type !== 'array') ) { 
+        const elemToIgnore = {object: true, array: true};
+        const isNotObjectNorArray = ( dataObj = {} ) => elemToIgnore[dataObj.type];
+        
+        if( isNotObjectNorArray(memory[0]) ) { 
             rules.process('string',{token: token, stack, memory}, 'strToken');
             return
         }
