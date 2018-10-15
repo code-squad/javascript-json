@@ -138,7 +138,7 @@ rules.charProcessing.array = {
         memory.push(updatedTempItem);
     },
     stringInput({token, stack, memory}) {
-        rules.charProcessing.string.stringInput(arguments[0]);
+        rules.process('string', arguments[0], 'stringInput');
     },
     string({token, stack, memory}) {
         // If string token appears out of nowhere, process it as opening token for keyword stream 
@@ -146,7 +146,7 @@ rules.charProcessing.array = {
             rules.process('keyword', arguments[0], 'keywordInput');
             return
         }
-        rules.charProcessing.string.strToken({token, memory});
+        rules.process('string', arguments[0], 'strToken');
     },
     updateItem({token, stack, memory}) { // Append item on memory to parent array
         const itemInMemory = memory.pop();
@@ -159,7 +159,7 @@ rules.charProcessing.array = {
         // if current stream is on string element, process token as pure string
         if(currentDataBranch.type === 'string') { 
             memory.push(itemInMemory);
-            rules.process('string',{token: token, stack, memory}, 'strToken');
+            rules.process('string', arguments[0], 'strToken');
             return
         }
 
