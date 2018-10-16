@@ -7,7 +7,6 @@ class Data {
         }
         if (type === 'array' || type === 'object') {
             this.type = type;
-            this.value = 'ArrayObject'
             this.child = [];
         }
     }
@@ -28,7 +27,7 @@ class Tokenizer {
                 numValue += tokens[this.index];
                 this.index += 1;
             }
-            else if (tokens[this.index].match(/\D/)) {
+            else {
                 return Number(numValue);
             }
         }
@@ -92,7 +91,7 @@ function dataFormat(data) {
 
 /*
 Test Case
-const str = '[123, [22, 45, [26, 89], 78], 33]';
-const result = arrayParser(str);
-console.log(JSON.stringify(result, null, 2));
+var str = "[123,[22,23,[11,[112233],112],55],33]";
+var result = ArrayParser(str);
+console.log(JSON.stringify(result, null, 2)); 
 */
