@@ -174,7 +174,7 @@ rules.charProcessing.array = {
         // if current stream is object or array element, do nothing
         const isNotObjectNorArray = ( dataObj ) => {
             if (dataObj) {
-                return (dataObj.type !== 'object' || dataObj.type !== 'array') ? true : false
+                if(dataObj.type !== 'object' || dataObj.type !== 'array') return true
             }
             return false
         };
