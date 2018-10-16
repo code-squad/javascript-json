@@ -31,6 +31,39 @@ class Lexer {
     }
 };
 
+class DataObj {
+    constructor(type, value) {
+        if (value) {
+            this.type = type;
+            this.value = value;
+            return
+        }
+        this.type = type;
+    }
+
+    updateType(type) {
+        this.type = type;
+        return this
+    }
+    updateValue(value) {
+        this.value = value;
+        return this
+    }
+    createChildArr() {
+        this.child = [];
+        return this
+    }
+    get clone() {
+        var copiedInstance = Object.assign(
+            Object.create(
+            Object.getPrototypeOf(this)
+            ),
+            this
+        );
+        return copiedInstance;
+        }
+}
+
 const rules = {
     process(dataType, {token, stack, memory}, tokenType = this.tagTokenType(token)) {
         // Call proper token processing method following submitted dataType info
@@ -45,17 +78,17 @@ const rules = {
     },
     concatLexeme(type, token, tempItem) {
         if (!tempItem){
-            tempItem = {type: type, value: token};
+            tempItem = new DataObj(type, token);
         } else {
-            tempItem = Object.assign(tempItem, {value: tempItem.value + token});
+            tempItem = tempItem.clone.updateValue(tempItem.value + token);
         }
 
         return tempItem
     },
     updateItemValue(dataObj) {
         const updateRule = {
-            noObj: () => ( {type: 'undefined', value: undefined} ),
-            array: () => Object.assign( dataObj, {value: 'arrayObject'} ),
+            noObj: () => new DataObj('undefined', undefined),
+            array: () => dataObj.clone.updateValue('arrayObject'),
             number: () => {
                 const updatedValueWithType = this.assignDataType(dataObj);
                 if(isNaN(updatedValueWithType)) {
@@ -63,10 +96,10 @@ const rules = {
                     logError(`${dataObj.value} : 알 수 없는 타입입니다!`);
                 }
 
-                return Object.assign( dataObj, {value: updatedValueWithType} )
+                return dataObj.clone.updateValue(updatedValueWithType)
             },
             string: () => dataObj, // Do nothing
-            openString: () => Object.assign( dataObj, {type: 'string'} ), 
+            openString: () => dataObj.clone.updateType('string'),
             keyword: () => {
                 const keywordObj = rules.charProcessing.keyword.dictionary[dataObj.value];
                 
@@ -137,7 +170,7 @@ rules.charProcessing.array = {
             return rules.charProcessing.string.strToken({token, stack, memory})
         }
 
-        const newArrayTree = {type: 'array', child: []};
+        const newArrayTree = new DataObj('array').createChildArr();
         return [stack, newArrayTree]
     },
     number({token, memory}) { // append or update last child object on temporary memory
@@ -214,9 +247,9 @@ rules.charProcessing.string = {
         // assign current lexeme as errorString to log error later when update lexeme to parent array
         const newStrTree = ( () => {
             if (memory[0] && memory[0].type === 'string') {
-                return {type: 'errorString', value: memory.pop().value + token}
+                return new DataObj('errorString', memory.pop().value + token)
             }
-             return {type: 'openString', value: token}
+             return new DataObj('openString', token)
         }) ();
 
         return [memory, newStrTree]
@@ -231,14 +264,14 @@ rules.charProcessing.string = {
 
 rules.charProcessing.keyword = {
     keywordInput ({token, stack, memory}) { //open new data branch
-        const newKeywordTree = {type: 'keyword', value: token};
+        const newKeywordTree = new DataObj('keyword', token);
         
         return [memory, newKeywordTree]
     },
     dictionary: {
-        'true': {type: 'boolean', value: true},
-        'false': {type: 'boolean', value: false},
-        'null': {type: 'object', value: null},
+        'true': new DataObj('boolean', true),
+        'false': new DataObj('boolean', false),
+        'null': new DataObj('object', null),
     },
 };
 
