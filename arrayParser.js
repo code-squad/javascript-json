@@ -17,8 +17,10 @@ class Lexer {
         dataStr.split('').forEach( (token) => { 
             const tokenDataObj = {token: token, stack: this.dataBranchStack, memory: this.tempMemory};
             const tokenType = rules.tagTokenType(token);
-            // if incoming string is not predefined, process it as string token
-            if(!rules.charProcessing.array[tokenType]) { 
+            // Process token as string if:
+                // if incoming string is not predefined, 
+                // or currently there are openString stream in memory
+            if(!rules.charProcessing.array[tokenType] || tokenDataObj.memory[0].type === 'openString') { 
                 rules.process('string', tokenDataObj, 'strToken');
                 return
             }
@@ -333,7 +335,10 @@ rules.charProcessing.object = {
         const currentTempItem = memory.pop();
         const targetKeyValPairOnStack = stack.pop();
         const parentObject = rules.getLastItemOfArr(stack);
-        const keyValPairObj = targetKeyValPairOnStack.clone.updateValue( Object.assign(targetKeyValPairOnStack.value, {value: currentTempItem}) );
+        const keyValPairObj = ( () => {
+            const completedKeyValpair = Object.assign(targetKeyValPairOnStack.value, {value: currentTempItem});
+            return targetKeyValPairOnStack.clone.updateValue(completedKeyValpair)
+        })();
         
         return [parentObject.child, keyValPairObj]
     },
