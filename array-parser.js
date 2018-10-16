@@ -143,18 +143,14 @@ class ArrayParser {
   }
 }
 
-// Test Case
-const str1 = '[123, 22, 33]';
-const str2 = '[123,[22],33, [1,2,3,4,5]]';
-const str3 = '[123,[22,23,[11,[112233],112],55],33]';
-const str4 = `['1a3',[null,false,['11',[112233],112],55, '99'],33, true]`;
-
-// Error Case
-const error1 = `['1a'3',[22,23,[11,[112233],112],55],33]`;
-const error2 = `['1a3',[22,23,[11,[112233],112],55],3d3]`;
-
 // Run
-const arrayParser = new ArrayParser();
-const tokens = arrayParser.tokenize(str4);
-const result = arrayParser.parse(tokens);
-console.log(JSON.stringify(result, null, 2));
+if (require.main === module) {
+  const str = `['1a3',[null,false,['11',[112233],112],55, '99'],33, true]`;
+  const arrayParser = new ArrayParser();
+  const tokens = arrayParser.tokenize(str);
+  const result = arrayParser.parse(tokens);
+  console.log(JSON.stringify(result, null, 2));
+}
+
+// Export
+module.exports = ArrayParser;
