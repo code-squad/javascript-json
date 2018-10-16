@@ -2,16 +2,19 @@
 
 // convert array in string form => return given array data in structured Object form
 function arrayParser(arrStr) { 
-    return arrLexer.lexer(arrStr)
+    return new Lexer('array').lexer(arrStr)
 }
 
-const arrLexer = {
-    tempMemory: [],
-    dataBranchStack: [],
-    dataTree: [],
-    lexer(arrStr) {
+class Lexer {
+    constructor(dataType) {
+        this.tempMemory = [];
+        this.dataBranchStack = [];
+        this.dataTree = [];
+        this.dataType = dataType;
+    }
+    lexer(dataStr) {
         // create array data branch & add chilren information
-        arrStr.split('').forEach( (token) => { 
+        dataStr.split('').forEach( (token) => { 
             const tokenDataObj = {token: token, stack: this.dataBranchStack, memory: this.tempMemory};
             const tokenType = rules.tagTokenType(token);
             // if incoming string is not predefined, process it as string token
@@ -19,13 +22,13 @@ const arrLexer = {
                 rules.process('string', tokenDataObj, 'strToken');
                 return
             }
-            rules.process('array', tokenDataObj, tokenType);
+            rules.process(this.dataType, tokenDataObj, tokenType);
         });
         
         this.dataTree.push(this.tempMemory.pop());
         
         return this.dataTree.pop();
-    },
+    }
 };
 
 const rules = {
