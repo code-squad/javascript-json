@@ -23,75 +23,76 @@ class Tokenizer {
         let numValue = '';
 
         while (this.index < tokens.length) {
-            if (tokens[this.index].match(/\.|[0-9]/)) {
-                numValue += tokens[this.index];
-                this.index += 1;
-            }
-            else {
-                return Number(numValue);
-            }
+            if (!tokens[this.index].match(/\.|[0-9]/)) return Number(numValue);
+            else numValue += tokens[this.index];
+
+            this.index += 1;
         }
         return Number(numValue);
     }
 
     array() { // 인자 type이 array일 경우
-        const parsedData = [];
         const tokens = this.tokens;
+        const parsedData = [];
 
         this.index += 1;
 
         while (this.index < tokens.length) {
-            if (tokens[this.index].match(/\]/)) {
+            const token = tokens[this.index];
+
+            if (token.match(/\]/)) {
                 this.index += 1;
                 return parsedData;
             }
-            else if (tokens[this.index].match(/\[/)) {
+            else if (token.match(/\[/)) {
                 parsedData.push(this.array());
             }
-            else if (tokens[this.index].match(/[0-9]/)) {
+            else if (token.match(/[0-9]/)) {
                 parsedData.push(this.number());
             }
-            else if (tokens[this.index].match(/\s|,/)) {
+            else if (token.match(/\s|,/)) {
                 this.index += 1;
             }
         }
     }
 
     execution() { // 토큰나이저 실행
-        const tokens = this.tokens;
-
-        if (tokens.match(/^\[/)) return this.array();
-        else if (tokens.match(/^[0-9]/)) return this.number();
+        if (this.tokens.match(/^\[/)) return this.array();
+        else if (this.tokens.match(/^[0-9]/)) return this.number();
     }
 }
 
 const arrayParser = function (str) {
     const tokenizer = new Tokenizer(str);
     const parsedData = tokenizer.execution();
-    return dataFormat(parsedData);
+    return util.dataFormat(parsedData);
 }
 
-function dataFormat(data) {
-    if (typeof data === 'number') {
-        return new Data('number', data);
-    }
+const util = {
+    dataFormat(data) {
+        if (typeof data === 'number') return new Data('number', data);
 
-    let result;
-    if (data instanceof Array) {
-        result = new Data('array');
-        data.forEach(element => {
-            const dataType = typeof element;
-            dataType === 'number'
-                ? result.child.push(new Data(dataType, element)) : element instanceof Array
-                    ? result.child.push(dataFormat(element)) : '';
-        });
+        if (data instanceof Array) {
+            let dataTree = new Data('array');
+            debugger;
+            data.forEach(element => this.classifyData(dataTree, element));
+            return dataTree;
+        }
+    },
+
+    classifyData(dataTree, data) {
+        const dataType = typeof data;
+
+        if (dataType === 'number') dataTree.child.push(new Data(dataType, data));
+        else if (data instanceof Array) dataTree.child.push(this.dataFormat(data));
+
+        return dataTree;
     }
-    return result;
 }
 
 /*
 Test Case
-var str = "[123,[22,23,[11,[112233],112],55],33]";
-var result = ArrayParser(str);
+const str = "[123,[22,23,[11,[112233],112],55],33]";
+const result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2)); 
 */
