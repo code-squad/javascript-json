@@ -1,93 +1,90 @@
 // 데이터 타입에 따라 생성되는 class
 class Data {
-    constructor(type, value) {
-        if (type === 'number' || type === 'string') {
-            this.type = type;
-            this.value = value;
-        }
-        if (type === 'array' || type === 'object') {
-            this.type = type;
-            this.child = [];
-        }
+  constructor(type, value) {
+    if (type === "number" || type === "string") {
+      this.type = type;
+      this.value = value;
     }
+    if (type === "array" || type === "object") {
+      this.type = type;
+      this.child = [];
+    }
+  }
 }
 
 class Tokenizer {
-    constructor(str) {
-        this.tokens = str;
-        this.index = 0;
+  constructor(str) {
+    this.tokens = str;
+    this.index = 0;
+  }
+
+  number() {
+    // 인자 type이 number일 경우
+    const tokens = this.tokens;
+    let numValue = "";
+
+    while (this.index < tokens.length) {
+      if (!tokens[this.index].match(/\.|[0-9]/)) return Number(numValue);
+      else numValue += tokens[this.index];
+
+      this.index += 1;
     }
+    return Number(numValue);
+  }
 
-    number() { // 인자 type이 number일 경우
-        const tokens = this.tokens;
-        let numValue = '';
+  array() {
+    // 인자 type이 array일 경우
+    const tokens = this.tokens;
+    const parsedData = [];
 
-        while (this.index < tokens.length) {
-            if (!tokens[this.index].match(/\.|[0-9]/)) return Number(numValue);
-            else numValue += tokens[this.index];
+    this.index += 1;
 
-            this.index += 1;
-        }
-        return Number(numValue);
-    }
+    while (this.index < tokens.length) {
+      const token = tokens[this.index];
 
-    array() { // 인자 type이 array일 경우
-        const tokens = this.tokens;
-        const parsedData = [];
-
+      if (token.match(/\]/)) {
         this.index += 1;
-
-        while (this.index < tokens.length) {
-            const token = tokens[this.index];
-
-            if (token.match(/\]/)) {
-                this.index += 1;
-                return parsedData;
-            }
-            else if (token.match(/\[/)) {
-                parsedData.push(this.array());
-            }
-            else if (token.match(/[0-9]/)) {
-                parsedData.push(this.number());
-            }
-            else if (token.match(/\s|,/)) {
-                this.index += 1;
-            }
-        }
+        return parsedData;
+      } else if (token.match(/\[/)) {
+        parsedData.push(this.array());
+      } else if (token.match(/[0-9]/)) {
+        parsedData.push(this.number());
+      } else if (token.match(/\s|,/)) {
+        this.index += 1;
+      }
     }
+  }
 
-    execution() { // 토큰나이저 실행
-        if (this.tokens.match(/^\[/)) return this.array();
-        else if (this.tokens.match(/^[0-9]/)) return this.number();
-    }
+  execution() {
+    // 토큰나이저 실행
+    if (this.tokens.match(/^\[/)) return this.array();
+    else if (this.tokens.match(/^[0-9]/)) return this.number();
+  }
 }
 
-const arrayParser = function (str) {
-    const tokenizer = new Tokenizer(str);
-    const parsedData = tokenizer.execution();
-    return util.dataFormat(parsedData);
+const arrayParser = function(str) {
+  const tokenizer = new Tokenizer(str);
+  const parsedData = tokenizer.execution();
+  return dataFormat(parsedData);
+};
+
+function dataFormat(data) {
+  if (typeof data === "number") return new Data("number", data);
+
+  if (data instanceof Array) {
+    let dataTree = new Data("array");
+    data.forEach(element => classifyData(dataTree, element));
+    return dataTree;
+  }
 }
 
-const util = {
-    dataFormat(data) {
-        if (typeof data === 'number') return new Data('number', data);
+function classifyData(dataTree, data) {
+  const dataType = typeof data;
 
-        if (data instanceof Array) {
-            let dataTree = new Data('array');
-            debugger;
-            data.forEach(element => this.classifyData(dataTree, element));
-            return dataTree;
-        }
-    },
+  if (dataType === "number") dataTree.child.push(new Data(dataType, data));
+  else if (data instanceof Array) dataTree.child.push(dataFormat(data));
 
-    classifyData(dataTree, data) {
-        const dataType = typeof data;
-
-        if (dataType === 'number') dataTree.child.push(new Data(dataType, data));
-        else if (data instanceof Array) dataTree.child.push(this.dataFormat(data));
-
-        return dataTree;
-    }
+  return dataTree;
 }
 
 /*
