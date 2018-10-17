@@ -178,13 +178,18 @@ const rules = {
     },
     checkUnclosedObject(stack, processType){
         const lastStackItem = rules.getLastItemOfArr(stack);
-        const bSomethingLeftAtProgramEnd = (processType === 'runtimeEnd' && lastStackItem);
+        const bSomethingLeftOnProgramEnd = (processType === 'runtimeEnd' && !!lastStackItem);
         const bObjectEndMismatch = (processType !== 'runtimeEnd' && processType !== lastStackItem.type);
 
-        if (bSomethingLeftAtProgramEnd || bObjectEndMismatch) { 
-            logError(`[Error] : 닫히지 않은 ${lastStackItem.type} 객체가 있습니다!\n[상세 정보] ${lastStackItem.value}`);
+        if (bSomethingLeftOnProgramEnd || bObjectEndMismatch) { 
+            logError(`[Error] : 닫히지 않은 ${lastStackItem.type} 객체가 있습니다!\n[상세 정보] ${JSON.stringify(lastStackItem, null, 2)}`);
             return false
         }
+        // if (!bKeyValueMatched) { 
+        //     logError(`[Error] : 콜론이 없는 속성 객체가 있습니다!\n[상세 정보] ${JSON.stringify(lastStackItem, null, 2)}`);
+        //     return false
+        // }
+        
 
         return true
     },
@@ -195,6 +200,11 @@ const rules = {
 =============================== */
 rules.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
+        const bObjKeyHasColon = memory[0] && memory[0].type === 'keyword' && rules.getLastItemOfArr(stack).type === 'object';
+        if(bObjKeyHasColon) {
+            throw logError(`[Error]: 콜론이 사용되지 않은 객체 표현 - ${JSON.stringify(memory[0],null,2)}`);
+        }
+
         const newArrayTree = new DataObj('array').createChildArr();
         return [stack, newArrayTree]
     },
@@ -215,7 +225,6 @@ rules.array = {
         return rules.string.strToken({token, stack, memory})
     },
     appendElem({token, stack, memory}) { // Append item in memory to parent array
-        // if current stream is on string element, process token as pure string
         if(memory[0]) {
             if(rules.getLastItemOfArr(stack).type === 'objectProperty') {
                 return rules.object.appendKeyValPair({token, stack, memory})
@@ -308,6 +317,11 @@ rules.keyword = {
 
 rules.object = {
     objectOpen({token, stack, memory}) {
+        const bObjKeyHasColon = memory[0] && memory[0].type === 'keyword' && rules.getLastItemOfArr(stack).type === 'object';
+        if(bObjKeyHasColon) {
+            throw logError(`[Error]: 콜론이 사용되지 않은 객체 표현 - ${JSON.stringify(memory[0],null,2)}`);
+        }
+
         const newObjTree = new DataObj('object').createChildArr();
         return [stack, newObjTree]
     },
@@ -316,7 +330,6 @@ rules.object = {
             rules.process('array', {token, stack, memory}, 'appendElem');
         }
         
-
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
         const objLexeme = stack.pop();
         
@@ -346,7 +359,7 @@ rules.object = {
             const completedKeyValpair = Object.assign({}, targetKeyValPairOnStack.value, {'propValue': currentTempItem});
             return targetKeyValPairOnStack.clone.updateValue(completedKeyValpair)
         })();
-        
+
         return [parentObject.child, keyValPairObj]
     },
 };

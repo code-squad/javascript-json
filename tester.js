@@ -17,9 +17,9 @@ var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b: [912,[5656,33]], true]
 var result = main.arrayParser(s);
 // 정상적으로 종료되지 않은 객체가 있습니다.
 
-// var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b  [912,[5656,33]]}, true]";
-// var result = main.arrayParser(s);
-// // ':'이 누락된 객체표현이 있습니다.
+var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b  [912,[5656,33]]}, true]";
+var result = main.arrayParser(s);
+// ':'이 누락된 객체표현이 있습니다.
 
 
 // console.log(`\n========== 정상 시나리오 1 - 객체타입 처리 ==========\n`);
