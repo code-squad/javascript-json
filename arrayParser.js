@@ -21,7 +21,7 @@ class Lexer {
             // Process token as string if:
                 // incoming string is not predefined, 
                 // or currently there are openString stream in memory
-            if(!rules.charProcessing.array[tokenType] || typeOfItemInMemory === 'openString') { 
+            if(!rules.array[tokenType] || typeOfItemInMemory === 'openString') { 
                 if (tokenType === 'stringInput') {
                     rules.process('string', tokenDataObj, 'stringInput');
                 }
@@ -73,7 +73,7 @@ class DataObj {
 const rules = {
     process(dataType, {token, stack, memory}, tokenType = this.tagTokenType(token)) {
         // Call proper token processing method following submitted dataType info
-        const [targetLocation, objToPush] = this.charProcessing[dataType][tokenType](arguments[1]);
+        const [targetLocation, objToPush] = this[dataType][tokenType](arguments[1]);
         
         if(objToPush) {
             targetLocation.push(objToPush);
@@ -107,7 +107,7 @@ const rules = {
             string: () => dataObj, // Do nothing
             openString: () => dataObj.clone.updateType('string'),
             keyword: () => {
-                const keywordObj = rules.charProcessing.keyword.dictionary[dataObj.value];
+                const keywordObj = rules.keyword.dictionary[dataObj.value];
                 
                 // If given keyword lexeme doesn't exist on dictionary, log error
                 if (!keywordObj) { 
@@ -178,8 +178,7 @@ const rules = {
 /* ============================
     Token processing rules 
 =============================== */
-rules.charProcessing = {};
-rules.charProcessing.array = {
+rules.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
         const newArrayTree = new DataObj('array').createChildArr();
         return [stack, newArrayTree]
@@ -191,20 +190,20 @@ rules.charProcessing.array = {
         return [memory, updatedTempItem]
     },
     stringInput({token, stack, memory}) {
-        return rules.charProcessing.string.stringInput({token, stack, memory})
+        return rules.string.stringInput({token, stack, memory})
     },
     string({token, stack, memory}) {
         // If string token appears out of nowhere, process it as opening token for keyword stream 
         if (!memory[0]) {
-            return rules.charProcessing.keyword.keywordInput({token, stack, memory});
+            return rules.keyword.keywordInput({token, stack, memory});
         }
-        return rules.charProcessing.string.strToken({token, stack, memory})
+        return rules.string.strToken({token, stack, memory})
     },
     appendElem({token, stack, memory}) { // Append item in memory to parent array
         // if current stream is on string element, process token as pure string
         if(memory[0]) {
             if(rules.getLastItemOfArr(stack).type === 'objectProperty') {
-                return rules.charProcessing.object.appendKeyValPair({token, stack, memory})
+                return rules.object.appendKeyValPair({token, stack, memory})
             }
         }
         
@@ -230,7 +229,7 @@ rules.charProcessing.array = {
         };
         
         if( isNotObjectNorArray(memory[0]) ) { 
-            return rules.charProcessing.string.strToken({token, stack, memory});
+            return rules.string.strToken({token, stack, memory});
         }
         
         return []// Nothing will happen
@@ -245,11 +244,11 @@ rules.charProcessing.array = {
         const arrayLexeme = stack.pop();
         return [memory, arrayLexeme]
     },
-    objectOpen: ({token, stack, memory}) => rules.charProcessing.object.objectOpen({token, stack, memory}),
-    objectClose: ({token, stack, memory}) => rules.charProcessing.object.objectClose({token, stack, memory}),
-    appendObjKey: ({token, stack, memory}) => rules.charProcessing.object.appendObjKey({token, stack, memory}),
+    objectOpen: ({token, stack, memory}) => rules.object.objectOpen({token, stack, memory}),
+    objectClose: ({token, stack, memory}) => rules.object.objectClose({token, stack, memory}),
+    appendObjKey: ({token, stack, memory}) => rules.object.appendObjKey({token, stack, memory}),
 };
-rules.charProcessing.string = {
+rules.string = {
     stringInput ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
         // if there are ongoing string stream on stack, close it
         if ( memory[0] && memory[0].type === 'openString' ) {
@@ -275,7 +274,7 @@ rules.charProcessing.string = {
     },
 };
 
-rules.charProcessing.keyword = {
+rules.keyword = {
     keywordInput ({token, stack, memory}) { //open new data branch
         const newKeywordTree = new DataObj('keyword', token);
         
@@ -288,7 +287,7 @@ rules.charProcessing.keyword = {
     },
 };
 
-rules.charProcessing.object = {
+rules.object = {
     objectOpen({token, stack, memory}) {
         const newObjTree = new DataObj('object').createChildArr();
         return [stack, newObjTree]
