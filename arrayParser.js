@@ -317,7 +317,7 @@ rules.charProcessing.object = {
         const targetKeyValPairOnStack = stack.pop();
         const parentObject = rules.getLastItemOfArr(stack);
         const keyValPairObj = ( () => {
-            const completedKeyValpair = Object.assign(targetKeyValPairOnStack.value, {'propValue': currentTempItem});
+            const completedKeyValpair = Object.assign({}, targetKeyValPairOnStack.value, {'propValue': currentTempItem});
             return targetKeyValPairOnStack.clone.updateValue(completedKeyValpair)
         })();
         
