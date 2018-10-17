@@ -33,6 +33,9 @@ class Lexer {
         
         this.dataTree.push(this.tempMemory.pop());
         
+        // Throw Error if there are leftover stream in stack (e.g. Object, Array...)
+        rules.checkUnclosedObject(this.dataBranchStack, 'runtimeEnd');
+        
         return this.dataTree.pop();
     }
 };
@@ -173,6 +176,18 @@ const rules = {
     removeAdditionalWhiteSpace(string) {
         return string.slice(0, string.match(/\S\s*$/).index + 1)
     },
+    checkUnclosedObject(stack, processType){
+        const lastStackItem = rules.getLastItemOfArr(stack);
+        const bSomethingLeftAtProgramEnd = (processType === 'runtimeEnd' && lastStackItem);
+        const bObjectEndMismatch = (processType !== 'runtimeEnd' && processType !== lastStackItem.type);
+
+        if (bSomethingLeftAtProgramEnd || bObjectEndMismatch) { 
+            logError(`[Error] : 닫히지 않은 ${lastStackItem.type} 객체가 있습니다!\n[상세 정보] ${lastStackItem.value}`);
+            return false
+        }
+
+        return true
+    },
 };
 
 /* ============================
@@ -207,7 +222,6 @@ rules.array = {
             }
         }
         
-        
         const itemInMemory = memory.pop();
         const currentDataBranch = rules.getLastItemOfArr(stack);
         // if item to update is keyword / string / number, remove all trailing whitespaces
@@ -235,13 +249,18 @@ rules.array = {
         return []// Nothing will happen
     }, 
     arrayClose({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
-        // if current stream is on string element, work as normal token
-
         if(memory[0]) { // append leftover element if exists
             rules.process('array', {token, stack, memory}, 'appendElem');
         }
         
+        const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'array');
         const arrayLexeme = stack.pop();
+        
+        if (!bNoObjectMismatch) { // If there is mismatch, remove unmatched stack & move on
+            const correctArrayLexeme = stack.pop();
+            return [memory, correctArrayLexeme]
+        }
+
         return [memory, arrayLexeme]
     },
     objectOpen: ({token, stack, memory}) => rules.object.objectOpen({token, stack, memory}),
@@ -297,7 +316,15 @@ rules.object = {
             rules.process('array', {token, stack, memory}, 'appendElem');
         }
         
+
+        const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
         const objLexeme = stack.pop();
+        
+        if (!bNoObjectMismatch) { // If there is mismatch, remove unmatched stack & move on
+            const correctObjLexeme = stack.pop();
+            return [memory, correctObjLexeme]
+        }
+
         return [memory, objLexeme]
     },
     appendObjKey({token, stack, memory}) {

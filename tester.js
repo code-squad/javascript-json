@@ -2,9 +2,30 @@
 const main = require('./arrayParser');
 
 console.log(`\n========== 정상 시나리오 1 - 객체타입 처리 ==========\n`);
-var s = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
+var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]]";
 var result = main.arrayParser(s);
 console.log(JSON.stringify(result, null, 2));
+//정상출력
+
+console.log(`\n========== 오류 시나리오 1 - 비정상 배열 ==========\n`);
+var s = "['1a3',[null,false,['11',112,'99' , {a:'str', b:[912,[5656,33]]}, true]";
+var result = main.arrayParser(s);
+// 정상적으로 종료되지 않은 배열이 있습니다.
+
+console.log(`\n========== 오류 시나리오 2 - 비정상 객체 ==========\n`);
+var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b: [912,[5656,33]], true]]";
+var result = main.arrayParser(s);
+// 정상적으로 종료되지 않은 객체가 있습니다.
+
+// var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b  [912,[5656,33]]}, true]";
+// var result = main.arrayParser(s);
+// // ':'이 누락된 객체표현이 있습니다.
+
+
+// console.log(`\n========== 정상 시나리오 1 - 객체타입 처리 ==========\n`);
+// var s = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
+// var result = main.arrayParser(s);
+// console.log(JSON.stringify(result, null, 2));
 
 // console.log(`\n========== 정상 시나리오 2 ==========\n`);
 // var s = "['ab,12',[2580,['bbc4',5],null]       , [true, false, 'kbs2'], 595,]";
