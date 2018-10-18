@@ -1,3 +1,5 @@
+'use strict';
+
 exports.testCaseList = [
   {
     name: '기본 배열 데이터 토큰화',

@@ -1,3 +1,5 @@
+'use strict';
+
 const { test, expect } = require('./mytest.js');
 const { testCaseList } = require('./tokenizer.testcase.js');
 const ArrayParser = require('../array-parser.js');
