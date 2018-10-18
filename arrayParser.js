@@ -260,10 +260,7 @@ rules.array = {
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'array');
-        if (!bNoObjectMismatch) { // If there is mismatch, remove unmatched stack & move on
-            const correctArrayLexeme = stack.pop();
-            return [memory, correctArrayLexeme]
-        }
+        if (!bNoObjectMismatch) return [] // Do nothing
         
         const arrayLexeme = stack.pop();
         return [memory, arrayLexeme]
@@ -327,11 +324,17 @@ rules.object = {
             rules.process('array', {token, stack, memory}, 'appendElem');
         }
         
-        const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
-        if (!bNoObjectMismatch) { // If there is mismatch, remove unmatched stack & move on
-            const correctObjLexeme = stack.pop();
-            return [memory, correctObjLexeme]
+        const childrenOfCurrentObj = rules.getLastItemOfArr(stack).child;
+        const bNoMissingKeys = childrenOfCurrentObj.every( data => data.propKey !== undefined);
+        if (!bNoMissingKeys) {
+            logError(`[Error] 키가 없는 객체 속성이 존재합니다! - ${JSON.stringify(childrenOfCurrentObj, null, 2)}`);
+            // childrenOfCurrentObj.length = 0; // remove invalid children to prevent further error
+            stack.pop();
+            return [] // Do nothing
         }
+        
+        const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
+        if (!bNoObjectMismatch) return [] // Do nothing
         
         const objLexeme = stack.pop();
         return [memory, objLexeme]
