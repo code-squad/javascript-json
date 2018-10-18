@@ -343,7 +343,16 @@ rules.object = {
         return [memory, objLexeme]
     },
     appendObjKey({token, stack, memory}) {
-        const itemInMemory = memory.pop();
+        let itemInMemory = memory.pop();
+        
+        // If data of itemInMemory has type of object or array, log error 
+        const bItemIsObjectOrArray = itemInMemory && (itemInMemory.type === 'object' || itemInMemory.type === 'array' );
+        if(bItemIsObjectOrArray) {
+            logError(`[Error]: 올바르지 않은 객체 키 자료형 - ${JSON.stringify(itemInMemory,null,2)}`);
+            // Apply 'toString' to itemInMemory for further processing
+            itemInMemory = itemInMemory.toString();
+        }
+
         // if item to update is keyword / string / number, remove all trailing whitespaces
         if (itemInMemory && itemInMemory.value) {
             itemInMemory.value = rules.removeAdditionalWhiteSpace(itemInMemory.value);

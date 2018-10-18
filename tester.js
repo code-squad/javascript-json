@@ -23,14 +23,10 @@ var result = main.arrayParser(s);
 // ':'이 누락된 객체표현이 있습니다.
 
 console.log(`\n========== 오류 시나리오 4 - 올바르지 않은 객체 키 자료형 ==========\n`);
-var s = "['1a3',[null,false,['11',112,'99'], { [ObjectKeyArr]:'str', b  [912,[5656,33]]}, true]";
+var s = "['1a3',[null,false,['11',112,'99'], { ['ObjectKeyArr']:'str', b : [912,[5656,33]]}, true]]";
 var result = main.arrayParser(s);
 // 객체나 배열은 객체의 키가 될 수 없습니다!
 
-/*
-appendObjectKey 메소드에서,
-현재 객체 스택이 열린 상태에서 새 키를 입력할 때 
-*/
 
 // console.log(`\n========== 정상 시나리오 1 - 객체타입 처리 ==========\n`);
 // var s = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
