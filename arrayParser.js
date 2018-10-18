@@ -183,13 +183,9 @@ const rules = {
 
         if (bSomethingLeftOnProgramEnd || bObjectEndMismatch) { 
             logError(`[Error] : 닫히지 않은 ${lastStackItem.type} 객체가 있습니다!\n[상세 정보] ${JSON.stringify(lastStackItem, null, 2)}`);
+            stack.pop() // Remove mismatched stack to prevent further error
             return false
         }
-        // if (!bKeyValueMatched) { 
-        //     logError(`[Error] : 콜론이 없는 속성 객체가 있습니다!\n[상세 정보] ${JSON.stringify(lastStackItem, null, 2)}`);
-        //     return false
-        // }
-        
 
         return true
     },
@@ -200,7 +196,7 @@ const rules = {
 =============================== */
 rules.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
-        const bObjKeyHasColon = memory[0] && memory[0].type === 'keyword' && rules.getLastItemOfArr(stack).type === 'object';
+        const bObjKeyHasColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasColon) {
             logError(`[Error]: 콜론이 사용되지 않은 객체 표현 - ${JSON.stringify(memory[0],null,2)}`);
             memory.pop(); // Remove wrong value in memory to prevent another error message
@@ -264,13 +260,12 @@ rules.array = {
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'array');
-        const arrayLexeme = stack.pop();
-        
         if (!bNoObjectMismatch) { // If there is mismatch, remove unmatched stack & move on
             const correctArrayLexeme = stack.pop();
             return [memory, correctArrayLexeme]
         }
-
+        
+        const arrayLexeme = stack.pop();
         return [memory, arrayLexeme]
     },
     objectOpen: ({token, stack, memory}) => rules.object.objectOpen({token, stack, memory}),
@@ -318,7 +313,7 @@ rules.keyword = {
 
 rules.object = {
     objectOpen({token, stack, memory}) {
-        const bObjKeyHasColon = memory[0] && memory[0].type === 'keyword' && rules.getLastItemOfArr(stack).type === 'object';
+        const bObjKeyHasColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasColon) {
             logError(`[Error]: 콜론이 사용되지 않은 객체 표현 - ${JSON.stringify(memory[0],null,2)}`);
             memory.pop(); // Remove wrong value in memory to prevent another error message
@@ -333,13 +328,12 @@ rules.object = {
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
-        const objLexeme = stack.pop();
-        
         if (!bNoObjectMismatch) { // If there is mismatch, remove unmatched stack & move on
             const correctObjLexeme = stack.pop();
             return [memory, correctObjLexeme]
         }
-
+        
+        const objLexeme = stack.pop();
         return [memory, objLexeme]
     },
     appendObjKey({token, stack, memory}) {
