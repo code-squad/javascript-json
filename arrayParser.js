@@ -198,7 +198,7 @@ rules.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
         const bObjKeyHasColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasColon) {
-            logError(`[Error]: 콜론이 사용되지 않은 객체 표현 - ${JSON.stringify(memory[0],null,2)}`);
+            logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
             memory.pop(); // Remove wrong value in memory to prevent another error message
         }
 
@@ -260,7 +260,9 @@ rules.array = {
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'array');
-        if (!bNoObjectMismatch) return [] // Do nothing
+        if (!bNoObjectMismatch) {
+            return [memory, stack.pop()] // Ignore current stack & move on to next stack item 
+        }
         
         const arrayLexeme = stack.pop();
         return [memory, arrayLexeme]
@@ -312,7 +314,7 @@ rules.object = {
     objectOpen({token, stack, memory}) {
         const bObjKeyHasColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasColon) {
-            logError(`[Error]: 콜론이 사용되지 않은 객체 표현 - ${JSON.stringify(memory[0],null,2)}`);
+            logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
             memory.pop(); // Remove wrong value in memory to prevent another error message
         }
 
@@ -324,17 +326,19 @@ rules.object = {
             rules.process('array', {token, stack, memory}, 'appendElem');
         }
         
+        const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
+        if (!bNoObjectMismatch) {
+            return [memory, stack.pop()] // Ignore current stack & move on to next stack item 
+        }
+        
         const childrenOfCurrentObj = rules.getLastItemOfArr(stack).child;
-        const bNoMissingKeys = childrenOfCurrentObj.every( data => data.propKey !== undefined);
+        const bNoMissingKeys = childrenOfCurrentObj.every( data => data.type === 'objectProperty');
         if (!bNoMissingKeys) {
-            logError(`[Error] 키가 없는 객체 속성이 존재합니다! - ${JSON.stringify(childrenOfCurrentObj, null, 2)}`);
+            logError(`[Error] 키가 없는 객체 속성이 존재합니다! \n[상세 정보]${JSON.stringify(childrenOfCurrentObj, null, 2)}`);
             // childrenOfCurrentObj.length = 0; // remove invalid children to prevent further error
             stack.pop();
             return [] // Do nothing
         }
-        
-        const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
-        if (!bNoObjectMismatch) return [] // Do nothing
         
         const objLexeme = stack.pop();
         return [memory, objLexeme]
@@ -345,7 +349,7 @@ rules.object = {
         // If data of itemInMemory has type of object or array, log error 
         const bItemIsObjectOrArray = itemInMemory && (itemInMemory.type === 'object' || itemInMemory.type === 'array' );
         if(bItemIsObjectOrArray) {
-            logError(`[Error]: 올바르지 않은 객체 키 자료형 - ${JSON.stringify(itemInMemory,null,2)}`);
+            logError(`[Error]: 올바르지 않은 객체 키 자료형 \n[상세 정보]${JSON.stringify(itemInMemory,null,2)}`);
             // Apply 'toString' to itemInMemory for further processing
             itemInMemory = itemInMemory.toString();
         }
