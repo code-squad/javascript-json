@@ -40,9 +40,24 @@ class Node {
   }
 }
 
+const arrayParser = function(str) {
+  const stack = new Stack();
+  let parsedData;
+
+  for (let token of str) {
+    if (token.match(/\[/)) {
+      stack.push(new Data("array", "ArrayObject"));
+    } else if (token.match(/\]/)) {
+      parsedData = stack.pop();
+      if (stack.top) stack.top.data.child.push(parsedData);
+    }
+  }
+  return parsedData;
+};
+
 /*
 Test Case
 */
-const str = "[123,33]";
+const str = "[[[[]]]]";
 const result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));
