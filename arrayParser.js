@@ -390,3 +390,9 @@ function logError(msgStr) {
 
 // Export to tester.js 
 module.exports.arrayParser = arrayParser;
+module.exports.testTarget = {
+    Class_Lexer: Lexer,
+    Class_DataObj: DataObj,
+    Obj_rules: rules,
+    Fn_logError: logError,
+};

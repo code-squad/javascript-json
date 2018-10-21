@@ -1,11 +1,11 @@
 // import arrayParser.js through Node.js
 const main = require('./arrayParser');
 
-// console.log(`\n========== 정상 시나리오 1 - 객체타입 처리 ==========\n`);
-// var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]]";
-// var result = main.arrayParser(s);
-// console.log(JSON.stringify(result, null, 2));
-// //정상출력
+console.log(`\n========== 정상 시나리오 1 - 객체타입 처리 ==========\n`);
+var s = "['1a3',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]]";
+var result = main.arrayParser(s);
+console.log(JSON.stringify(result, null, 2));
+//정상출력
 
 console.log(`\n========== 오류 시나리오 1 - 닫히지 않은 배열 ==========\n`);
 var s = "['1a3',[null,false,['11',112,'99'] , {a:'str', b:[912,[5656,33]}, true]";
