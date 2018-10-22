@@ -14,8 +14,9 @@ class Lexer {
     }
     lexer(dataStr) {
         // create array data branch & add chilren information
-        dataStr.split('').forEach( (token) => { 
-            const tokenDataObj = {token: token, stack: this.dataBranchStack, memory: this.tempMemory};
+        const dataStrArr = dataStr.split('');
+        function tokenProcessor(token, stack, memory, dataType) { 
+            const tokenDataObj = {token: token, stack: stack, memory: memory};
             const tokenType = rules.tagTokenType(token);
             const typeOfItemInMemory = (tokenDataObj.memory[0]) ? tokenDataObj.memory[0].type : undefined;
             // Process token as string if:
@@ -25,11 +26,18 @@ class Lexer {
                 if (tokenType === 'stringInput') {
                     rules.process('string', tokenDataObj, 'stringInput');
                 }
-                rules.process('string', tokenDataObj, 'strToken');
-                return
+                return rules.process('string', tokenDataObj, 'strToken');
             }
-            rules.process(this.dataType, tokenDataObj, tokenType);
-        });
+            return rules.process(dataType, tokenDataObj, tokenType);
+        }
+        
+        for (let token of dataStrArr) { 
+            const bProcessedWithoutIssue = tokenProcessor(token, this.dataBranchStack, this.tempMemory, this.dataType);
+            if (!bProcessedWithoutIssue) {
+                console.log(`토큰 처리 중 오류가 발생하여 프로그램을 종료합니다.`);
+                return false
+            }
+        }
         
         this.dataTree.push(this.tempMemory.pop());
         
@@ -78,9 +86,11 @@ const rules = {
         // Call proper token processing method following submitted dataType info
         const [targetLocation, objToPush] = this[dataType][tokenType](arguments[1]);
         
-        if(objToPush) {
-            targetLocation.push(objToPush);
-        }
+        if (targetLocation === false) return false
+
+        if (objToPush) targetLocation.push(objToPush)
+        
+        return true
     },
     getLastItemOfArr(arr) {
         return arr[arr.length-1]
@@ -199,7 +209,7 @@ rules.array = {
         const bObjKeyHasNoColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasNoColon) {
             logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
-            memory.pop(); // Remove wrong value in memory to prevent another error message
+            return [false, null]
         }
 
         const newArrayTree = new DataObj('array').createChildArr();
@@ -260,9 +270,7 @@ rules.array = {
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'array');
-        if (!bNoObjectMismatch) {
-            return [memory, stack.pop()] // Ignore current stack & move on to next stack item 
-        }
+        if (!bNoObjectMismatch) return [false, null] 
         
         const arrayLexeme = stack.pop();
         return [memory, arrayLexeme]
@@ -315,7 +323,7 @@ rules.object = {
         const bObjKeyHasNoColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasNoColon) {
             logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
-            memory.pop(); // Remove wrong value in memory to prevent another error message
+            return [false, null]
         }
 
         const newObjTree = new DataObj('object').createChildArr();
@@ -327,17 +335,13 @@ rules.object = {
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
-        if (!bNoObjectMismatch) {
-            return [memory, stack.pop()] // Ignore current stack & move on to next stack item 
-        }
+        if (!bNoObjectMismatch) return [false, null]
         
         const childrenOfCurrentObj = rules.getLastItemOfArr(stack).child;
         const bNoMissingKeys = childrenOfCurrentObj.every( data => data.type === 'objectProperty');
         if (!bNoMissingKeys) {
             logError(`[Error] 키가 없는 객체 속성이 존재합니다! \n[상세 정보]${JSON.stringify(childrenOfCurrentObj, null, 2)}`);
-            // childrenOfCurrentObj.length = 0; // remove invalid children to prevent further error
-            stack.pop();
-            return [] // Do nothing
+            return [false, null]
         }
         
         const objLexeme = stack.pop();
@@ -350,8 +354,7 @@ rules.object = {
         const bItemIsObjectOrArray = itemInMemory && (itemInMemory.type === 'object' || itemInMemory.type === 'array' );
         if(bItemIsObjectOrArray) {
             logError(`[Error]: 올바르지 않은 객체 키 자료형 \n[상세 정보]${JSON.stringify(itemInMemory,null,2)}`);
-            // Apply 'toString' to itemInMemory for further processing
-            itemInMemory = itemInMemory.toString();
+            return [false, null]
         }
 
         // if item to update is keyword / string / number, remove all trailing whitespaces
