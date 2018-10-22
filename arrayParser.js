@@ -244,13 +244,12 @@ rules.array = {
         
         const itemInMemory = memory.pop();
         const currentDataBranch = rules.getLastItemOfArr(stack);
-        // if item to update is keyword / string / number, remove all trailing whitespaces
+        // if item to update is Non-object (has 'value' property), remove all trailing whitespaces
         if (itemInMemory && itemInMemory.value) {
             itemInMemory.value = rules.removeAdditionalWhiteSpace(itemInMemory.value);
         }
 
         const childToAdd = rules.updateItemValue(itemInMemory);
-        
         if (childToAdd === false) return [false, null]
 
         return [currentDataBranch.child, childToAdd]
@@ -287,8 +286,7 @@ rules.array = {
     appendObjKey: ({token, stack, memory}) => rules.object.appendObjKey({token, stack, memory}),
 };
 rules.string = {
-    stringInput ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
-        // if there are ongoing string stream on stack, close it
+    stringInput ({token, stack, memory}) { // Open new String data branch. If one exists already, close it.
         if ( memory[0] && memory[0].type === 'openString' ) {
             const updatedItem = rules.updateItemValue( memory.pop() );
             
@@ -298,7 +296,7 @@ rules.string = {
         }
 
         // If there are string stream left on memory and yet this function was called, 
-        // assign current lexeme as errorString to log error later when update lexeme to parent array
+        // assign current lexeme as errorString to log error later when append lexeme to parent array
         const newStrTree = ( () => {
             if (memory[0] && memory[0].type === 'string') {
                 return new DataObj('errorString', memory.pop().value + token)
@@ -342,7 +340,8 @@ rules.object = {
     },
     objectClose({token, stack, memory}) {
         if(memory[0]) { // append leftover element if exists
-            rules.process('array', {token, stack, memory}, 'appendElem');
+            const bProcessResult = rules.process('array', {token, stack, memory}, 'appendElem');
+            if (!bProcessResult) return [false, null]
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'object');
@@ -368,7 +367,7 @@ rules.object = {
             return [false, null]
         }
 
-        // if item to update is keyword / string / number, remove all trailing whitespaces
+        // if item to update is Non-object (has 'value' property), remove all trailing whitespaces
         if (itemInMemory && itemInMemory.value) {
             itemInMemory.value = rules.removeAdditionalWhiteSpace(itemInMemory.value);
         }
@@ -382,6 +381,10 @@ rules.object = {
         const targetKeyValPairOnStack = stack.pop();
         const parentObject = rules.getLastItemOfArr(stack);
         const keyValPairObj = ( () => {
+            // if item to update is Non-object (has 'value' property), remove all trailing whitespaces
+            if (currentTempItem && currentTempItem.value) {
+                currentTempItem.value = rules.removeAdditionalWhiteSpace(currentTempItem.value);
+            }
             const completedKeyValpair = Object.assign({}, targetKeyValPairOnStack.value, {'propValue': currentTempItem});
             return targetKeyValPairOnStack.clone.updateValue(completedKeyValpair)
         })();
