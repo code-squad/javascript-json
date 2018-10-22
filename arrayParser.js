@@ -42,7 +42,8 @@ class Lexer {
         this.dataTree.push(this.tempMemory.pop());
         
         // Throw Error if there are leftover stream in stack (e.g. Object, Array...)
-        rules.checkUnclosedObject(this.dataBranchStack, 'runtimeEnd');
+        const bHasNoUnclosedObj = rules.checkUnclosedObject(this.dataBranchStack, 'runtimeEnd');
+        if (!bHasNoUnclosedObj) return false
         
         return this.dataTree.pop();
     }
@@ -113,6 +114,7 @@ const rules = {
                 if(isNaN(updatedValueWithType)) {
                     // Log error message if data branch has other characters than number strings
                     logError(`${dataObj.value} : 알 수 없는 타입입니다!`);
+                    return false
                 }
 
                 return dataObj.clone.updateValue(updatedValueWithType)
@@ -125,12 +127,14 @@ const rules = {
                 // If given keyword lexeme doesn't exist on dictionary, log error
                 if (!keywordObj) { 
                     logError(`${dataObj.value} : 존재하지 않는 명령어입니다!`);
+                    return false
                 }
 
                 return keywordObj
             },
             errorString: () => {
                 logError(`${dataObj.value} : 올바른 문자열이 아닙니다!`);
+                return false
             },
             object: () => dataObj,
         };
@@ -193,7 +197,6 @@ const rules = {
 
         if (bSomethingLeftOnProgramEnd || bObjectEndMismatch) { 
             logError(`[Error] : 닫히지 않은 ${lastStackItem.type} 객체가 있습니다!\n[상세 정보] ${JSON.stringify(lastStackItem, null, 2)}`);
-            stack.pop() // Remove mismatched stack to prevent further error
             return false
         }
 
@@ -247,6 +250,8 @@ rules.array = {
 
         const childToAdd = rules.updateItemValue(itemInMemory);
         
+        if (childToAdd === false) return [false, null]
+
         return [currentDataBranch.child, childToAdd]
     },
     whiteSpace({token, stack, memory}) {
@@ -266,7 +271,8 @@ rules.array = {
     }, 
     arrayClose({token, stack, memory}) { // Append last child object on temporary memory. And then close data branch
         if(memory[0]) { // append leftover element if exists
-            rules.process('array', {token, stack, memory}, 'appendElem');
+            const bProcessResult = rules.process('array', {token, stack, memory}, 'appendElem');
+            if (!bProcessResult) return [false, null]
         }
         
         const bNoObjectMismatch = rules.checkUnclosedObject(stack, 'array');
@@ -283,7 +289,11 @@ rules.string = {
     stringInput ({token, stack, memory}) { // Open new data branch if there is no current one. If it exists, close it.
         // if there are ongoing string stream on stack, close it
         if ( memory[0] && memory[0].type === 'openString' ) {
-            return [memory, rules.updateItemValue(memory.pop())];
+            const updatedItem = rules.updateItemValue( memory.pop() );
+            
+            if(updatedItem === false) return [false, null]
+            
+            return [memory, updatedItem];
         }
 
         // If there are string stream left on memory and yet this function was called, 
@@ -385,6 +395,7 @@ function logError(msgStr) {
     }
     catch(e) {
         console.log(e);
+        return false
     }
 }
 
