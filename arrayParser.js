@@ -196,8 +196,8 @@ const rules = {
 =============================== */
 rules.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
-        const bObjKeyHasColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
-        if(bObjKeyHasColon) {
+        const bObjKeyHasNoColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
+        if(bObjKeyHasNoColon) {
             logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
             memory.pop(); // Remove wrong value in memory to prevent another error message
         }
@@ -312,8 +312,8 @@ rules.keyword = {
 
 rules.object = {
     objectOpen({token, stack, memory}) {
-        const bObjKeyHasColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
-        if(bObjKeyHasColon) {
+        const bObjKeyHasNoColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
+        if(bObjKeyHasNoColon) {
             logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
             memory.pop(); // Remove wrong value in memory to prevent another error message
         }
