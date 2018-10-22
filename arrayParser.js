@@ -30,11 +30,12 @@ class Lexer {
             }
             return rules.process(dataType, tokenDataObj, tokenType);
         }
-        
+        let tokenIdx = -1;
         for (let token of dataStrArr) { 
+            tokenIdx++;
             const bProcessedWithoutIssue = tokenProcessor(token, this.dataBranchStack, this.tempMemory, this.dataType);
             if (!bProcessedWithoutIssue) {
-                console.log(`토큰 처리 중 오류가 발생하여 프로그램을 종료합니다.`);
+                console.log(`토큰 처리 중 오류가 발생하여 프로그램을 종료합니다. 오류가 기록된 문자열 : ${tokenIdx+1}번째 문자 " ${token} "`);
                 return false
             }
         }
@@ -196,7 +197,7 @@ const rules = {
         const bObjectEndMismatch = (processType !== 'runtimeEnd' && processType !== lastStackItem.type);
 
         if (bSomethingLeftOnProgramEnd || bObjectEndMismatch) { 
-            logError(`[Error] : 닫히지 않은 ${lastStackItem.type} 객체가 있습니다!\n[상세 정보] ${JSON.stringify(lastStackItem, null, 2)}`);
+            logError(`[Error] : 닫히지 않은 ${lastStackItem.type} 객체가 있습니다!`);
             return false
         }
 
@@ -211,7 +212,7 @@ rules.array = {
     arrayOpen({token, stack, memory}) { //open new data branch
         const bObjKeyHasNoColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasNoColon) {
-            logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
+            logError(`[Error]: 콜론이 사용되지 않은 객체 표현`);
             return [false, null]
         }
 
@@ -332,7 +333,7 @@ rules.object = {
     objectOpen({token, stack, memory}) {
         const bObjKeyHasNoColon = memory[0] && rules.getLastItemOfArr(stack).type === 'object';
         if(bObjKeyHasNoColon) {
-            logError(`[Error]: 콜론이 사용되지 않은 객체 표현 \n[상세 정보]${JSON.stringify(memory[0],null,2)}`);
+            logError(`[Error]: 콜론이 사용되지 않은 객체 표현`);
             return [false, null]
         }
 
@@ -350,7 +351,7 @@ rules.object = {
         const childrenOfCurrentObj = rules.getLastItemOfArr(stack).child;
         const bNoMissingKeys = childrenOfCurrentObj.every( data => data.type === 'objectProperty');
         if (!bNoMissingKeys) {
-            logError(`[Error] 키가 없는 객체 속성이 존재합니다! \n[상세 정보]${JSON.stringify(childrenOfCurrentObj, null, 2)}`);
+            logError(`[Error] 키가 없는 객체 속성이 존재합니다!`);
             return [false, null]
         }
         
@@ -363,7 +364,7 @@ rules.object = {
         // If data of itemInMemory has type of object or array, log error 
         const bItemIsObjectOrArray = itemInMemory && (itemInMemory.type === 'object' || itemInMemory.type === 'array' );
         if(bItemIsObjectOrArray) {
-            logError(`[Error]: 올바르지 않은 객체 키 자료형 \n[상세 정보]${JSON.stringify(itemInMemory,null,2)}`);
+            logError(`[Error]: 올바르지 않은 객체 키 자료형`);
             return [false, null]
         }
 
