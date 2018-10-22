@@ -19,20 +19,15 @@ ArrayParser
 **arrayParser:** 문자열을 파싱해 데이터 구조를 형성
 
 ###### - 로직 구조 -
-- **Tokenizer Class**를 통해 인자로 받은 문자열의 Token Type을 확인하고 Type에 따른 메소드를 호출하여 파싱 및 데이터 구조 형성
-    1. arrayParser 함수를 호출하면 tokenizer.execution 메소드를 실행한다.
-    2. 문자열의 첫번째 인덱스의 값을 받아 Token Type을 확인한다. 
-    3. Token Type에 따른 tokenizer 메소드를 호출 및 실행한다.(Data Type은 'number', 'array' 존재)
+- **Stack 자료구조**를 통해 인자로 받은 문자열을 tokenizer 함수를 통해 파싱 및 데이터 구조 형성
+    1. arrayParser 함수를 호출하면 tokenizer 실행한다.
+    2. tokenizer 내부에 stack 객체를 생성하고, linked list를 이용하여 데이터 파싱. 
+    3. Token Type에 따른 함수 로직 실행(Data Type은 'number', 'array' 존재)
+    4. 'array' 경우, Node class instance를 생성하고 stack에 쌓는 구조로 실행된다.
     <hr>
 
-- Tokenizer Class 메소드를 통해 반환된 값을 parsedData 변수에 저장, 원하는 데이터 구조로 **변환**
-    1. **dataFormat** 함수 호출
-    2. 배열에 저장된 데이터 type에 따른 Data Class instance 객체 생성
-        ```
-        { type: 'number', value: '123', child: [] }
-        ```
-    3. 배열의 경우 child 프로퍼티에 트리 구조로 저장(재귀적 함수 호출)
-        ```
+- 결과
+    ```
         { 
             type: 'array', 
             child: [ 
@@ -41,4 +36,4 @@ ArrayParser
                 { type: 'number', value: '33', child: [] } 
             ]
         }        
-        ```
+    ```
