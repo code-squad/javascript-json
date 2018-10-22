@@ -28,8 +28,11 @@ class Stack {
     return data;
   }
 
-  peek() {
-    return this.top.data;
+  concat() {
+    const parsedData = this.pop();
+    if (this.top) this.top.data.child.push(parsedData);
+
+    return parsedData;
   }
 }
 
@@ -40,24 +43,36 @@ class Node {
   }
 }
 
-const arrayParser = function(str) {
+const arrayParser = function (str) {
   const stack = new Stack();
+  let numValue = "";
   let parsedData;
 
   for (let token of str) {
     if (token.match(/\[/)) {
       stack.push(new Data("array", "ArrayObject"));
-    } else if (token.match(/\]/)) {
-      parsedData = stack.pop();
-      if (stack.top) stack.top.data.child.push(parsedData);
+    }
+    else if (token.match(/,|\]/)) {
+      if (numValue) {
+        const topChild = stack.top.data.child;
+        topChild.push(new Data("number", Number(numValue)));
+        numValue = "";
+      }
+
+      if (token === ']') {
+        parsedData = stack.concat();
+      }
+    }
+    else if (token.match(/[0-9]|\./)) {
+      numValue += token;
     }
   }
-  return parsedData;
+  return numValue ? new Data("number", Number(numValue)) : parsedData;
 };
 
 /*
 Test Case
 */
-const str = "[[[[]]]]";
+const str = "123";
 const result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));
