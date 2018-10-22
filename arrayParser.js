@@ -52,11 +52,7 @@ class Lexer {
 
 class DataObj {
     constructor(type, value) {
-        if (value !== undefined) {
-            this.type = type;
-            this.value = value;
-            return
-        }
+        if (value !== undefined) this.value = value;
         this.type = type;
     }
 
@@ -73,11 +69,13 @@ class DataObj {
         return this
     }
     get clone() {
-        var copiedInstance = Object.assign(
-            Object.create(
-            Object.getPrototypeOf(this)
-            ),
-            this
+        const copiedInstance = (
+            Object.assign(
+                Object.create(
+                    Object.getPrototypeOf(this)
+                ),
+                this
+            )
         );
         return copiedInstance;
         }
@@ -98,13 +96,9 @@ const rules = {
         return arr[arr.length-1]
     },
     concatLexeme(type, token, tempItem) {
-        if (!tempItem){
-            tempItem = new DataObj(type, token);
-        } else {
-            tempItem = tempItem.clone.updateValue(tempItem.value + token);
-        }
-
-        return tempItem
+        if (!tempItem) return new DataObj(type, token)
+            
+        return tempItem.clone.updateValue(tempItem.value + token)
     },
     updateItemValue(dataObj) {
         const updateRule = {
@@ -149,15 +143,6 @@ const rules = {
             'number': (value) => Number(value),
         };
         return convertTypeTo[targetType](value)
-    },
-    adjustStack(dataObj, stack) {
-        const typesRequireStackAdjustment = {
-            'keyword': true,
-            'errorString': true,
-        }
-        if (typesRequireStackAdjustment[dataObj.type]) {
-            stack.length--;
-        }
     },
     tagTokenType(token) {
         let tokenType = token;
