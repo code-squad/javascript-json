@@ -28,6 +28,10 @@ const arrayParser = (() => {
       return data;
     }
 
+    getTopChild() {
+      return this.top.data.child;
+    }
+
     concat() {
       const topData = this.pop();
       if (this.top) this.top.data.child.push(topData);
@@ -54,7 +58,7 @@ const arrayParser = (() => {
       }
       else if (token.match(/,|\]/)) {
         if (numValue) {
-          const topChild = stack.top.data.child;
+          const topChild = stack.getTopChild();
           topChild.push(new Data("number", Number(numValue)));
           numValue = "";
         }
@@ -77,6 +81,6 @@ const arrayParser = (() => {
 /*
 Test Case
 */
-const str = "[123,[22,23,[11,[112233],112],55],33]";
+const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));
