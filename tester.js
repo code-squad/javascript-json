@@ -36,3 +36,101 @@ var s = "['1a3',[null,false,['11',112,'99'], { ['ObjectKeyArr']:'str', {b:1} : [
 var result = main.arrayParser(s);
 console.log(JSON.stringify(result, null, 2));
 // 객체나 배열은 객체의 키가 될 수 없습니다!
+
+const modelOutput = {
+    "type": "array",
+    "child": [
+      {
+        "value": "'1a3'",
+        "type": "string"
+      },
+      {
+        "type": "array",
+        "child": [
+          {
+            "value": null,
+            "type": "object"
+          },
+          {
+            "value": false,
+            "type": "boolean"
+          },
+          {
+            "type": "array",
+            "child": [
+              {
+                "value": "'11'",
+                "type": "string"
+              },
+              {
+                "value": 112,
+                "type": "number"
+              },
+              {
+                "value": "'99'",
+                "type": "string"
+              }
+            ],
+            "value": "arrayObject"
+          },
+          {
+            "type": "object",
+            "child": [
+              {
+                "value": {
+                  "propKey": {
+                    "value": "a",
+                    "type": "keyword"
+                  },
+                  "propValue": {
+                    "value": "'str'",
+                    "type": "string"
+                  }
+                },
+                "type": "objectProperty"
+              },
+              {
+                "value": {
+                  "propKey": {
+                    "value": "b",
+                    "type": "keyword"
+                  },
+                  "propValue": {
+                    "type": "array",
+                    "child": [
+                      {
+                        "value": 912,
+                        "type": "number"
+                      },
+                      {
+                        "type": "array",
+                        "child": [
+                          {
+                            "value": 5656,
+                            "type": "number"
+                          },
+                          {
+                            "value": 33,
+                            "type": "number"
+                          }
+                        ],
+                        "value": "arrayObject"
+                      }
+                    ]
+                  }
+                },
+                "type": "objectProperty"
+              }
+            ]
+          },
+          {
+            "value": true,
+            "type": "boolean"
+          }
+        ],
+        "value": "arrayObject"
+      }
+    ]
+  };
+
+  module.exports.modelOutput = modelOutput;
