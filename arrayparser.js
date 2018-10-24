@@ -42,4 +42,8 @@ Test Case
 */
 const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const result = arrayParser(str);
-console.log(JSON.stringify(result, null, 2)); 
+console.log(JSON.stringify(result, null, 2));
+
+const str1 = "['1a'3',[null,false,['11',[112233],112],55, '99'],33, true]";
+const result1 = arrayParser(str1);
+console.log(JSON.stringify(result1, null, 2));
