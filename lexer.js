@@ -27,6 +27,15 @@ class Lexeme {
 
         return error.throw(token);
     }
+
+    getValue(type, token) {
+        if (type === 'null') return null;
+        if (type === 'string') return token;
+        if (type === 'arrayClose') return 'close';
+        if (type === 'array') return 'ArrayObject';
+        if (type === 'number') return Number(token);
+        if (type === 'boolean') return token === 'true' ? true : false;
+    }
 }
 
 class TypeCheck {
