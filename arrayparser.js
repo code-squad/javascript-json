@@ -1,6 +1,14 @@
 const Stack = require("./stack.js");
 const tokenizer = require("./tokenizer.js");
 
+try {
+  tokenizer("['1a'3',[null,false,['11',[112233],112],55, '99'],33, true]");
+}
+
+catch (e) {
+  console.log(`${e}은 올바른 문자열이 아닙니다.`);
+}
+
 function arrayParser() {
   const stack = new Stack();
   function parser(tokens) {
