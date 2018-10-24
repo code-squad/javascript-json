@@ -38,6 +38,29 @@ class Node {
   }
 }
 
+function tokenizer(str) {
+  const tokens = [];
+  let token = '';
+
+  for (let char of str) {
+    if (char === '[') {
+      tokens.push(char);
+    }
+    else if (char === ',' || char === ']') {
+      tokens.push(token);
+      token = '';
+      if (char === ']') token += char;
+    }
+    else {
+      token += char;
+    }
+  }
+
+  tokens.push(token);
+
+  return tokens;
+}
+
 function arrayParser() {
   class Data {
     constructor(type, value) {
@@ -48,44 +71,6 @@ function arrayParser() {
   }
 
   const stack = new Stack();
-
-  function tokenizer(str) {
-    const tokens = [];
-    let token = '';
-    let bString = false;
-
-    for (let char of str) {
-      if (char === '[') {
-        tokens.push(char);
-      }
-      else if (char === "'") {
-        bString = !bString;
-        token += char;
-      }
-      else if (char === ',') {
-        if (bString) {
-          token += char;
-        }
-        else {
-          tokens.push(token);
-          token = '';
-        }
-      }
-      else if (char === ']') {
-        tokens.push(token);
-        token = '';
-        token += char;
-      }
-      else {
-        token += char;
-      }
-    }
-
-    tokens.push(token);
-
-    return tokens;
-  }
-
   function parser(tokens) {
     let dataValue = '';
     let parsedData;
