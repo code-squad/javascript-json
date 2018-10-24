@@ -1,45 +1,39 @@
 const Stack = require("./stack.js");
 const tokenizer = require("./tokenizer.js");
+const lexer = require("./lexer.js");
 
-try {
-  tokenizer("['1a'3',[null,false,['11',[112233],112],55, '99'],33, true]");
+class Data {
+  constructor(type, value, child = []) {
+    this.type = type;
+    this.value = value;
+    this.child = child;
+  }
 }
 
-catch (e) {
-  console.log(`${e}은 올바른 문자열이 아닙니다.`);
-}
-
-function arrayParser() {
+function arrayParser(str) {
   const stack = new Stack();
-  function parser(tokens) {
-    let dataValue = '';
-    let parsedData;
+  const tokens = tokenizer(str);
+  const lexemes = lexer(tokens);
 
-    for (let token of tokens) {
-      if (token.match(/\[/)) {
-        stack.push(new Data("array", "ArrayObject"));
-      }
-      else if (token.match(/,|\]/)) {
-        if (dataValue) pushLexerToTop(lexer(dataValue));
-        dataValue = '';
-        if (token === ']') parsedData = stack.concat();
-      }
-      else {
-        dataValue += token;
-      }
+  let parsedData;
+
+  for (let lexeme of lexemes) {
+    const type = lexeme.type;
+
+    if (type === 'array') {
+      stack.push(new Data(type, lexeme.value));
     }
-    return dataValue ? new Data("number", Number(dataValue)) : parsedData;
-  }
+    else if (type === 'arrayClose') {
+      parsedData = stack.pop();
 
-  function pushLexerToTop(lexerData) {
-    const topChild = stack.peek().child;
-    topChild.push(lexerData);
+      if (stack.top) stack.peek().child.push(parsedData);
+    }
+    else {
+      const top = stack.peek();
+      top.child.push(new Data(type, lexeme.value, ''));
+    }
   }
-
-  return (str) => {
-    const tokens = tokenizer(str);
-    return parser(tokens);
-  }
+  return parsedData;
 };
 
 /*
@@ -47,4 +41,4 @@ Test Case
 */
 const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const result = arrayParser(str);
-console.log(JSON.stringify(result, null, 2));
+console.log(JSON.stringify(result, null, 2)); 

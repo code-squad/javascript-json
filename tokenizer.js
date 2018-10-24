@@ -1,32 +1,29 @@
 module.exports = function tokenizer(str) {
     const tokens = [];
+
+    const pushToken = (token) => tokens.push(token);
+    const initToken = () => token = '';
+    const concatChar = (char) => token += char;
+
     let token = '';
-    let bStrClosed = true;
 
     for (let char of str) {
-        if (char === "'") {
-            token += char;
-            bStrClosed = !bStrClosed;
-        }
-        else if (char === '[') {
-            if (!bStrClosed) throw token;
-            token += char;
-            tokens.push(token.trim());
-            token = '';
+        if (char === '[') {
+            concatChar(char);
+            pushToken(token.trim());
+            initToken();
         }
         else if (char === ',' || char === ']') {
-            if (!bStrClosed) throw token;
-
-            tokens.push(token.trim());
-            token = '';
-            if (char === ']') token += char;
+            if (token) pushToken(token.trim());
+            initToken();
+            if (char === ']') pushToken(char);
         }
         else {
-            token += char;
+            concatChar(char);
         }
     }
 
-    tokens.push(token.trim());
+    if (token) pushToken(token.trim());
 
     return tokens;
 }
