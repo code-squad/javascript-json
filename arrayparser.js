@@ -1,75 +1,7 @@
-class Stack {
-  constructor() {
-    this.top = null;
-  }
-
-  push(data) {
-    const node = new Node(data);
-
-    node.next = this.top;
-    this.top = node;
-  }
-
-  pop() {
-    if (!this.top) return;
-
-    const data = this.top.data;
-    this.top = this.top.next;
-
-    return data;
-  }
-
-  peek() {
-    return this.top.data;
-  }
-
-  concat() {
-    const topData = stack.pop();
-    if (stack.top) stack.peek().child.push(topData);
-
-    return topData;
-  }
-}
-
-class Node {
-  constructor(data) {
-    this.data = data;
-    this.next = null;
-  }
-}
-
-function tokenizer(str) {
-  const tokens = [];
-  let token = '';
-
-  for (let char of str) {
-    if (char === '[') {
-      tokens.push(char);
-    }
-    else if (char === ',' || char === ']') {
-      tokens.push(token);
-      token = '';
-      if (char === ']') token += char;
-    }
-    else {
-      token += char;
-    }
-  }
-
-  tokens.push(token);
-
-  return tokens;
-}
+const Stack = require("./stack.js");
+const tokenizer = require("./tokenizer.js");
 
 function arrayParser() {
-  class Data {
-    constructor(type, value) {
-      this.type = type;
-      this.value = value;
-      this.child = [];
-    }
-  }
-
   const stack = new Stack();
   function parser(tokens) {
     let dataValue = '';
@@ -89,13 +21,6 @@ function arrayParser() {
       }
     }
     return dataValue ? new Data("number", Number(dataValue)) : parsedData;
-  }
-
-  function lexer(data) {
-    if (data.match(/[0-9]+/)) return new Data("number", Number(data));
-    if (data.match(/\w/)) return new Data("string", String(data));
-    if (data.match(/true|false/)) return new Data("boolean", Boolean(data));
-    if (data.match(/null/)) return new Data("object", null);
   }
 
   function pushLexerToTop(lexerData) {
