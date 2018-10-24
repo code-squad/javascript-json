@@ -19,18 +19,19 @@ function arrayParser(str) {
 
   for (let lexeme of lexemes) {
     const type = lexeme.type;
+    const value = lexeme.value;
 
     if (type === 'array') {
-      stack.push(new Data(type, lexeme.value));
+      stack.push(new Data(type, value));
     }
     else if (type === 'arrayClose') {
       parsedData = stack.pop();
 
-      if (stack.top) stack.peek().child.push(parsedData);
+      stack.top ? stack.peek().child.push(parsedData) : '';
     }
     else {
       const top = stack.peek();
-      top.child.push(new Data(type, lexeme.value, ''));
+      top.child.push(new Data(type, value, ''));
     }
   }
   return parsedData;

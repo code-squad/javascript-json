@@ -9,31 +9,108 @@ ArrayParser
 5. 데이터구조에 대한 이해
 6. 복잡한 코드의 함수나구기 연습
 
-#### 요구사항(Step3)
-- 무한중첩 구조 parsing
-- 배열의 원소는 숫자타입만 존재
-- 복잡한 세부로직은 함수로 분리
-- 중복된 코드역시 함수로 분리
+#### 요구사항(Step4)
+- 숫자타입이외에 string, boolean, null 타입도 지원하도록 구현한다.
+- 올바른 문자열이 아닌 경우 오류를 발생한다.
+- 타입체크를 정규표현식을 사용하는 경우, backreference를 활용하는 것을 추천.
+- 복잡한 세부로직은 함수로 분리해본다.
+- 중복된 코드역시 함수로 분리해서 일반화한다.
 
 #### 설계
 **arrayParser:** 문자열을 파싱해 데이터 구조를 형성
 
 ###### - 로직 구조 -
-- **Stack 자료구조**를 통해 인자로 받은 문자열을 tokenizer 함수를 통해 파싱 및 데이터 구조 형성
-    1. arrayParser 함수를 호출하면 tokenizer 실행한다.
-    2. tokenizer 내부에 stack 객체를 생성하고, linked list를 이용하여 데이터 파싱. 
-    3. Token Type에 따른 함수 로직 실행(Data Type은 'number', 'array' 존재)
-    4. 'array' 경우, Node class instance를 생성하고 stack에 쌓는 구조로 실행된다.
-    <hr>
+- tokenizer -> lexer -> parser의 순서로 문자열 파싱
+
+    1. **tokenizer**
+        - 인자로 들어오는 문자열을 의미있는 유닛단위로 배열에 담는다.(여기서는 '[', ']', comma 단위로 나누었다.)
+        - 새로 생성된 배열 반환(tokens)
+
+    2. **lexer**
+        - tokenizer의 반환값이 lexer 함수의 인자
+        - 반환값 배열을 돌면서 token의 type과 value를 lexeme이라는 객체를 생성해 저장한다.
+        - token의 type이 올바르지 않을 경우, Error 메세지를 띄운다.
+
+    3. **parser**
+        - lexer에 의해 type이 정해진 값들의 배열을 받아 데이터를 구조화한다.
+        - '[' : array 생성
+        - ']' : stack에 저장되어있던 가장 최상위 값 반환 및 이전에 생성된 array의 child 배열에 push된다.
+        - ...rest: string, number, boolean, null 등 type에 상관없이 stack 최상위 array의 child 배열에 push된다.
 
 - 결과
     ```
-        { 
-            type: 'array', 
-            child: [ 
-                { type: 'number', value: '123', child: [] }, 
-                { type: 'number', value: '22', child: [] }, 
-                { type: 'number', value: '33', child: [] } 
+        {
+            "type": "array",
+            "value": "ArrayObject",
+            "child": [
+                {
+                    "type": "string",
+                    "value": "'1a3'",
+                    "child": ""
+                },
+                {
+                    "type": "array",
+                    "value": "ArrayObject",
+                    "child": [
+                        {
+                        "type": "null",
+                        "value": null,
+                        "child": ""
+                        },
+                        {
+                        "type": "boolean",
+                        "value": false,
+                        "child": ""
+                        },
+                        {
+                        "type": "array",
+                        "value": "ArrayObject",
+                        "child": [
+                                {
+                                "type": "string",
+                                "value": "'11'",
+                                "child": ""
+                                },
+                                {
+                                "type": "array",
+                                "value": "ArrayObject",
+                                "child": [
+                                    {
+                                    "type": "number",
+                                    "value": 112233,
+                                    "child": ""
+                                    }
+                                    ]
+                                },
+                                {
+                                "type": "number",
+                                "value": 112,
+                                "child": ""
+                                }
+                            ]
+                        },
+                        {
+                        "type": "number",
+                        "value": 55,
+                        "child": ""
+                        },
+                        {
+                        "type": "string",
+                        "value": "'99'",
+                        "child": ""
+                        }
+                    ]
+                },
+                {
+                "type": "number",
+                "value": 33,
+                "child": ""
+                },
+                {
+                "type": "boolean",
+                "value": true,
+                "child": ""
+                }
             ]
-        }        
+        }
     ```
