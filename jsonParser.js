@@ -10,7 +10,6 @@ const array = '[123,22,33]'
 
 function arrayParser(str) {
    // const value = getValue(str)
-
 }
 
 function getType(str) {
@@ -25,6 +24,10 @@ function getType(str) {
     }
 };
 
-function getChild(str) {
+function getValue(str) {
+    
+}
 
+function getChild(str) {
+    
 }
