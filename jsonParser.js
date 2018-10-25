@@ -1,21 +1,30 @@
-const array = '[1,2]'
-
-function getBrackets(array) {
-    for(let i = 0; i < array.length; i++) {
-        if(array[i] === '[') {
-            console.log(array[i])
-        } else if(array[i] === ']') {
-            console.log(array[i])
-        }
+class JSONData {
+    constructor(type, value, child) {
+        this.type = type
+        this.value = value
+        this.child = child
     }
 }
 
-getBrackets(array)
+const array = '[123,22,33]'
 
-function getValue(array) {
-    let frontBrackets = array.indexOf('[')
-    let backBrackets = array.lastIndexOf(']')
-    console.log(array.slice(frontBrackets + 1, backBrackets));
+function arrayParser(str) {
+   // const value = getValue(str)
+
 }
 
-getValue(array)
+function getType(str) {
+    if(str.indexOf('[') === -1) {
+        if(!isNaN(str)) {
+            return 'number';
+        } else {
+            return 'string';
+        }
+    } else {
+        return 'array'
+    }
+};
+
+function getChild(str) {
+
+}
