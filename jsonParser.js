@@ -11,3 +11,10 @@ function getBrackets(array) {
 }
 
 getBrackets(array)
+
+function getValue(array) {
+    let frontBrackets = array.indexOf('[')
+    let backBrackets = array.lastIndexOf(']')
+    console.log(array.slice(frontBrackets + 1, backBrackets));
+}
+getValue(array)
