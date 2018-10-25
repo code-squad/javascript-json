@@ -18,3 +18,4 @@
 * type을구하는 메서드, value를 구하는 메서드 child,를 구하는 메서드를 만들어보자
 * constructor에 대입
 * child와 value를 잘 다루도록 하자.
+* 

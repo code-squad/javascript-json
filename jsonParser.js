@@ -8,12 +8,9 @@ class JSONData {
 
 const array = '[123,22,33]'
 
-function arrayParser(str) {
-    const type = getType(str);
-    const value = getValue(str);
-    const child = getChild(str);
-    const jsonData = new JSONData(type, value, child)
-    console.log(jsonData)
+function arrayParser(array) {
+    str = array.replace(/ /gi, "");
+
 }
 
 function getType(str) {
@@ -29,9 +26,13 @@ function getType(str) {
 };
 
 function getValue(str) {
-    
+    if(str.indexOf('[') !== 0) {
+        return str.slice(0, str.lastIndexOf(']'))
+    } else {
+        return str.slice(0, str.indexOf(','))
+    }
 }
 
 function getChild(str) {
-
+    
 }
