@@ -9,7 +9,11 @@ class JSONData {
 const array = '[123,22,33]'
 
 function arrayParser(str) {
-   // const value = getValue(str)
+    const type = getType(str);
+    const value = getValue(str);
+    const child = getChild(str);
+    const jsonData = new JSONData(type, value, child)
+    console.log(jsonData)
 }
 
 function getType(str) {
@@ -29,5 +33,5 @@ function getValue(str) {
 }
 
 function getChild(str) {
-    
+
 }
