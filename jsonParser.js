@@ -17,4 +17,5 @@ function getValue(array) {
     let backBrackets = array.lastIndexOf(']')
     console.log(array.slice(frontBrackets + 1, backBrackets));
 }
+
 getValue(array)
