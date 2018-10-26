@@ -6,7 +6,7 @@ class JSONData {
     }
 }
 
-const array = '[123,22,33]'
+const array = '[123,"hallo",33]'
 
 function arrayParser(array) {
     str = array.replace(/ /gi, "");
@@ -44,8 +44,9 @@ function getChild(str) {
         child.push(new JSONData(getType(value), value, []))
         str = str.slice(str.indexOf(',') + 1, str.length)
         if (str.indexOf(',') === -1) {
-            child.push(new JSONData(getType(value), value, []))
+            child.push(new JSONData(getType(str), str, []))
         }
+        console.log(str)
     }
     return child
 }
