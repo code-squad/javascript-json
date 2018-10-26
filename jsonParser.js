@@ -13,9 +13,9 @@ function arrayParser(array) {
     let type = getType(str)
     let value = getValue(str)
     let child = getChild(value)
-    console.log(new JSONData(type, value, child))
+    let result = new JSONData(type, value, child)
+    printResult(result)
 }
-arrayParser(array)
 
 function getType(str) {
     if (str.indexOf('[') === -1) {
@@ -49,3 +49,9 @@ function getChild(str) {
     }
     return child
 }
+
+function printResult(result) {
+    console.log(result)
+}
+
+arrayParser(array)
