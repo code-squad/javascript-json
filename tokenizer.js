@@ -15,7 +15,7 @@ module.exports = class Tokenizer {
         this.token = token + char;
     }
     throwWrongString() {
-        if (this.bStrOpen) throw this.token;
+        if (this.bStrOpen) throw `${this.token}은 올바른 문자열이 아닙니다.`;
     }
     run(str) {
         for (let char of str) {

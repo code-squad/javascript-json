@@ -1,6 +1,6 @@
 // const str = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]"
-// const tokenizer = require("./tokenizer.js");
-// const tokens = tokenizer(str);
+// const Tokenizer = require("./tokenizer.js");
+// const tokens = tokenizer.run(str);
 
 module.exports = function lexer(tokens) {
     const lexemes = [];
@@ -23,10 +23,9 @@ class Lexeme {
         const error = new Error;
 
         if (typeCheck.isArray(token)) return 'array';
-        if (typeCheck.isComma(token)) return 'comma';
+        if (typeCheck.isArrayClose(token)) return 'arrayClose';
         if (typeCheck.isNumber(token)) return 'number';
         if (typeCheck.isString(token)) return 'string';
-        if (typeCheck.isArrayClose(token)) return 'arrayClose';
         if (typeCheck.isObject(token)) return 'object';
         if (typeCheck.isObjectClose(token)) return 'objectClose';
         if (typeCheck.isKey(token)) return 'keyString';
@@ -39,7 +38,7 @@ class Lexeme {
     getValue(type, token) {
         if (type === 'array') return 'ArrayObject';
         if (type === 'number') return Number(token);
-        if (type === 'string') return token.valueOf();
+        if (type === 'string') return token;
         if (type === 'arrayClose') return 'close';
         if (type === 'object') return 'Object';
         if (type === 'objectClose') return 'close';
@@ -54,10 +53,6 @@ class TypeCheck {
         return token === '[';
     }
 
-    isComma(token) {
-        return token === ',';
-    }
-
     isNumber(token) {
         return !token.match(/[^0-9|^.]/);
     }
@@ -65,14 +60,6 @@ class TypeCheck {
     isString(token) {
         const subStr = token.match(/'.+?'/);
         return subStr ? subStr[0] === token : false;
-    }
-
-    isNull(token) {
-        return token === 'null';
-    }
-
-    isBoolean(token) {
-        return token === 'true' || token === 'false';
     }
 
     isArrayClose(token) {
@@ -90,6 +77,14 @@ class TypeCheck {
     isKey(token) {
         if (token.match(/:/)) return true;
     }
+
+    isBoolean(token) {
+        return token === 'true' || token === 'false';
+    }
+
+    isNull(token) {
+        return token === 'null';
+    }
 }
 
 class Error {
@@ -98,4 +93,8 @@ class Error {
     }
 }
 
+// const str = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]"
+// const Tokenizer = require("./tokenizer.js");
+// const tokenizer = new Tokenizer;
+// const tokens = tokenizer.run(str);
 // console.log(lexer(tokens));

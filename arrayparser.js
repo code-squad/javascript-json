@@ -1,5 +1,5 @@
 const Stack = require("./stack.js");
-const tokenizer = require("./tokenizer.js");
+const Tokenizer = require("./tokenizer.js");
 const lexer = require("./lexer.js");
 
 class Data {
@@ -12,10 +12,10 @@ class Data {
 
 function arrayParser(str) {
   const stack = new Stack();
-  const tokens = tokenizer(str);
+  const tokenizer = new Tokenizer;
+  const tokens = tokenizer.run(str);
   const lexemes = lexer(tokens);
 
-  let tempData = '';
   let parsedData;
 
 
@@ -27,20 +27,14 @@ function arrayParser(str) {
       stack.push(new Data(type, value));
     }
     else if (type === 'arrayClose' || type === 'objectClose') {
-      const top = stack.peek();
-      if (tempData) top.child.push(tempData);
-      tempData = '';
       parsedData = stack.pop();
 
       stack.top ? stack.peek().child.push(parsedData) : '';
     }
-    else if (type === 'comma') {
-      const top = stack.peek();
-      if (tempData) top.child.push(tempData);
-      tempData = '';
-    }
     else {
-      tempData = new Data(type, value, '');
+      const top = stack.peek();
+      top.child.push(new Data(type, value, ''));
+      tempData = '';
     }
   }
   return parsedData;
