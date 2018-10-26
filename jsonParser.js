@@ -10,29 +10,42 @@ const array = '[123,22,33]'
 
 function arrayParser(array) {
     str = array.replace(/ /gi, "");
-
+    let type = getType(str)
+    let value = getValue(str)
+    let child = getChild(value)
+    console.log(new JSONData(type, value, child))
 }
+arrayParser(array)
 
 function getType(str) {
-    if(str.indexOf('[') === -1) {
-        if(!isNaN(str)) {
+    if (str.indexOf('[') === -1) {
+        if (!isNaN(str)) {
             return 'number';
         } else {
             return 'string';
         }
     } else {
-        return 'array'
+        return 'array '
     }
 };
 
 function getValue(str) {
-    if(str.indexOf('[') !== 0) {
-        return str.slice(0, str.lastIndexOf(']'))
+    if (str.indexOf('[') !== -1) {
+        return str.slice(str.indexOf('[') + 1, str.lastIndexOf(']'))
     } else {
-        return str.slice(0, str.indexOf(','))
+        return str.slice(0, str.length)
     }
 }
 
 function getChild(str) {
-    
+    child = []
+    while (str.indexOf(',') !== -1) {
+        var value = str.slice(0, str.indexOf(','))
+        child.push(new JSONData(getType(value), value, []))
+        str = str.slice(str.indexOf(',') + 1, str.length)
+        if (str.indexOf(',') === -1) {
+            child.push(new JSONData(getType(value), value, []))
+        }
+    }
+    return child
 }
