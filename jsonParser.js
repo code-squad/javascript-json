@@ -6,25 +6,21 @@ class JSONData {
     }
 }
 const array = '[123,[11, 22],33]'
+
+//토큰을 구별해내는 함수, 토큰을 분석하는 함수
 function arrayParser(array) {
-    str = array.replace(/ /gi, "");
-    let type = getType(str)
-    let value = getValue(str)
-    let child = getChild(value)
-    let result = new JSONData(type, value, child)
-    printResult(result)
+    
 }
-function getType(str) {
-    if (str.indexOf('[') === -1) {
-        if (!isNaN(str)) {
-            return 'number';
-        } else {
-            return 'string';
-        }
-    } else {
-        return 'array '
+
+function judgeToken(value) {
+    if(value.indexOf(',') === -1) {
+        return value
+    }else if(value[0] === '[') {
+        return value.slice(0, value.indexOf(']'))
     }
-};
+    return value.slice(0, value.indexOf(','))
+}
+
 function getValue(str) {
     if (str.indexOf('[') !== -1) {
         return str.slice(str.indexOf('[') + 1, str.lastIndexOf(']'))
@@ -32,6 +28,7 @@ function getValue(str) {
         return str.slice(0, str.length)
     }
 }
+
 function getChild(str) {
     child = []
     while (str.indexOf(',') !== -1) {
@@ -45,7 +42,8 @@ function getChild(str) {
     }
     return child
 }
+
 function printResult(result) {
     console.log(result)
 }
-arrayParser(array)
+
