@@ -1,9 +1,10 @@
-module.exports = class Tokenizer {
+class Tokenizer {
     constructor() {
         this.tokenList = [];
         this.token = '';
         this.bStr = false;
         this.bStrOpen = false;
+        this.arrayStack = [];
         this.error = new Error;
     }
     push(token) {
@@ -25,6 +26,7 @@ module.exports = class Tokenizer {
                 this.concat(this.token, char);
             }
             else if (char.match(/\[|\{|\:/)) {
+                this.arrayStack.push(1);
                 this.concat(this.token, char);
                 this.push(this.token.trim());
                 this.initToken();
@@ -33,6 +35,7 @@ module.exports = class Tokenizer {
                 if (this.bStrOpen) this.error.throwWrongString(this.token);
                 if (this.token) this.push(this.token.trim());
                 if (char !== ',') this.push(char);
+                if (char === ']') this.arrayStack.pop();
 
                 this.initToken();
                 this.bStr = false;
@@ -48,6 +51,7 @@ module.exports = class Tokenizer {
         //올바르지 않은 문자열 검출
         if (this.bStrOpen) this.error.throwWrongString(this.token);
         if (this.token) this.push(this.token.trim());
+        if (this.arrayStack.length) this.error.throwWrongArray();
 
         return this.tokenList;
     }
@@ -57,4 +61,12 @@ class Error {
     throwWrongString(string) {
         throw `${string}은 올바른 문자열이 아닙니다.`;
     }
+
+    throwWrongArray() {
+        throw `정상적으로 종료되지 않은 배열이 있습니다.`;
+    }
 }
+
+const tokenizer = new Tokenizer;
+const str = "['1a3',[null,false,['11',112,'99' , {a:'str', b:[912,[5656,33]]}, true]";
+console.log(tokenizer.run(str));
