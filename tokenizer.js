@@ -4,6 +4,7 @@ module.exports = class Tokenizer {
         this.token = '';
         this.bStr = false;
         this.bStrOpen = false;
+        this.error = new Error;
     }
     push(token) {
         this.tokenList.push(token);
@@ -14,15 +15,12 @@ module.exports = class Tokenizer {
     concat(token, char) {
         this.token = token + char;
     }
-    throwWrongString() {
-        if (this.bStrOpen) throw `${this.token}은 올바른 문자열이 아닙니다.`;
-    }
     run(str) {
         for (let char of str) {
             if (this.bStrOpen) {
                 if (char === "'") {
-                    this.bStrOpen = !this.bStrOpen;
                     this.bStr = !this.bStr;
+                    this.bStrOpen = !this.bStrOpen;
                 }
                 this.concat(this.token, char);
             }
@@ -32,25 +30,31 @@ module.exports = class Tokenizer {
                 this.initToken();
             }
             else if (char.match(/,|\]|\}/)) {
-                this.throwWrongString();
-
+                if (this.bStrOpen) this.error.throwWrongString(this.token);
                 if (this.token) this.push(this.token.trim());
                 if (char !== ',') this.push(char);
+
                 this.initToken();
                 this.bStr = false;
             }
             else {
                 if (char === "'") this.bStrOpen = !this.bStrOpen;
                 this.concat(this.token, char);
-                if (this.bStr) this.throwWrongString();
+
+                if (this.bStr && this.bStrOpen) this.error.throwWrongString(this.token);
             }
         }
 
         //올바르지 않은 문자열 검출
-        this.throwWrongString();
-
+        if (this.bStrOpen) this.error.throwWrongString(this.token);
         if (this.token) this.push(this.token.trim());
 
         return this.tokenList;
+    }
+}
+
+class Error {
+    throwWrongString(string) {
+        throw `${string}은 올바른 문자열이 아닙니다.`;
     }
 }
