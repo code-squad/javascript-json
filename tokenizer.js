@@ -5,6 +5,7 @@ class Tokenizer {
         this.bStr = false;
         this.bStrOpen = false;
         this.arrayStack = [];
+        this.objectStack = [];
         this.error = new Error;
     }
     push(token) {
@@ -26,7 +27,9 @@ class Tokenizer {
                 this.concat(this.token, char);
             }
             else if (char.match(/\[|\{|\:/)) {
-                this.arrayStack.push(1);
+                if (char === '[') this.arrayStack.push('[');
+                if (char === '{') this.objectStack.push('{');
+
                 this.concat(this.token, char);
                 this.push(this.token.trim());
                 this.initToken();
@@ -51,6 +54,7 @@ class Tokenizer {
         //올바르지 않은 문자열 검출
         if (this.bStrOpen) this.error.throwWrongString(this.token);
         if (this.token) this.push(this.token.trim());
+        if (this.objectStack.length) this.error.throwWrongObject();
         if (this.arrayStack.length) this.error.throwWrongArray();
 
         return this.tokenList;
@@ -65,8 +69,12 @@ class Error {
     throwWrongArray() {
         throw `정상적으로 종료되지 않은 배열이 있습니다.`;
     }
+
+    throwWrongObject() {
+        throw `정상적으로 종료되지 않은 객체가 있습니다.`;
+    }
 }
 
 const tokenizer = new Tokenizer;
-const str = "['1a3',[null,false,['11',112,'99' , {a:'str', b:[912,[5656,33]]}, true]";
+const str = "['1a3',[null,false,['11',112,'99'], {a:'str', b: [912,[5656,33]], true]";
 console.log(tokenizer.run(str));
