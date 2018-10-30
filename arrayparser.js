@@ -3,10 +3,10 @@ const Tokenizer = require("./tokenizer.js");
 const lexer = require("./lexer.js");
 
 class Data {
-  constructor(type, value, child = []) {
+  constructor(type, value, child) {
     this.type = type;
     this.value = value;
-    this.child = child;
+    if (child) this.child = child;
   }
 }
 
@@ -24,7 +24,7 @@ function arrayParser(str) {
     const value = lexeme.value;
 
     if (type === 'array' || type === 'object') {
-      stack.push(new Data(type, value));
+      stack.push(new Data(type, value, []));
     }
     else if (type === 'arrayClose' || type === 'objectClose') {
       parsedData = stack.pop();
@@ -33,7 +33,7 @@ function arrayParser(str) {
     }
     else {
       const top = stack.peek();
-      top.child.push(new Data(type, value, null));
+      top.child.push(new Data(type, value));
       tempData = '';
     }
   }
@@ -43,6 +43,6 @@ function arrayParser(str) {
 /*
 Test Case
 */
-const str = "['1a3',[null,false,['11',112,'99'], {a:'str', b  [912,[5656,33]]}], true]";
+const str = "['1a3',[null,false,['11',112,'99'], , {a:'str', b : [912,[5656,33]]}], true]";
 const result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));

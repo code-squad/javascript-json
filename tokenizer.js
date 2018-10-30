@@ -1,4 +1,4 @@
-class Tokenizer {
+module.exports = class Tokenizer {
     constructor() {
         this.tokenList = [];
         this.token = '';
@@ -9,15 +9,50 @@ class Tokenizer {
         this.bKeyAvailable = false;
         this.error = new Error;
     }
+
     push(token) {
         this.tokenList.push(token);
     }
+
     initToken() {
         this.token = '';
     }
+
     concat(token, char) {
         this.token = token + char;
     }
+
+    processByType(char) {
+        const self = this;
+        const type = {
+            '['() {
+                self.arrayStack++;
+            },
+            '{'() {
+                self.objectStack++;
+                self.bKeyAvailable = !self.bKeyAvailable;
+            },
+            ':'() {
+                self.bKeyAvailable = !self.bKeyAvailable;
+            },
+            ','() {
+                if (!self.token.trim()) self.error.throwWrongComma();
+                if (self.objectStack) self.bKeyAvailable = !self.bKeyAvailable;
+            },
+            ']'() {
+                if (!self.arrayStack) self.error.throwWrongArray();
+                else self.arrayStack--;
+            },
+            '}'() {
+                if (self.bKeyAvailable) self.error.throwMissingColon();
+
+                if (!self.objectStack) self.error.throwWrongObject();
+                else self.objectStack--;
+            }
+        }
+        type[char]();
+    }
+
     run(str) {
         for (let char of str) {
             if (this.bStrOpen) {
@@ -28,32 +63,20 @@ class Tokenizer {
                 this.concat(this.token, char);
             }
             else if (char.match(/\[|\{|\:/)) {
-                if (char === '[') this.arrayStack++;
-                if (char === '{') {
-                    this.objectStack++;
-                    this.bKeyAvailable = !this.bKeyAvailable;
-                }
-                if (char === ':') this.bKeyAvailable = !this.bKeyAvailable;
+                this.processByType(char);
 
                 this.concat(this.token, char);
                 this.push(this.token.trim());
                 this.initToken();
             }
             else if (char.match(/,|\]|\}/)) {
+                this.processByType(char);
+
                 if (this.bStrOpen) this.error.throwWrongString(this.token);
-                if (this.objectStack && char === ',') this.bKeyAvailable = !this.bKeyAvailable;
-                if (char === ']') !this.arrayStack ? this.error.throwWrongArray() : this.arrayStack--;
-                if (char === '}') {
-                    if (!this.objectStack) this.error.throwWrongObject();
-                    else this.objectStack--;
-
-                    if (this.bKeyAvailable) this.error.throwMissingColon();
-                }
-
                 if (this.token) this.push(this.token.trim());
-                if (char !== ',') this.push(char);
 
                 this.initToken();
+                if (char !== ',') this.token += char;
                 this.bStr = false;
             }
             else {
@@ -64,7 +87,7 @@ class Tokenizer {
             }
         }
 
-        //올바르지 않은 문자열 검출
+        //error 검출
         if (this.bStrOpen) this.error.throwWrongString(this.token);
         if (this.objectStack) this.error.throwWrongObject();
         if (this.arrayStack) this.error.throwWrongArray();
@@ -92,8 +115,12 @@ class Error {
     throwMissingColon() {
         throw `':'이 누락된 객체표현이 있습니다.`;
     }
+
+    throwWrongComma() {
+        throw `연속된 ','가 존재합니다.`
+    }
 }
 
-const tokenizer = new Tokenizer;
-const str = "['1a3',[null,false,['11',112,'99' , {a:'str', b [912,[5656,33]]}, true]";
-console.log(tokenizer.run(str));
+// const tokenizer = new Tokenizer;
+// const str = "['1a3',[null,false,['11',112,'99', {a:'str', b: [912,[5656,33]]}], true]]";
+// console.log(tokenizer.run(str));
