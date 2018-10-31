@@ -12,5 +12,41 @@ const str = array.replace(/ /gi, "")
 //그 토큰을 또 쪼개고 쪼개고 하는 방식으로 생각해보자.
 //- token이 array라면 JSONData를 만들때 child를 만드는 함수를 사용하고 array가 아니라면 
 //child를 만드는 함수가 아닌 그냥 type 과 value를 이용해서 JSONData를 만들어보도록 하자.
+function printJSONData(data) {
+    console.log(data)
+}
+//printJSONData(arrayParser(array)) => ret
+function removeBlank(array) {
+    return array.replace(/ /gi, '')
+}
 
+function arrayParser(array) {
+    const str = removeBlank(array)
+    const type = getType(str)
+    const value = str
+    const child = []
+    if(type === 'array') {
+        var i = 0
+        while(str.length !== 0) {
+            const token = getToken(str)
+            child.push(arrayParser(token))
+            str = removeBeforeToken(str)
+            i++
+            if(i > 5) break;
+        }
+    }
+    return new JSONData(type, value, child) 
+}
+
+function removeBeforeToken(str) {
+
+}
+
+function getToken(str) {
+
+}
+
+function analyzeToken(token) {
+
+}
 
