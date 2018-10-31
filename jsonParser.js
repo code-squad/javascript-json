@@ -6,50 +6,11 @@ class JSONData {
     }
 }
 const array = '[123,[11, 22],33]'
-
+const str = array.replace(/ /gi, "")
 //토큰을 구별해내는 함수, 토큰을 분석하는 함수
-function arrayParser(array) {
-    while(array.length === 0) {
+//- 의미있는 token. 어떻게 보면 처음에 주어지는 값 또한 의미있는 token이 될 수 있다.
+//그 토큰을 또 쪼개고 쪼개고 하는 방식으로 생각해보자.
+//- token이 array라면 JSONData를 만들때 child를 만드는 함수를 사용하고 array가 아니라면 
+//child를 만드는 함수가 아닌 그냥 type 과 value를 이용해서 JSONData를 만들어보도록 하자.
 
-    }
-}
-
-function judgeToken(value) {
-    if(value.indexOf(',') === -1) {
-        return value
-    }else if(value[0] === '[') {
-        return value.slice(1, value.lastIndexOf(']'))
-    }
-    return value.slice(0, value.indexOf(','))
-}
-
-function analyzeToken(token) {
-    const value = judgeToken(token)
-}
-
-function getValue(str) {
-    if (str.indexOf('[') !== -1) {
-        return str.slice(str.indexOf('[') + 1, str.lastIndexOf(']'))
-    } else {
-        return str.slice(0, str.length)
-    }
-}
-
-function getChild(str) {
-    child = []
-    while (str.indexOf(',') !== -1) {
-        var value = str.slice(0, str.indexOf(','))
-        child.push(new JSONData(getType(value), value, []))
-        str = str.slice(str.indexOf(',') + 1, str.length)
-        if (str.indexOf(',') === -1) {
-            child.push(new JSONData(getType(str), str, []))
-        }
-        console.log(str)
-    }
-    return child
-}
-
-function printResult(result) {
-    console.log(result)
-}
 
