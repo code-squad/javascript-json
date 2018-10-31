@@ -6,7 +6,11 @@ module.exports = class Tokenizer {
         this.bStrOpen = false;
         this.arrayStack = 0;
         this.objectStack = 0;
+        this.key = '';
         this.bKeyAvailable = false;
+        this.bValueAvailable = false;
+        this.type;
+        this.stateList = [];
         this.error = new Error;
     }
 
@@ -23,42 +27,64 @@ module.exports = class Tokenizer {
     }
 
     processByType(char) {
-        const self = this;
-        const type = {
+        this.type = {
             '['() {
-                self.arrayStack++;
+                this.stateList.push('array');
+                this.arrayStack++;
             },
-            '{'() {
-                self.objectStack++;
-                self.bKeyAvailable = !self.bKeyAvailable;
-            },
-            ':'() {
-                self.bKeyAvailable = !self.bKeyAvailable;
-            },
-            ','() {
-                if (!self.token.trim()) self.error.throwWrongComma();
-                if (self.objectStack) self.bKeyAvailable = !self.bKeyAvailable;
-            },
-            ']'() {
-                if (!self.arrayStack) self.error.throwWrongArray();
-                else self.arrayStack--;
-            },
-            '}'() {
-                if (self.bKeyAvailable) self.error.throwMissingColon();
 
-                if (!self.objectStack) self.error.throwWrongObject();
-                else self.objectStack--;
+            '{'() {
+                this.stateList.push('object');
+                this.objectStack++;
+                this.bKeyAvailable = true;
+            },
+
+            ':'() {
+                if (!this.token.trim()) {
+                    this.error.throwNotDefinedKey();
+                }
+                else {
+                    this.key = this.token.trim();
+                    this.bKeyAvailable = false;
+                    this.bValueAvailable = true;
+                }
+            },
+
+            ','() {
+                if (!this.token.trim()) this.error.throwWrongComma();
+
+                const currentState = this.stateList[this.stateList.length - 1];
+                if (currentState === 'object' && this.bValueAvailable) {
+                    this.bKeyAvailable = true;
+                    this.bValueAvailable = false;
+                }
+            },
+
+            ']'() {
+                if (!this.arrayStack) this.error.throwWrongArray();
+
+                this.arrayStack--;
+                this.stateList.pop();
+            },
+
+            '}'() {
+                if (!this.objectStack) this.error.throwWrongObject();
+                if (this.bKeyAvailable && this.token.trim()) this.error.throwMissingColon();
+                if (this.bValueAvailable && !this.token.trim()) this.error.throwNotDefinedValue(this.key);
+
+                this.objectStack--;
+                this.stateList.pop();
             }
         }
-        type[char]();
+        this.type[char].call(this);
     }
 
     run(str) {
         for (let char of str) {
             if (this.bStrOpen) {
                 if (char === "'") {
-                    this.bStr = !this.bStr;
-                    this.bStrOpen = !this.bStrOpen;
+                    this.bStr = true;
+                    this.bStrOpen = false;
                 }
                 this.concat(this.token, char);
             }
@@ -70,17 +96,17 @@ module.exports = class Tokenizer {
                 this.initToken();
             }
             else if (char.match(/,|\]|\}/)) {
+                if (this.bStr && this.bStrOpen) this.error.throwWrongString(this.token);
+
                 this.processByType(char);
 
-                if (this.bStrOpen) this.error.throwWrongString(this.token);
-                if (this.token) this.push(this.token.trim());
-
+                if (this.token.trim()) this.push(this.token.trim());
                 this.initToken();
                 if (char !== ',') this.token += char;
                 this.bStr = false;
             }
             else {
-                if (char === "'") this.bStrOpen = !this.bStrOpen;
+                if (char === "'") this.bStrOpen = true;
                 if (this.bStr && this.bStrOpen) this.error.throwWrongString(this.token);
 
                 this.concat(this.token, char);
@@ -92,7 +118,7 @@ module.exports = class Tokenizer {
         if (this.objectStack) this.error.throwWrongObject();
         if (this.arrayStack) this.error.throwWrongArray();
 
-        if (this.token) this.push(this.token.trim());
+        if (this.token) this.push(this.token);
 
 
         return this.tokenList;
@@ -112,6 +138,14 @@ class Error {
         throw `정상적으로 종료되지 않은 객체가 있습니다.`;
     }
 
+    throwNotDefinedKey() {
+        throw `key가 정의되지 않았습니다.`
+    }
+
+    throwNotDefinedValue(key) {
+        throw `${key}의 value가 정의되지 않았습니다.`
+    }
+
     throwMissingColon() {
         throw `':'이 누락된 객체표현이 있습니다.`;
     }
@@ -120,7 +154,3 @@ class Error {
         throw `연속된 ','가 존재합니다.`
     }
 }
-
-// const tokenizer = new Tokenizer;
-// const str = "['1a3',[null,false,['11',112,'99', {a:'str', b: [912,[5656,33]]}], true]]";
-// console.log(tokenizer.run(str));
