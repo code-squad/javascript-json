@@ -10,7 +10,7 @@ const array = "[123,[22, 33],44]";
 
 
 function ArrayParser(array) {
-    const WholeDataQueue = ['[', '123', ',', '[', '22', ',', '33', ']', ',', '44', ']'];
+    const WholeDataQueue = [];
     while (array.length === 0) {
         //토큰 자르고 토큰wholeDataqueue 에 넣고
         const token = getToken(array)
@@ -59,16 +59,18 @@ function analyzeQueue(queue) {
 }
 function getChild(queue) {
     let child = []
+    const valueIn = queueShifter(queue)
     while (valueIn === ']') {
         if (valueIn === '[') {
-            getChild(queue)
+            child.push(getChild(queue))
+        } if(valueIn === ',') {
+            continue;
         }
-        let valueIn = queueShifter(queue)
         child.push(new JSONData('Number', valueIn, []))
     }
 }
 function printJSONData(JSONData) {
-    console.log(JSON.stringify(data, null, 2))
+    console.log(JSON.stringify(JSONData, null, 2))
 }
 
-//printJSONData(ArrayParser(array))
+printJSONData(ArrayParser(array))
