@@ -7,7 +7,7 @@ class JSONData {
 }
 
 const array = "[123,[22, 33],44]";
-const WholeDataStack = [];
+const WholeDataStack = ['[','123',',','[','22',',','33',']',',','44',']'];
 
 
 function ArrayParser(array) {
@@ -22,6 +22,13 @@ function ArrayParser(array) {
 }
 function getToken(string) {
     //, [ or ]가 나오면 따로뽑아냄
+    if(string[0] === '[') {
+        return string.slice(0, 1)
+    } else if(string[0] === ',') {
+        return string.slice(0, 1)
+    } else {
+        return string.slice(0, indexOf(','))
+    }
 }
 function stackPusher(token) {
     stack.push(token)
