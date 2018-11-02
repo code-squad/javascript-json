@@ -7,48 +7,65 @@ class JSONData {
 }
 
 const array = "[123,[22, 33],44]";
-const WholeDataStack = ['[','123',',','[','22',',','33',']',',','44',']'];
 
 
 function ArrayParser(array) {
+    const WholeDataQueue = ['[', '123', ',', '[', '22', ',', '33', ']', ',', '44', ']'];
     while (array.length === 0) {
-        //토큰 자르고 토큰wholeDataStack 에 넣고
+        //토큰 자르고 토큰wholeDataqueue 에 넣고
         const token = getToken(array)
-        WholeDataStack.push(token)
+        queuePusher(token, WholeDataQueue)
         array = array.replace(token, '')
     }
-    
-    return analyzeStack(WholeDataStack)
+
+    return analyzeQueue(WholeDataQueue)
 }
 function getToken(string) {
     //, [ or ]가 나오면 따로뽑아냄
-    if(string[0] === '[') {
+    if (string[0] === '[') {
         return string.slice(0, 1)
-    } else if(string[0] === ',') {
+    } else if (string[0] === ',') {
         return string.slice(0, 1)
     } else {
         return string.slice(0, indexOf(','))
     }
 }
-function stackPusher(token) {
-    stack.push(token)
+function queuePusher(token, queue) {
+    queue.push(token)
+    return queue
 }
-function stackPoper() {
-    return stack.pop()
+function queueShifter(queue) {
+    return queue.shift()
 }
-function stackChecker(stack) {
-    if (stack[stack.length - 1] === ']') {
-        while (stack[stack.length - 1] === '[') {
-            child.push(getConditionKey(value))//뽑아서 분석
+function analyzeQueue(queue) {
+    while (queue.length === 0) {
+        const value = queueShifter(queue)
+        if (value === '[') {
+            let child = []
+            while (valueIn === ']') {
+                if (valueIn === '[') {
+
+                }
+                let valueIn = queueShifter(queue)
+                child.push(new JSONData('Number', valueIn, []))
+            }
+            new JSONData('array', 'array Object', child)
         }
-        //한개 더 뽑
     }
-}
-function analyzeStack(stack) {
     //스택 하나하나 앞에서부터 빼며 '['이 나오면 
     //array상태인 객체를 하나 만들며 child배열을 만듬.
     //그 child배열에 ]값이 나올때 까지 추가
     //결과값으로 제이슨데이터 리턴 
+}
+function getChild(queue) {
+    let child = []
+    while (valueIn === ']') {
+        if (valueIn === '[') {
+            getChild(queue)
+        }
+        let valueIn = queueShifter(queue)
+        child.push(new JSONData('Number', valueIn, []))
+    }
 }
 function printJSONData(JSONData) {
     console.log(JSON.stringify(data, null, 2))
