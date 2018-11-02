@@ -8,8 +8,6 @@ class JSONData {
 
 const array = "[123,[22, 33],44,[1,2,3]]".replace(/ /gi, '')
 
-
-
 function ArrayParser(array) {
     const WholeDataQueue = [];
     while (array.length !== 0) {
@@ -19,7 +17,6 @@ function ArrayParser(array) {
         queuePusher(token, WholeDataQueue)
         array = array.replace(token, '')
     }
-
     return analyzeQueue(WholeDataQueue)
 }
 function getToken(string) {
@@ -50,10 +47,6 @@ function analyzeQueue(queue) {
             return new JSONData('array', 'array Object', child)
         }
     }
-    //스택 하나하나 앞에서부터 빼며 '['이 나오면 
-    //array상태인 객체를 하나 만들며 child배열을 만듬.
-    //그 child배열에 ]값이 나올때 까지 추가
-    //결과값으로 제이슨데이터 리턴 
 }
 function getChild(queue, valueIn) {
     let child = []
