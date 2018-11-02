@@ -13,11 +13,14 @@ const WholeDataStack = [];
 function ArrayParser(array) {
     while (array.length === 0) {
         //토큰 자르고 토큰wholeDataStack 에 넣고
+        const token = getToken(array)
+        WholeDataStack.push(token)
+        array = array.replace(token, '')
     }
     
     return analyzeStack(WholeDataStack)
 }
-function getToken(array) {
+function getToken(string) {
     //, [ or ]가 나오면 따로뽑아냄
 }
 function stackPusher(token) {
