@@ -1,42 +1,66 @@
-function lexer(str) {
-  let result = [];
-  let number = '';
-  for (i = 0; i < str.length; i++) {
+let str = "[1,[1,[1,[1,3,[1,[2,[3,[4,[5,[6,[7]]]]]]]]]], 22]";
+let stack= [];
+let endCount = -1;
+let result = arrayParser(str);
+console.log(JSON.stringify(result, null, 2));   
+
+function arrayParser(str) {
+    let tokenArray = lexer(tokenize, str)
+    let result = tokenArray.reduce(reducer, tokenArray[0])
+    return result;
+}
+function reducer(acc, cur) {
+    if (cur.type === 'number') {
+        acc.child.push(cur);
+        return acc;
+    }
+    if (cur.type === 'array') {
+        stack.push(acc)
+        endCount++;
+        acc = cur;
+        return acc;
+    }
+    if(cur === ']'&& endCount !== 0){
+        stack[endCount].child.push(acc);
+        acc = stack[endCount];
+        endCount--;
+        return acc;
+    }
+    return acc;
+};
+function tokenize(str) {
+    let result = each(str, checkToken)
+    return result;
+};
+function each(str, iter) {
+    let result = [];
+    let number;
+    for (i = 0; i < str.length; i++) {
+        number = iter(str, result, number)
+    }
+    return result;
+}
+function checkToken(str, result, number) {
+    if (number === undefined) number = ''
     if (str[i] === ']' && str[i - 1] !== ']') result.push(number);
     if (str[i].match(/\[|\]/)) result.push(`${str[i]}`);
     if (str[i].match(/[^\[\],]/)) number += str[i];
     if (str[i] === ',') {
-      if (str[i - 1] === ']') {
-        number = '';
-      } else {
-        result.push(number);
-        number = '';
-      }
+        if (str[i - 1] === ']') {
+            number = '';
+        } else {
+            result.push(number);
+            number = '';
+        }
     };
-  };
-  return result;
+    return number;
+}
+function lexer(fn, str) {
+    let tokenArray = fn(str)
+    let lexerResult = tokenArray.map(v => {
+        if (v === '[') return { type: 'array', value: 'ArrayObject', child: [] };
+        if (Number(v)) return { type: 'number', value: `${v}`, child: [] };
+        return v;
+    });
+    return lexerResult;
 };
-function arrayParser(str) {
-  let lexerResult = lexer(str);
-  let parserResult = {};
-  if (lexerResult[0] + lexerResult[lexerResult.length - 1] === '[]') parserResult.type = 'array';
-  parserResult.child = [];
-  for (let i = 1, j = 1; i < lexerResult.length - 1; i++ , j++) {
-    if (Number(lexerResult[i])) {
-      parserResult.child[j - 1] = { type: 'number', value: `${lexerResult[i]}`, child: [] };
-    }
-    if (lexerResult[i] !== '[') continue;
-    parserResult.child[j - 1] = { type: 'array', value: 'ArrayObject', child: [] };
-    for (let k = i + 1; k < lexerResult.length; k++) {
-      if (lexerResult[k] === ']') {
-        i = k;
-        break;
-      };
-      parserResult.child[j - 1].child.push({ type: 'number', value: lexerResult[k], child: [] });
-    };
-  };
-  return parserResult;
-};
-let result = arrayParser('[11,332,[1],[1,2,3],132,[1,2,3],[3],[4]]');
-
-console.log(JSON.stringify(result, null, 2));
