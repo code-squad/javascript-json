@@ -43,15 +43,26 @@ function lexer(fn, str) {
   let lexerResult = tokenArray.map(mapper);
   return lexerResult;
 };
+let type = {
+  '[': { type: 'array', value: 'ArrayObject', child: [] },
+  'null': { type: 'Null', value: `null`, child: [] },
+  'true': { type: 'Boolean', value: `true`, child: [] },
+  'false': { type: 'Boolean', value: `false`, child: [] }
+};
 function mapper(value) {
-  let conversionValue = value.match(/[^\s]\w*'|[^\s]\w*/)[0]
-  if (conversionValue === '[') return { type: 'array', value: 'ArrayObject', child: [] };
+  let conversionValue = value.match(/[^\s]\w*'|[^\s]\w*/)[0];
+  // checktype 에서 리턴값을 받을때 참조가 생겨 eval 로 그값을 복사하여 리턴하는 방식
+  if (checktype(conversionValue)) return eval('(' + JSON.stringify(checktype(conversionValue)) + ')');
   if (Number(conversionValue)) return { type: 'number', value: `${conversionValue}`, child: [] };
-  if (conversionValue === 'null') return { type: 'Null', value: `${conversionValue}`, child: [] };
-  if (conversionValue === 'true' || conversionValue === 'false') return { type: 'Boolean', value: `${conversionValue}`, child: [] };
-  if (typeof conversionValue === 'string' && conversionValue !== ']') return { type: 'string', value: `${conversionValue}`, child: [] };
+  if (typeof conversionValue === 'string' && conversionValue !== ']') {
+    return { type: 'string', value: `${conversionValue}`, child: [] };
+  }
   return conversionValue;
 }
+function checktype(value) {
+  if (type[value]) return type[value];
+  return false;
+};
 function tokenize(str) {
   let result = each(str, checkToken);
   return result;
@@ -83,4 +94,5 @@ function checkToken(str, result, number) {
 let str = "['1a3',[null, false, ['11', [[null,[false]]], 112],55, '99'],33,true]";
 let stack = new Stack;
 let result = arrayParser(str);
+// console.log(result);
 console.log(JSON.stringify(result, null, 2));
