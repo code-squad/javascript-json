@@ -35,14 +35,25 @@ function checkEnd(acc, cur) {
 };
 function arrayParser(str) {
   let tokenArray = lexer(tokenize, str);
-  let result = tokenArray.reduce(reducer, tokenArray[0]);
-  return result;
+  if (tokenArray) return tokenArray.reduce(reducer, tokenArray[0]);
 };
 function lexer(fn, str) {
   let tokenArray = fn(str);
+  if (!checkSyntax(tokenArray)) return false;
   let lexerResult = tokenArray.map(mapper);
   return lexerResult;
 };
+function checkSyntax(tokenArray) {
+  if(tokenArray.some(v => {
+    if (v !== '[' || v !== ']') {
+      if (v.match(/'|"/g) !== null && v.match(/'|"/g).length % 2 !== 0) {
+        console.error(`${v} 는 올바른 값이 아닙니다`)
+        return true;
+      }
+    }
+  })) return false;
+ return true;
+}
 let type = {
   '[': { type: 'array', value: 'ArrayObject', child: [] },
   'null': { type: 'Null', value: `null`, child: [] },
@@ -58,7 +69,7 @@ function mapper(value) {
     return { type: 'string', value: `${conversionValue}`, child: [] };
   }
   return conversionValue;
-}
+};
 function checktype(value) {
   if (type[value]) return type[value];
   return false;
