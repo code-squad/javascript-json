@@ -4,6 +4,32 @@ class Stack {
     this.endCount = -1;
   }
 };
+function reducer(acc, cur) {
+  arg = [acc, cur];
+  return checkNum(...arg) || checkArray(...arg) || checkEnd(...arg) || acc;
+};
+function checkNum(acc, cur) {
+  if (cur.type === 'number') { acc.child.push(cur); return acc; }
+  return false;
+};
+function checkArray(acc, cur) {
+  if (cur.type === 'array') {
+    stack.list.push(acc);
+    stack.endCount++;
+    acc = cur;
+    return acc;
+  }
+  return false;
+};
+function checkEnd(acc, cur) {
+  if (cur === ']' && stack.endCount !== 0) {
+    stack.list[stack.endCount].child.push(acc);
+    acc = stack.list[stack.endCount];
+    stack.endCount--;
+    return acc;
+  }
+  return false;
+};
 function arrayParser(str) {
   let tokenArray = lexer(tokenize, str);
   let result = tokenArray.reduce(reducer, tokenArray[0]);
@@ -44,36 +70,6 @@ function checkToken(str, result, number) {
     }
   };
   return number;
-};
-function reducer(acc, cur) {
-  arg = [acc, cur];
-  return checkNum(...arg) || checkArray(...arg) || checkEnd(...arg) || acc;
-};
-function checkNum(acc, cur) {
-  if (cur.type === 'number') return pushChild(...arguments);
-  return false;
-};
-function pushChild(acc, cur) {
-  acc.child.push(cur);
-  return acc;
-};
-function checkArray(acc, cur) {
-  if (cur.type === 'array') {
-    stack.list.push(acc);
-    stack.endCount++;
-    acc = cur;
-    return acc;
-  }
-  return false;
-};
-function checkEnd(acc, cur) {
-  if (cur === ']' && stack.endCount !== 0) {
-    stack.list[stack.endCount].child.push(acc);
-    acc = stack.list[stack.endCount];
-    stack.endCount--;
-    return acc;
-  }
-  return false;
 };
 
 let str = "[1,[1,[1,[1,3,[1,[2,[11233,[4,[5,[6,[7],1],3],4]]]],6]]], 22]";
