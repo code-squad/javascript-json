@@ -6,7 +6,7 @@ class JSONData {
     }
 }
 
-const array = "[123,[22, 33],44,[1,2,3]]".replace(/ /gi, '')
+const array = "[123,[22, 33],44,[1,2,3], 11]".replace(/ /gi, '')
 
 function ArrayParser(array) {
     const WholeDataQueue = [];
