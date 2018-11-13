@@ -1,4 +1,4 @@
-// arrayParser step5(객체 type 분석) commit 2
+// arrayParser step5(객체 type 분석) commit 3
 
 const ArrayParser = class {
     constructor() {
@@ -15,7 +15,7 @@ const ArrayParser = class {
                 rootBranch = this.checkBrace(rootBranch, ch); // 새로운 브랜치 생성(괄호)
             }
             else if (this.passByCharacter(this.extractedString, ch)) continue;
-            else if (this.tossToParser(this.extractedString, ch)) continue;
+            else if (this.parseStringByType(this.extractedString, ch)) continue;
             else if (this.identifyKey(this.extractedString, ch)) continue;
             else this.extractedString += ch;
         }
@@ -54,8 +54,8 @@ const ArrayParser = class {
 
     // 브랜치 요소 구성하기
     composeBranchForm(branchType, ch) {
-        const map = { "[" : "array", "{" : "object" };
-        if (map[ch] === "array" && !this.key) 
+        const map = { "[": "array", "{": "object" };
+        if (map[ch] === "array" && !this.key)
             return this.composeObjectInfoBranch(branchType, map[ch], "object Array");
         if (map[ch] === "object" && !this.key)
             return this.composeObjectInfoBranch(branchType, map[ch], "object Object");
@@ -94,55 +94,54 @@ const ArrayParser = class {
         }
     }
 
-    // 문자열 파서로 전달
-    tossToParser(extractedString, ch) {
-        if (ch === "," && extractedString !== "") {
-            if (this.parseStringByType(extractedString)) {
-                this.extractedString = "";
-                this.key = undefined;
-                return true;
-            }
+    // 문자열 분석
+    parseStringByType(extractedString, ch) {
+        if (extractedString == "") return false;
+        if ((ch === "," || ch === "]" || ch === "}") && extractedString !== "") {
+            if (this.identifyNumber(extractedString, ch)) return true;
+            if (this.identifyBoolean(extractedString, ch)) return true;
+            if (this.identifyString(extractedString, ch)) return true;
         }
-        if ((ch === "]" || ch === "}") && extractedString !== "") {
-            if (this.parseStringByType(extractedString)) {
-                this.extractedString = "";
-                this.accumulatedObj = this.accumulatedObjStack.pop();
-                this.key = undefined;
-                return true;
-            }
-        }
-        return false;
     }
 
-    // 문자열 분석
-    parseStringByType(extractedString) {
-        if (this.identifyNumber(extractedString)) return true;
-        if (this.identifyBoolean(extractedString)) return true;
-        if (this.identifyString(extractedString)) return true;
+    // 문자열, 키 재설정
+    initializeToken(ch) { 
+        this.extractedString = "";
+        this.key = undefined;
+        if (ch === "]" || ch === "}") {
+            this.accumulatedObj = this.accumulatedObjStack.pop();
+        }
     }
 
     // 숫자 데이터 식별 
-    identifyNumber(extractedString) {
+    identifyNumber(extractedString, ch) {
         if (isNaN(Number(extractedString))) return false;
-        return this.accumulatedObj.child.push(this.addChildInfo(extractedString, "number")); // 숫자면 true; 
+        this.accumulatedObj.child.push(this.addChildInfo(extractedString, "number")); // 숫자면 true; 
+        this.initializeToken(ch);
+        return true;
     }
 
     // Boolean, null 데이터 식별
-    identifyBoolean(extractedString) {
-        let childObj = {};
+    identifyBoolean(extractedString, ch) {
         if (extractedString !== "true" && extractedString !== "false" && extractedString !== "null")
             return false;
-        if (extractedString === "true") childObj = this.addChildInfo(true, "Boolean");
-        if (extractedString === "false") childObj = this.addChildInfo(false, "Boolean");
-        if (extractedString === "null") childObj = this.addChildInfo(null, "null");
-        return this.accumulatedObj.child.push(childObj);
+        if (extractedString === "true")
+            this.accumulatedObj.child.push(this.addChildInfo(true, "Boolean"));
+        if (extractedString === "false")
+            this.accumulatedObj.child.push(this.addChildInfo(false, "Boolean"));
+        if (extractedString === "null") {
+            this.accumulatedObj.child.push(this.addChildInfo(null, "null"));
+        }
+        this.initializeToken(ch);
+        return true;
     }
 
     // 문자열 식별
-    identifyString(extractedString) {
+    identifyString(extractedString, ch) {
         if (this.checkErrorString(extractedString)) {
             this.accumulatedObj.child.push(this.addChildInfo(extractedString, "string"));
-            return true;
+            this.initializeToken(ch);
+            return true; 
         }
         return true;
     }
