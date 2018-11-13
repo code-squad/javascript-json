@@ -61,6 +61,14 @@ class Analyze {
     constructor(queue) {
         this.queueArr = queue
     }
+    
+    Queue(queueArr) {
+
+    }
+
+    getChild(queueArr, checkingValue) {
+
+    }
 }
 function analyzeQueue(queueArr) {
     while (queueArr.length !== 0) {
@@ -94,6 +102,5 @@ function printJSONData(JSONData) {
 }
 
 const tokenize = new Tokenize
-tokenize.sentence
-const analyze = new Analyze()
-printJSONData(ArrayParser(sentence))
+tokenize.updateWholeDataQueue(sentence)
+const analyze = new Analyze(tokenize.wholeDataQueue)
