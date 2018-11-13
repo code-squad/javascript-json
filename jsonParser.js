@@ -23,7 +23,15 @@ class Tokenize {
     }
 
     getToken(str) {
-        
+        if (str[0] === '[' || str[0] === ',' || str[0] === ']') {
+            return str.slice(0, 1)
+        } else if (str.indexOf(']') < str.indexOf(',')) {
+            return str.slice(0, str.indexOf(']'))
+        } else if (str.indexOf(',') === -1) {
+            return str.slice(0, str.indexOf(']'))
+        } else {
+            return str.slice(0, str.indexOf(','))
+        }
     }
 }
 function arrayParser(arr) {
