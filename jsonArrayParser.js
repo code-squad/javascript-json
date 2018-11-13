@@ -1,4 +1,4 @@
-// arrayParser step5(객체 type 분석) commit 1
+// arrayParser step5(객체 type 분석) commit 2
 
 const ArrayParser = class {
     constructor() {
@@ -56,17 +56,17 @@ const ArrayParser = class {
     composeBranchForm(branchType, ch) {
         const map = { "[" : "array", "{" : "object" };
         if (map[ch] === "array" && !this.key) 
-            return this.formObjectInfoBranch(branchType, map[ch], "object Array");
+            return this.composeObjectInfoBranch(branchType, map[ch], "object Array");
         if (map[ch] === "object" && !this.key)
-            return this.formObjectInfoBranch(branchType, map[ch], "object Object");
+            return this.composeObjectInfoBranch(branchType, map[ch], "object Object");
         if (map[ch] === "array" && this.key)
-            return this.formKeyValueBranch(branchType, this.key, map[ch], "object Array");
+            return this.composeKeyValueBranch(branchType, this.key, map[ch], "object Array");
         if (map[ch] === "object" && this.key)
-            return this.formKeyValueBranch(branchType, this.key, map[ch], "object Object");
+            return this.composeKeyValueBranch(branchType, this.key, map[ch], "object Object");
     }
 
     // 오브젝트 정보 브랜치 
-    formObjectInfoBranch(branchType, type, value) {
+    composeObjectInfoBranch(branchType, type, value) {
         branchType.type = type;
         branchType.value = value;
         branchType.child = [];
@@ -74,7 +74,7 @@ const ArrayParser = class {
     }
 
     // 키값 정보 브랜치
-    formKeyValueBranch(branchType, key, type, value) {
+    composeKeyValueBranch(branchType, key, type, value) {
         branchType.key = key;
         branchType.value = {
             type: type,
