@@ -15,7 +15,7 @@ class Tokenize {
     
     updateWholeDataQueue(sentence) {
         while(sentence.length !== 0) {
-            const token = getToken(sentence)
+            const token = this.getToken(sentence)
             this.wholeDataQueue.push(token)
             sentence = sentence.replace(token, '')
         }
@@ -64,7 +64,7 @@ class Analyze {
     
     queue() {
         while(this.queueArr.length !== 0) {
-            const value = queueArr.shift()
+            const value = this.queueArr.shift()
             if(value === '[') {
                 const child = this.getChild(queueArr, value)
                 return new JSONData('Array', 'Array Object', child)
