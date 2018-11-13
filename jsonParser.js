@@ -66,7 +66,7 @@ class Analyze {
         while(this.queueArr.length !== 0) {
             const value = this.queueArr.shift()
             if(value === '[') {
-                const child = this.getChild(queueArr, value)
+                const child = this.getChild(this.queueArr, value)
                 return new JSONData('Array', 'Array Object', child)
             }
         }
@@ -77,7 +77,7 @@ class Analyze {
         while (checkingValue !== ']') {
             checkingValue = queueArr.shift()
             if(checkingValue === '[') {
-                child.push(new JSONData('Array', 'Object Array', getChild(queueArr, checkingValue)))
+                child.push(new JSONData('Array', 'Object Array', this.getChild(queueArr, checkingValue)))
                 continue;
             } else if (checkingValue === ',') {
                 continue;
