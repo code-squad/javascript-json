@@ -62,7 +62,7 @@ class Analyze {
         this.queueArr = queue
     }
     
-    Queue(queueArr) {
+    queue() {
 
     }
 
@@ -70,32 +70,32 @@ class Analyze {
 
     }
 }
-function analyzeQueue(queueArr) {
-    while (queueArr.length !== 0) {
-        const value = queueArr.shift()
-        if (value === '[') {
-            const child = getChild(queueArr, value)
-            return new JSONData('array', 'array Object', child)
-        }
-    }
-}
+// function analyzeQueue(queueArr) {
+//     while (queueArr.length !== 0) {
+//         const value = queueArr.shift()
+//         if (value === '[') {
+//             const child = getChild(queueArr, value)
+//             return new JSONData('array', 'array Object', child)
+//         }
+//     }
+// }
 
-function getChild(queueArr, valueIn) {
-    let child = []
-    while (valueIn !== ']') {
-        let valueIn = queueArr.shift()
-        if (valueIn === '[') {
-            child.push(new JSONData('Array', 'object Array', getChild(queueArr, valueIn)))
-            continue;
-        } else if (valueIn === ',') {
-            continue;
-        } else if (valueIn === ']') {
-            break;
-        }
-        child.push(new JSONData('Number', valueIn, []))
-    }
-    return child
-}
+// function getChild(queueArr, valueIn) {
+//     let child = []
+//     while (valueIn !== ']') {
+//         let valueIn = queueArr.shift()
+//         if (valueIn === '[') {
+//             child.push(new JSONData('Array', 'object Array', getChild(queueArr, valueIn)))
+//             continue;
+//         } else if (valueIn === ',') {
+//             continue;
+//         } else if (valueIn === ']') {
+//             break;
+//         }
+//         child.push(new JSONData('Number', valueIn, []))
+//     }
+//     return child
+// }
 
 function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
@@ -104,3 +104,5 @@ function printJSONData(JSONData) {
 const tokenize = new Tokenize
 tokenize.updateWholeDataQueue(sentence)
 const analyze = new Analyze(tokenize.wholeDataQueue)
+const jsonData = analyze.queue()
+printJSONData(jsonData)
