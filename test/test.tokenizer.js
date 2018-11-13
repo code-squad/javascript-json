@@ -30,3 +30,43 @@ test('배열이 안 닫힌 경우, 에러 메세지를 호출합니다.', functi
         expect(err).toBe(`정상적으로 종료되지 않은 배열이 있습니다.`);
     }
 })
+
+test('객체 안 닫힌 경우, 에러 메세지를 호출합니다.', function () {
+    try {
+        const str = "{a:'str', b: [912,[5656,33]]";
+        tokenizer.run(str);
+    }
+    catch (err) {
+        expect(err).toBe(`정상적으로 종료되지 않은 객체가 있습니다.`);
+    }
+})
+
+test('key가 정의되지 않은 경우, 에러 메세지를 호출합니다.', function () {
+    try {
+        const str = "{ :'str', b: [912,[5656,33]]";
+        tokenizer.run(str);
+    }
+    catch (err) {
+        expect(err).toBe(`key가 정의되지 않았습니다.`);
+    }
+})
+
+test('value가 정의되지 않은 경우, 에러 메세지를 호출합니다.', function () {
+    try {
+        const str = "{ a: 12, b: }";
+        tokenizer.run(str);
+    }
+    catch (err) {
+        expect(err).toBe(`b의 value가 정의되지 않았습니다.`);
+    }
+})
+
+test("':' 가 누락 될 경우, 에러 메세지를 호출합니다.", function () {
+    try {
+        const str = "{a:'str', b  [912,[5656,33]]}";
+        tokenizer.run(str);
+    }
+    catch (err) {
+        expect(err).toBe(`':'이 누락된 객체표현이 있습니다.`);
+    }
+})
