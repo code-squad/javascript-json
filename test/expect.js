@@ -22,6 +22,9 @@ const expect = function (data) {
                         if (typeof value[key] === 'object' && typeof value[key] !== 'null') {
                             bSame = toEqual(value[key], expectValue[key]);
                         }
+                        else {
+                            bSame = false;
+                        }
                     }
                     else {
                         bSame = false;
