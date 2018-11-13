@@ -34,7 +34,7 @@ class Lexeme {
     getValue(type, token) {
         if (type === 'array') return 'ArrayObject';
         if (type === 'number') return Number(token);
-        if (type === 'string') return token;
+        if (type === 'string') return token.substring(1, token.length - 1)
         if (type === 'arrayClose') return 'close';
         if (type === 'object') return 'Object';
         if (type === 'objectClose') return 'close';

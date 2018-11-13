@@ -1,37 +1,30 @@
 const expect = function (data) {
-    const expectValue = data;
+    const isObject = (...args) => {
+        const bObject = args.every(arg => typeof arg === 'object' && typeof arg !== 'null');
+
+        return bObject;
+    }
 
     return expectation = {
         toBe(value) {
             const bSame = this.toEqual(value);
             if (bSame) return console.log(`OK`);
-            console.log(`FAIL (targetValue is ${value}, expectValue is ${expectValue})`)
+            console.log(`FAIL (targetValue is ${value}, expectValue is ${data})`)
         },
 
-        toEqual(value) {
-            let bSame = Object.is(value, expectValue);
-
-            if (bSame) return true;
-
-            if (typeof value === 'object' && typeof expectValue === 'object') {
+        toEqual(value, expectValue = data) {
+            if (Object.is(value, expectValue)) return true;
+            if (isObject(value, expectValue)) {
                 for (let key in value) {
-                    if (value.hasOwnProperty(key) && expectValue.hasOwnProperty(key)) {
-                        if (Object.is(value[key], expectValue[key])) {
-                            bSame = true;
-                        }
-                        if (typeof value[key] === 'object' && typeof value[key] !== 'null') {
-                            bSame = toEqual(value[key], expectValue[key]);
-                        }
-                        else {
-                            bSame = false;
-                        }
+                    if (expectValue.hasOwnProperty(key)) {
+                        if (!this.toEqual(value[key], expectValue[key])) return false;
                     }
                     else {
-                        bSame = false;
+                        return false;
                     }
                 }
+                return true;
             }
-            return bSame;
         }
     }
 }
