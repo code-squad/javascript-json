@@ -13,12 +13,13 @@ class Tokenize {
         this.wholeDataQueue = [];
     }
     
-    updateWholeDataQueue(sentence) {
+    getWholeDataQueue(sentence) {
         while(sentence.length !== 0) {
             const token = this.getToken(sentence)
             this.wholeDataQueue.push(token)
             sentence = sentence.replace(token, '')
         }
+        return this.wholeDataQueue
     }
 
     getToken(str) {
@@ -72,7 +73,7 @@ function printJSONData(JSONData) {
 }
 
 const tokenize = new Tokenize
-tokenize.updateWholeDataQueue(sentence)
-const analyze = new Analyze(tokenize.wholeDataQueue)
+const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+const analyze = new Analyze(tokenizedDataArr)
 const jsonData = analyze.queue()
 printJSONData(jsonData)
