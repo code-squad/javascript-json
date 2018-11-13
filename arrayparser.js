@@ -40,6 +40,7 @@ function arrayParser(str) {
   return parsedData;
 };
 
+exports.arrayParser = arrayParser;
 /*
 Test Case
 */
