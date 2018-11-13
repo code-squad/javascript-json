@@ -8,6 +8,9 @@ class JSONData {
 
 const sentence = "[123,[22,[33]],44,[1,2,3],11]".replace(/ /gi, '')
 
+class Tokenize {
+
+}
 function arrayParser(arr) {
     const wholeDataQueue = [];
     while (arr.length !== 0) {
