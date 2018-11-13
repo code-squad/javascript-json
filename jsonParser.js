@@ -63,11 +63,17 @@ class Analyze {
     }
     
     queue() {
-
+        while(this.queueArr.length !== 0) {
+            const value = queueArr.shift()
+            if(value === '[') {
+                const child = getChild(queueArr, value)
+                return new JSONData('Array', 'Array Object', child)
+            }
+        }
     }
 
     getChild(queueArr, checkingValue) {
-
+        
     }
 }
 // function analyzeQueue(queueArr) {
