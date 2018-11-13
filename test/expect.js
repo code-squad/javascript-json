@@ -2,37 +2,33 @@ const expect = function (data) {
     const expectValue = data;
 
     return expectation = {
-        //primitive value comparison
         toBe(value) {
-            const bSame = Object.is(expectValue, value);
-
-            if (bSame) {
-                console.log(`OK`);
-                return;
-            }
-
+            const bSame = this.toEqual(value);
+            if (bSame) return console.log(`OK`);
             console.log(`FAIL (targetValue is ${value}, expectValue is ${expectValue})`)
         },
-        //deep cloning for testing object
-        toEqual(value, data) {
-            const expectValue = data;
-            let bSame = false;
 
-            if (typeof value === 'object' && typeof value !== 'null') {
+        toEqual(value) {
+            let bSame = Object.is(value, expectValue);
+
+            if (bSame) return true;
+
+            if (typeof value === 'object' && typeof expectValue === 'object') {
                 for (let key in value) {
                     if (value.hasOwnProperty(key) && expectValue.hasOwnProperty(key)) {
-                        if (value[key] === expectValue[key]) {
+                        if (Object.is(value[key], expectValue[key])) {
                             bSame = true;
                         }
                         if (typeof value[key] === 'object' && typeof value[key] !== 'null') {
                             bSame = toEqual(value[key], expectValue[key]);
                         }
-                    } else {
+                    }
+                    else {
                         bSame = false;
                     }
                 }
-                return bSame;
             }
+            return bSame;
         }
     }
 }
