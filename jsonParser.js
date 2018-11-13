@@ -9,7 +9,9 @@ class JSONData {
 const sentence = "[123,[22,[33]],44,[1,2,3],11]".replace(/ /gi, '')
 
 class Tokenize {
-
+    constructor() {
+        this.wholeDataQueue = [];
+    }
 }
 function arrayParser(arr) {
     const wholeDataQueue = [];
