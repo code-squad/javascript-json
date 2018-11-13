@@ -16,7 +16,8 @@ function ArrayParser(arr) {
         wholeDataQueue.push(token)
         arr = arr.replace(token, '')
     }
-    return analyzeQueue(wholeDataQueue)
+    const analyzedQueue = analyzeQueue(wholeDataQueue)
+    return analyzedQueue
 }
 function getToken(str) {
     //, [ or ]가 나오면 따로뽑아냄
@@ -57,6 +58,7 @@ function getChild(queueArr, valueIn) {
     }
     return child
 }
+
 function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
 }
