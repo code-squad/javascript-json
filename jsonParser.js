@@ -15,7 +15,7 @@ class Tokenize {
     
     updateWholeDataQueue(sentence) {
         while(sentence.length !== 0) {
-            const token = getToekn(sentence)
+            const token = getToken(sentence)
             this.wholeDataQueue.push(token)
             sentence = sentence.replace(token, '')
         }
@@ -73,7 +73,20 @@ class Analyze {
     }
 
     getChild(queueArr, checkingValue) {
-        
+        let child = [];
+        while (checkingValue !== ']') {
+            checkingValue = queueArr.shift()
+            if(checkingValue === '[') {
+                child.push(new JSONData('Array', 'Object Array', getChild(queueArr, checkingValue)))
+                continue;
+            } else if (checkingValue === ',') {
+                continue;
+            } else if (checkingValue === ']') {
+                break;
+            }
+            child.push(new JSONData('Number', checkingValue, []))
+        }
+        return childg
     }
 }
 // function analyzeQueue(queueArr) {
