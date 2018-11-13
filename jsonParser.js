@@ -8,7 +8,7 @@ class JSONData {
 
 const sentence = "[123,[22,[33]],44,[1,2,3],11]".replace(/ /gi, '')
 
-function ArrayParser(arr) {
+function arrayParser(arr) {
     const wholeDataQueue = [];
     while (arr.length !== 0) {
         //토큰 자르고 토큰wholeDataqueue 에 넣고
