@@ -35,30 +35,50 @@ function checkEnd(acc, cur) {
 };
 function arrayParser(str) {
   let tokenArray = lexer(tokenize, str);
+  console.log('입력하신 str에 대한 분석결과는...')
   if (tokenArray) return tokenArray.reduce(reducer, tokenArray[0]);
+  return [];
 };
 function lexer(fn, str) {
   let tokenArray = fn(str);
-  if (!checkSyntax(tokenArray)) return false;
+  if (checkSyntax(tokenArray)) return false;
   let lexerResult = tokenArray.map(mapper);
   return lexerResult;
 };
 function checkSyntax(tokenArray) {
-  if(tokenArray.some(v => {
-    if (v !== '[' || v !== ']') {
-      if (v.match(/'|"/g) !== null && v.match(/'|"/g).length % 2 !== 0) {
-        console.error(`${v} 는 올바른 값이 아닙니다`)
-        return true;
-      }
-    }
-  })) return false;
- return true;
+  var result = tokenArray.some(v => {
+    if (checkQuote(v)) return true;
+    if (checkNaN(v)) return true;
+  })
+  return result ? true : false;
+}
+function checkQuote(val) {
+  if (val.match(/'|"/g) !== null && val.match(/'|"/g).length % 2 !== 0) {
+    console.error(`${val} 는 올바른 값이 아닙니다`)
+    return true;
+  }
+  return false;
+}
+function checkNaN(val) {
+  if (getBoolean(val)) return false;
+  if (val.match(/'|"/g) === null && val!=='['&& val !== ']'&& isNaN(val * 1)) {
+    console.log(`${val}는 알수없는 타입임니다.`)
+    return true;
+  }
+  if (typeof val === 'string' && val !== ']') return false;
+}
+function getBoolean(val) {
+  val = val.match(/\S\w*/g)
+  return type['bool'].some(function (bool) {
+    return bool === val[0];
+  });
 }
 let type = {
   '[': { type: 'array', value: 'ArrayObject', child: [] },
   'null': { type: 'Null', value: `null`, child: [] },
   'true': { type: 'Boolean', value: `true`, child: [] },
-  'false': { type: 'Boolean', value: `false`, child: [] }
+  'false': { type: 'Boolean', value: `false`, child: [] },
+  'bool': ['true', 'false', 'null']
 };
 function mapper(value) {
   let conversionValue = value.match(/[^\s]\w*'|[^\s]\w*/)[0];
@@ -102,7 +122,7 @@ function checkToken(str, result, number) {
   return number;
 };
 
-let str = "['1a3',[null, false, ['11', [[null,[false]]], 112],55, '99'],33,true]";
+let str = "['3a3',[null, false, ['11', [['null',[false]]], 'a112'],55, '99'],33,true]";
 let stack = new Stack;
 let result = arrayParser(str);
 // console.log(result);
