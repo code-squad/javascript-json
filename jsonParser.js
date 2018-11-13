@@ -9,8 +9,7 @@ class JSONData {
 const sentence = "[123,[22,[33]],44,[1,2,3],11]".replace(/ /gi, '')
 
 class Tokenize {
-    constructor(sentence) {
-        this.sentence = sentence
+    constructor() {
         this.wholeDataQueue = [];
     }
     
@@ -58,6 +57,11 @@ class Tokenize {
 //     }
 // }
 
+class Analyze {
+    constructor(queue) {
+        this.queueArr = queue
+    }
+}
 function analyzeQueue(queueArr) {
     while (queueArr.length !== 0) {
         const value = queueArr.shift()
@@ -89,4 +93,7 @@ function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
 }
 
+const tokenize = new Tokenize
+tokenize.sentence
+const analyze = new Analyze()
 printJSONData(ArrayParser(sentence))
