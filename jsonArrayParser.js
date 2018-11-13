@@ -1,4 +1,4 @@
-// arrayParser step5(객체 type 분석) commit 3
+// arrayParser step5(객체 type 분석) commit 4
 
 const ArrayParser = class {
     constructor() {
@@ -14,7 +14,8 @@ const ArrayParser = class {
             if (ch === "[" || ch === "{") {
                 rootBranch = this.checkBrace(rootBranch, ch); // 새로운 브랜치 생성(괄호)
             }
-            else if (this.passByCharacter(this.extractedString, ch)) continue;
+            else if (this.skipCharacter(this.extractedString, ch)) continue;
+            else if (this.reduceDepth(this.extractedString, ch)) continue; 
             else if (this.parseStringByType(this.extractedString, ch)) continue;
             else if (this.identifyKey(this.extractedString, ch)) continue;
             else this.extractedString += ch;
@@ -84,11 +85,15 @@ const ArrayParser = class {
         return branchType;
     }
 
-    // 해당 문자열 통과, 스택 제거
-    passByCharacter(extractedString, ch) {
+    // 해당 문자열 건너뛰기
+    skipCharacter(extractedString, ch) {
         if ((ch === "," && extractedString === "") || ch === " ") return true;
+    }
+
+    // 단계 낮추기
+    reduceDepth(extractedString, ch) {
         if ((ch === "]" || ch === "}") && extractedString === "") {
-            this.accumulatedObj = this.accumulatedObjStack.pop();
+            this.reduceDepthFromStack();
             this.key = undefined;
             return true;
         }
@@ -109,8 +114,13 @@ const ArrayParser = class {
         this.extractedString = "";
         this.key = undefined;
         if (ch === "]" || ch === "}") {
-            this.accumulatedObj = this.accumulatedObjStack.pop();
+            this.reduceDepthFromStack(); 
         }
+    }
+
+    // 스택으로부터 depth 낮추기
+    reduceDepthFromStack() {
+        this.accumulatedObj = this.accumulatedObjStack.pop();
     }
 
     // 숫자 데이터 식별 
@@ -141,7 +151,6 @@ const ArrayParser = class {
         if (this.checkErrorString(extractedString)) {
             this.accumulatedObj.child.push(this.addChildInfo(extractedString, "string"));
             this.initializeToken(ch);
-            return true; 
         }
         return true;
     }
