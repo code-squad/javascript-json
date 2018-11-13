@@ -1,4 +1,4 @@
-// arrayParser step5(객체 type 분석) step4 수정 사항 반영, 클래스 작성
+// arrayParser step5(객체 type 분석) commit 1
 
 const ArrayParser = class {
     constructor() {
@@ -54,14 +54,15 @@ const ArrayParser = class {
 
     // 브랜치 요소 구성하기
     composeBranchForm(branchType, ch) {
-        if (ch === '[' && !this.key)
-            return this.formObjectInfoBranch(branchType, "array", "object Array");
-        if (ch === '{' && !this.key)
-            return this.formObjectInfoBranch(branchType, "object", "object Object");
-        if (ch === '[' && this.key)
-            return this.formKeyValueBranch(branchType, this.key, "array", "object Array");
-        if (ch === '{' && this.key)
-            return this.formKeyValueBranch(branchType, this.key, "object", "object Object");
+        const map = { "[" : "array", "{" : "object" };
+        if (map[ch] === "array" && !this.key) 
+            return this.formObjectInfoBranch(branchType, map[ch], "object Array");
+        if (map[ch] === "object" && !this.key)
+            return this.formObjectInfoBranch(branchType, map[ch], "object Object");
+        if (map[ch] === "array" && this.key)
+            return this.formKeyValueBranch(branchType, this.key, map[ch], "object Array");
+        if (map[ch] === "object" && this.key)
+            return this.formKeyValueBranch(branchType, this.key, map[ch], "object Object");
     }
 
     // 오브젝트 정보 브랜치 
