@@ -14,14 +14,16 @@ class Tokenize {
         this.wholeDataQueue = [];
     }
     
-    getWholeData(sentence) {
+    updateWholeDataQueue(sentence) {
         while(sentence.length !== 0) {
             const token = getToekn(sentence)
+            this.wholeDataQueue.push(token)
+            sentence = sentence.replace(token, '')
         }
     }
 
     getToken(str) {
-
+        
     }
 }
 function arrayParser(arr) {
