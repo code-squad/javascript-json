@@ -34,29 +34,29 @@ class Tokenize {
         }
     }
 }
-function arrayParser(arr) {
-    const wholeDataQueue = [];
-    while (arr.length !== 0) {
-        //토큰 자르고 토큰wholeDataqueue 에 넣고
-        const token = getToken(arr)
-        wholeDataQueue.push(token)
-        arr = arr.replace(token, '')
-    }
-    const analyzedQueue = analyzeQueue(wholeDataQueue)
-    return analyzedQueue
-}
-function getToken(str) {
-    //, [ or ]가 나오면 따로뽑아냄
-    if (str[0] === '[' || str[0] === ',' || str[0] === ']') {
-        return str.slice(0, 1)
-    } else if (str.indexOf(']') < str.indexOf(',')) {
-        return str.slice(0, str.indexOf(']'))
-    } else if (str.indexOf(',') === -1) {
-        return str.slice(0, str.indexOf(']'))
-    } else {
-        return str.slice(0, str.indexOf(','))
-    }
-}
+// function arrayParser(arr) {
+//     const wholeDataQueue = [];
+//     while (arr.length !== 0) {
+//         //토큰 자르고 토큰wholeDataqueue 에 넣고
+//         const token = getToken(arr)
+//         wholeDataQueue.push(token)
+//         arr = arr.replace(token, '')
+//     }
+//     const analyzedQueue = analyzeQueue(wholeDataQueue)
+//     return analyzedQueue
+// }
+// function getToken(str) {
+//     //, [ or ]가 나오면 따로뽑아냄
+//     if (str[0] === '[' || str[0] === ',' || str[0] === ']') {
+//         return str.slice(0, 1)
+//     } else if (str.indexOf(']') < str.indexOf(',')) {
+//         return str.slice(0, str.indexOf(']'))
+//     } else if (str.indexOf(',') === -1) {
+//         return str.slice(0, str.indexOf(']'))
+//     } else {
+//         return str.slice(0, str.indexOf(','))
+//     }
+// }
 
 function analyzeQueue(queueArr) {
     while (queueArr.length !== 0) {
