@@ -96,7 +96,11 @@ function deepCopyObj(obj) {
   return copiedObj;
 };
 function checktype(value, obj = 0) {
-  if (obj) return JSON.parse(value);
+  if (obj) {
+    let result = { type: 'object', value: 'object', child: [] };
+    result.child.push(JSON.parse(value))
+    return result;
+  }
   if (type[value]) return type[value];
   return false;
 };
@@ -128,7 +132,7 @@ function checkToken(str, result, token, i) {
   return token;
 };
 
-let str = '["1a3",{ "ke": "innervalue", "newkeys": { "a": ["1",{ "name": "arr", "arr": ["1", "2"] },"5"]}}, true]';
+let str = '["1a3",[{ "ke": "innervalue", "newkeys": { "a": ["1",{ "name": "arr", "arr": ["1", "2"] },"5"]}}],{"name" :1}, true]';
 // let str = '[1,2,[3,[4,[5],1],2],3]';
 let stack = new Stack;
 let result = arrayParser(str);
