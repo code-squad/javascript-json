@@ -79,7 +79,16 @@ class Analyze {
 
 class ErrorCheck {    
     checkString(token) {
-        
+        let count = 0
+        for(let position = 0; position < token.length; position++) {
+            if(token[position] === "'") {
+                count++
+            }
+        }
+        if(count === 2) {
+            return true
+        }
+        return false
     }
 
     checkBoolean(token) {
