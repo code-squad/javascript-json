@@ -82,6 +82,7 @@ class ErrorCheck {
         this.token = token
     }
     
+    
 }
 function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
@@ -89,7 +90,7 @@ function printJSONData(JSONData) {
 
 const tokenize = new Tokenize
 const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
-console.log(tokenizedDataArr)
-const analyze = new Analyze(tokenizedDataArr)
+const errorCheck = new ErrorCheck
+const analyze = new Analyze(tokenizedDataArr, errorCheck)
 const jsonData = analyze.queue()
 printJSONData(jsonData)
