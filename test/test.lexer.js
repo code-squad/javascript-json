@@ -1,5 +1,6 @@
 const { test } = require('./test');
 const { expect } = require('./expect');
+const { toBeDataArray, toBeDataObject } = require('./test-data-lexer');
 const { Tokenizer } = require('../tokenizer');
 const { lexer } = require('../lexer');
 
@@ -45,9 +46,7 @@ test('data type: array, lexer를 수행합니다.', function () {
     const tokens = tokenizer.run(str);
     const lexemes = lexer(tokens);
 
-    expect(lexemes).toBe([
-        { type: 'array', value: 'ArrayObject' }, { type: 'number', value: 1 }, { type: 'number', value: 2 }, { type: 'number', value: 3 }, { type: 'arrayClose', value: 'close' }
-    ]);
+    expect(lexemes).toBe(toBeDataArray);
 })
 
 test('data type: object, lexer를 수행합니다.', function () {
@@ -56,16 +55,7 @@ test('data type: object, lexer를 수행합니다.', function () {
     const tokens = tokenizer.run(str);
     const lexemes = lexer(tokens);
 
-    expect(lexemes).toBe([
-        { type: 'object', value: 'Object' },
-        { type: 'keyString', value: 'a' },
-        { type: 'string', value: 'crong' },
-        { type: 'keyString', value: 'b' },
-        { type: 'array', value: 'ArrayObject' },
-        { type: 'number', value: 1 },
-        { type: 'arrayClose', value: 'close' },
-        { type: 'objectClose', value: 'close' }
-    ]);
+    expect(lexemes).toBe(toBeDataObject);
 })
 
 test("type을 확인할 수 없을 시, 에러 메세지를 호출합니다.", function () {
