@@ -17,6 +17,14 @@ test('token을 초기화합니다.', function () {
     expect(tokenizer.token).toBe('');
 })
 
+test('token과 문자열을 합칩니다.', function () {
+    const tokenizer = new Tokenizer;
+    tokenizer.token = 'code';
+    tokenizer.concat(tokenizer.token, '-squad');
+
+    expect(tokenizer.token).toBe('code-squad');
+})
+
 test('comma(,)를 기준으로 tokenizer를 실행합니다.', function () {
     const str = '[1,2,3]';
     const tokenizer = new Tokenizer;
