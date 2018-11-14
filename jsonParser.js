@@ -92,7 +92,10 @@ class ErrorCheck {
     }
 
     checkNumber(token) {
-        
+        if(typeof Number(token) !== "number") {
+            return false
+        }
+        return true
     }
 }
 function printJSONData(JSONData) {
