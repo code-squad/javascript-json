@@ -92,7 +92,7 @@ class ErrorCheck {
     }
 
     checkNumber(token) {
-        if(typeof Number(token) !== "number") {
+        if(isNaN(Number(token)) === true) {
             return false
         }
         return true
@@ -108,4 +108,4 @@ const errorCheck = new ErrorCheck
 // const analyze = new Analyze(tokenizedDataArr, errorCheck)
 // const jsonData = analyze.queue()
 // printJSONData(jsonData)
-console.log(errorCheck.checkString("'hel'lo"))
+
