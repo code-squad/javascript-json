@@ -79,13 +79,14 @@ class Analyze {
 
 class ErrorCheck {    
     checkString(token) {
+        debugger;
         let count = 0
         for(let position = 0; position < token.length; position++) {
             if(token[position] === "'") {
                 count++
             }
         }
-        if(count === 2) {
+        if(count === 2 && token[0] === "'" && token[token.length-1] === "'") {
             return true
         }
         return false
@@ -107,9 +108,10 @@ function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
 }
 
-const tokenize = new Tokenize
-const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+// const tokenize = new Tokenize
+// const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
 const errorCheck = new ErrorCheck
-const analyze = new Analyze(tokenizedDataArr, errorCheck)
-const jsonData = analyze.queue()
-printJSONData(jsonData)
+// const analyze = new Analyze(tokenizedDataArr, errorCheck)
+// const jsonData = analyze.queue()
+// printJSONData(jsonData)
+console.log(errorCheck.checkString("'hel'lo"))
