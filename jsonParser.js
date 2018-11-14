@@ -91,8 +91,8 @@ class ErrorCheck {
         return false
     }
 
-    checkNull(token) {
-
+    checkNumber(token) {
+        
     }
 }
 function printJSONData(JSONData) {
