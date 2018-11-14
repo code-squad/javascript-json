@@ -79,7 +79,6 @@ class Analyze {
 
 class ErrorCheck {    
     checkString(token) {
-        debugger;
         let count = 0
         for(let position = 0; position < token.length; position++) {
             if(token[position] === "'") {
@@ -90,14 +89,6 @@ class ErrorCheck {
             return true
         }
         return false
-    }
-
-    checkBoolean(token) {
-
-    }
-
-    checkNumber(token) {
-
     }
 
     checkNull(token) {
