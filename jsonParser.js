@@ -61,9 +61,9 @@ class Analyze {
                 continue;
             } else if (checkingValue === ']') {
                 break;
-            } else if (checkingValue[0] === 'n') {
+            } else if (checkingValue === 'true' || checkingValue === 'false') {
                 console.log(checkingValue)
-            } else if (checkingValue[0] === 't' || checkingValue[0] === 'f') {
+            } else if (checkingValue === 'null') {
                 console.log(checkingValue)
             } else if (checkingValue[0] === "'") {
                 console.log(checkingValue)
