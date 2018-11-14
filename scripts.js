@@ -41,7 +41,6 @@ function arrayParser(str) {
 };
 function lexer(fn, str) {
   let tokenArray = fn(str);
-  console.log(tokenArray)
   if (checkSyntax(tokenArray)) return false;
   let lexerResult = tokenArray.map(tokenMapper);
   return lexerResult;
@@ -52,28 +51,28 @@ function checkSyntax(tokenArray) {
     if (checkNaN(v)) return true;
   })
   return result ? true : false;
-}
+};
 function checkQuote(val) {
   if (val.match(/'|"/g) !== null && val.match(/'|"/g).length % 2 !== 0) {
-    console.error(`${val} 는 올바른 값이 아닙니다`)
+    console.error(`${val} 는 올바른 값이 아닙니다`);
     return true;
   }
   return false;
-}
+};
 function checkNaN(val) {
   if (getBoolean(val)) return false;
   if (val.match(/'|"/g) === null && val !== '[' && val !== ']' && isNaN(val * 1)) {
-    console.log(`${val}는 알수없는 타입임니다.`)
+    console.log(`${val}는 알수없는 타입임니다.`);
     return true;
   }
   if (typeof val === 'string' && val !== ']') return false;
-}
+};
 function getBoolean(val) {
   val = val.match(/\S\w*/g)
   return type['bool'].some(function (bool) {
     return bool === val[0];
   });
-}
+};
 const type = {
   '[': { type: 'array', value: 'ArrayObject', child: [] },
   'null': { type: 'Null', value: `null`, child: [] },
@@ -82,9 +81,9 @@ const type = {
   'bool': ['true', 'false', 'null']
 };
 function tokenMapper(value) {
-  if (value.match(/{/g)) return checktype(value, 'obj');
+  if (value.match(/{/g)) return checkType(value, 'obj');
   let conversionValue = value.match(/[^\s]\w*('|")|[^\s]\w*/)[0]
-  if (checktype(conversionValue)) return deepCopyObj(checktype(conversionValue));
+  if (checkType(conversionValue)) return deepCopyObj(checkType(conversionValue));
   if (Number(conversionValue)) return { type: 'number', value: `${conversionValue}`, child: [] };
   if (typeof conversionValue === 'string' && conversionValue !== ']') {
     return { type: 'string', value: `${conversionValue}`, child: [] };
@@ -92,17 +91,18 @@ function tokenMapper(value) {
   return conversionValue;
 };
 function deepCopyObj(obj) {
-  let copiedObj = JSON.parse(JSON.stringify(obj))
+  let copiedObj = JSON.parse(JSON.stringify(obj));
   return copiedObj;
 };
-function checktype(value, obj = 0) {
-  if (obj) {
-    let result = { type: 'object', value: 'object', child: [] };
-    result.child.push(JSON.parse(value))
-    return result;
-  }
+function checkType(value, obj = 0) {
+  if (obj) return returnObj(value);
   if (type[value]) return type[value];
   return false;
+};
+function returnObj(value) {
+  let result = { type: 'object', value: 'object', child: [] };
+  result.child.push(JSON.parse(value));
+  return result;
 };
 function tokenize(str) {
   let result = each(str, checkToken);
@@ -116,14 +116,18 @@ function each(str, iter) {
   }
   return result;
 };
-function checkToken(str, result, token, i) {
-  if (token === undefined) token = '';
+function checkObjToken(str, token, i) {
   if (str[i] === '{' || stack.objCount !== 0) {
-    if (str[i] === '{') stack.objCount++;
+    if (str[i] === '{') stack.objCount++; 
     token += str[i];
     if (str[i] === '}') stack.objCount--;
     return token;
   }
+  return false;
+};
+function checkToken(str, result, token, i) {
+  if (token === undefined) token = '';
+  if (checkObjToken(str, token, i)) return checkObjToken(str, token, i);
   if (str[i] === ']' && str[i - 1] !== ']') result.push(token);
   if (str[i] === ']' || str[i] === '[') result.push(`${str[i]}`);
   if (str[i].match(/[^\[\],]/)) token += str[i];
@@ -133,9 +137,6 @@ function checkToken(str, result, token, i) {
 };
 
 let str = '["1a3",[{ "ke": "innervalue", "newkeys": { "a": ["1",{ "name": "arr", "arr": ["1", "2"] },"5"]}}],{"name" :1}, true]';
-// let str = '[1,2,[3,[4,[5],1],2],3]';
 let stack = new Stack;
 let result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));
-
-//  { 를 만나면 카운트 1증가 }만나면 카운트 감소, 카운트 0됫을때 token전체를 반환
