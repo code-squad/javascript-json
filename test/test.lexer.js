@@ -2,7 +2,19 @@ const { test } = require('./test');
 const { expect } = require('./expect');
 const { toBeDataArray, toBeDataObject } = require('./test-data-lexer');
 const { Tokenizer } = require('../tokenizer');
-const { lexer } = require('../lexer');
+const { lexer, Lexeme, TypeCheck } = require('../lexer');
+
+test('lexeme 객체의 type을 얻습니다.', function () {
+    const result = Lexeme.getType("123");
+
+    expect(result).toBe('number');
+})
+
+test('lexeme 객체의 value를 얻습니다.', function () {
+    const result = Lexeme.getValue("number", "123");
+
+    expect(result).toBe(123);
+})
 
 test('data type: true, lexer를 수행합니다.', function () {
     const str = "true";

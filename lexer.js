@@ -1,4 +1,4 @@
-exports.lexer = function (tokens) {
+function lexer(tokens) {
     const lexemes = [];
 
     for (let token of tokens) {
@@ -10,11 +10,11 @@ exports.lexer = function (tokens) {
 
 class Lexeme {
     constructor(token) {
-        this.type = this.getType(token);
-        this.value = this.getValue(this.type, token);
+        this.type = Lexeme.getType(token);
+        this.value = Lexeme.getValue(this.type, token);
     }
 
-    getType(token) {
+    static getType(token) {
         const typeCheck = new TypeCheck;
         const typeError = new TypeError;
 
@@ -31,7 +31,7 @@ class Lexeme {
         return typeError.throw(token);
     }
 
-    getValue(type, token) {
+    static getValue(type, token) {
         if (type === 'array') return 'ArrayObject';
         if (type === 'number') return Number(token);
         if (type === 'string') return token.substring(1, token.length - 1)
@@ -82,6 +82,8 @@ class TypeCheck {
         return token === 'null';
     }
 }
+
+module.exports = { lexer, Lexeme, TypeCheck };
 
 class TypeError {
     throw(token) {
