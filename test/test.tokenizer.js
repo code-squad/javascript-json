@@ -2,6 +2,14 @@ const { test } = require('./test');
 const { expect } = require('./expect');
 const { Tokenizer } = require('../tokenizer');
 
+test('token을 초기화합니다.', function () {
+    const tokenizer = new Tokenizer;
+    tokenizer.token = 'code-squad';
+    tokenizer.initToken();
+
+    expect(tokenizer.token).toBe('');
+})
+
 test('comma(,)를 기준으로 tokenizer를 실행합니다.', function () {
     const str = '[1,2,3]';
     const tokenizer = new Tokenizer;
