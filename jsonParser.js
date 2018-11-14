@@ -36,8 +36,9 @@ class Tokenize {
 }
 
 class Analyze {
-    constructor(queue) {
+    constructor(queue, checkError) {
         this.queueArr = queue
+        this.checkError = checkError
     }
     
     queue() {
@@ -68,8 +69,16 @@ class Analyze {
                 child.push(new JSONData('Null', checkingValue, []))
                 continue;
             } else if (checkingValue[0] === "'") {
+                if(checkError.checkString) {
+                    console.log(`${checkingValue}는 제대로된 문자열이 아닙니다.`)
+                    return 
+                }
                 child.push(new JSONData('String', checkingValue, []))
                 continue;
+            }
+            if(this.checkError.checkNumber) {
+                console.log(`${checkingValue}는 제대로된 문자가 아닙니다.`)
+                return
             }
             child.push(new JSONData('Number', checkingValue, []))
         }
@@ -86,9 +95,9 @@ class ErrorCheck {
             }
         }
         if(count === 2 && token[0] === "'" && token[token.length-1] === "'") {
-            return true
+            return false
         }
-        return false
+        return true
     }
 
     checkNumber(token) {
