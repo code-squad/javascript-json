@@ -6,7 +6,7 @@ class JSONData {
     }
 }
 
-const sentence = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]".replace(/ /gi, '')
+const sentence = "['1a3',[22,23,[11,[112233],112],55],3d3]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -69,16 +69,15 @@ class Analyze {
                 child.push(new JSONData('Null', checkingValue, []))
                 continue;
             } else if (checkingValue[0] === "'") {
-                debugger;
-                if(this.errorCheck.checkString) {
+                if(this.errorCheck.checkString(checkingValue)) {
                     console.log(`${checkingValue}는 제대로된 문자열이 아닙니다.`)
                     return 
                 }
                 child.push(new JSONData('String', checkingValue, []))
                 continue;
             }
-            if(this.errorCheck.checkNumber) {
-                console.log(`${checkingValue}는 제대로된 문자가 아닙니다.`)
+            if(this.errorCheck.checkNumber(checkingValue)) {
+                console.log(`${checkingValue}은 알수없는 문자열입니다.`)
                 return
             }
             child.push(new JSONData('Number', checkingValue, []))
