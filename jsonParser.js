@@ -6,7 +6,7 @@ class JSONData {
     }
 }
 
-const sentence = "['1a3',[22,23,[11,[112233],112],55],3d3]".replace(/ /gi, '')
+const sentence = "['1a'3',[22,23,[11,[112233],112],55],33]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -108,6 +108,7 @@ class ErrorCheck {
         return false
     }
 }
+
 function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
 }
