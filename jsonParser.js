@@ -6,7 +6,7 @@ class JSONData {
     }
 }
 
-const sentence = "[123,[22,[33]],44,[1,2,3],11]".replace(/ /gi, '')
+const sentence = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -61,10 +61,20 @@ class Analyze {
                 continue;
             } else if (checkingValue === ']') {
                 break;
+            } else if (checkingValue[0] === 'n') {
+                console.log(checkingValue)
+            } else if (checkingValue[0] === 't' || checkingValue[0] === 'f') {
+                console.log(checkingValue)
+            } else if (checkingValue[0] === "'") {
+                console.log(checkingValue)
             }
             child.push(new JSONData('Number', checkingValue, []))
         }
         return child
+    }
+
+    errorCheck(token) {
+        
     }
 }
 
@@ -74,6 +84,7 @@ function printJSONData(JSONData) {
 
 const tokenize = new Tokenize
 const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+console.log(tokenizedDataArr)
 const analyze = new Analyze(tokenizedDataArr)
 const jsonData = analyze.queue()
 printJSONData(jsonData)
