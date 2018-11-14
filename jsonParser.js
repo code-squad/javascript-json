@@ -75,12 +75,14 @@ class Analyze {
         }
         return child
     }
-
-    errorCheck(token) {
-        
-    }
 }
 
+class ErrorCheck {
+    constructor(token) {
+        this.token = token
+    }
+    
+}
 function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
 }
