@@ -66,7 +66,7 @@ class Analyze {
             } else if (checkingValue === 'null') {
                 child.push(new JSONData('Null', checkingValue, []))
             } else if (checkingValue[0] === "'") {
-                console.log(checkingValue)
+                child.push(new JSONData('String', checkingValue, []))
             }
             child.push(new JSONData('Number', checkingValue, []))
         }
