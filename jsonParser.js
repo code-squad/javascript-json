@@ -63,10 +63,13 @@ class Analyze {
                 break;
             } else if (checkingValue === 'true' || checkingValue === 'false') {
                 child.push(new JSONData('Boolean', checkingValue, []))
+                continue;
             } else if (checkingValue === 'null') {
                 child.push(new JSONData('Null', checkingValue, []))
+                continue;
             } else if (checkingValue[0] === "'") {
                 child.push(new JSONData('String', checkingValue, []))
+                continue;
             }
             child.push(new JSONData('Number', checkingValue, []))
         }
