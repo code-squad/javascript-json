@@ -1,5 +1,6 @@
 const { test } = require('./test');
 const { expect } = require('./expect');
+const { toBeData } = require('./test-data-tokenizer');
 const { Tokenizer } = require('../tokenizer');
 
 test('tokenList에 token을 추가합니다.', function () {
@@ -23,6 +24,13 @@ test('token과 문자열을 합칩니다.', function () {
     tokenizer.concat(tokenizer.token, '-squad');
 
     expect(tokenizer.token).toBe('code-squad');
+})
+
+test('char에 따른 process를 실행합니다.', function () {
+    const tokenizer = new Tokenizer;
+    tokenizer.processByType('[');
+
+    expect(tokenizer).toBe(toBeData);
 })
 
 test('comma(,)를 기준으로 tokenizer를 실행합니다.', function () {
