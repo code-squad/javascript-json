@@ -64,7 +64,7 @@ class Analyze {
             } else if (checkingValue === 'true' || checkingValue === 'false') {
                 child.push(new JSONData('Boolean', checkingValue, []))
             } else if (checkingValue === 'null') {
-                console.log(checkingValue)
+                child.push(new JSONData('Null', checkingValue, []))
             } else if (checkingValue[0] === "'") {
                 console.log(checkingValue)
             }
