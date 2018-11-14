@@ -36,9 +36,9 @@ class Tokenize {
 }
 
 class Analyze {
-    constructor(queue, checkError) {
+    constructor(queue, errorCheck) {
         this.queueArr = queue
-        this.checkError = checkError
+        this.errorCheck = errorCheck
     }
     
     queue() {
@@ -69,14 +69,15 @@ class Analyze {
                 child.push(new JSONData('Null', checkingValue, []))
                 continue;
             } else if (checkingValue[0] === "'") {
-                if(checkError.checkString) {
+                debugger;
+                if(this.errorCheck.checkString) {
                     console.log(`${checkingValue}는 제대로된 문자열이 아닙니다.`)
                     return 
                 }
                 child.push(new JSONData('String', checkingValue, []))
                 continue;
             }
-            if(this.checkError.checkNumber) {
+            if(this.errorCheck.checkNumber) {
                 console.log(`${checkingValue}는 제대로된 문자가 아닙니다.`)
                 return
             }
@@ -88,6 +89,7 @@ class Analyze {
 
 class ErrorCheck {    
     checkString(token) {
+        debugger;
         let count = 0
         for(let position = 0; position < token.length; position++) {
             if(token[position] === "'") {
@@ -102,19 +104,19 @@ class ErrorCheck {
 
     checkNumber(token) {
         if(isNaN(Number(token)) === true) {
-            return false
+            return true
         }
-        return true
+        return false
     }
 }
 function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
 }
 
-// const tokenize = new Tokenize
-// const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+const tokenize = new Tokenize
+const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
 const errorCheck = new ErrorCheck
-// const analyze = new Analyze(tokenizedDataArr, errorCheck)
-// const jsonData = analyze.queue()
-// printJSONData(jsonData)
+const analyze = new Analyze(tokenizedDataArr, errorCheck)
+const jsonData = analyze.queue()
+printJSONData(jsonData)
 
