@@ -2,6 +2,13 @@ const { test } = require('./test');
 const { expect } = require('./expect');
 const { Tokenizer } = require('../tokenizer');
 
+test('tokenList에 token을 추가합니다.', function () {
+    const tokenizer = new Tokenizer;
+    tokenizer.push('code-squad');
+
+    expect(tokenizer.tokenList).toBe(['code-squad']);
+})
+
 test('token을 초기화합니다.', function () {
     const tokenizer = new Tokenizer;
     tokenizer.token = 'code-squad';
