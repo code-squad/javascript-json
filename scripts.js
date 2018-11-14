@@ -2,6 +2,7 @@ class Stack {
   constructor() {
     this.list = [];
     this.endCount = -1;
+    this.objCount = 0;
   }
 };
 function tokenReducer(acc, cur) {
@@ -40,6 +41,7 @@ function arrayParser(str) {
 };
 function lexer(fn, str) {
   let tokenArray = fn(str);
+  console.log(tokenArray)
   if (checkSyntax(tokenArray)) return false;
   let lexerResult = tokenArray.map(tokenMapper);
   return lexerResult;
@@ -80,7 +82,8 @@ const type = {
   'bool': ['true', 'false', 'null']
 };
 function tokenMapper(value) {
-  let conversionValue = value.match(/[^\s]\w*'|[^\s]\w*/)[0];
+  if (value.match(/{/g)) return checktype(value, 'obj');
+  let conversionValue = value.match(/[^\s]\w*('|")|[^\s]\w*/)[0]
   if (checktype(conversionValue)) return deepCopyObj(checktype(conversionValue));
   if (Number(conversionValue)) return { type: 'number', value: `${conversionValue}`, child: [] };
   if (typeof conversionValue === 'string' && conversionValue !== ']') {
@@ -92,7 +95,8 @@ function deepCopyObj(obj) {
   let copiedObj = JSON.parse(JSON.stringify(obj))
   return copiedObj;
 };
-function checktype(value) {
+function checktype(value, obj = 0) {
+  if (obj) return JSON.parse(value);
   if (type[value]) return type[value];
   return false;
 };
@@ -110,16 +114,24 @@ function each(str, iter) {
 };
 function checkToken(str, result, token, i) {
   if (token === undefined) token = '';
+  if (str[i] === '{' || stack.objCount !== 0) {
+    if (str[i] === '{') stack.objCount++;
+    token += str[i];
+    if (str[i] === '}') stack.objCount--;
+    return token;
+  }
   if (str[i] === ']' && str[i - 1] !== ']') result.push(token);
   if (str[i] === ']' || str[i] === '[') result.push(`${str[i]}`);
   if (str[i].match(/[^\[\],]/)) token += str[i];
   if (str[i] === ',' && str[i - 1] === ']') token = '';
-  if (str[i] === ',' && str[i - 1] !== ']') { result.push(token); token = ''; }
+  if (str[i] === ',' && str[i - 1] !== ']' && stack.objCount === 0) { result.push(token); token = ''; }
   return token;
 };
 
-let str = "['3a3',[null, false, ['11', [['null',[false]]], 'a112'],55,'99'],33,true]";
+let str = '["1a3",{ "ke": "innervalue", "newkeys": { "a": ["1",{ "name": "arr", "arr": ["1", "2"] },"5"]}}, true]';
 // let str = '[1,2,[3,[4,[5],1],2],3]';
 let stack = new Stack;
 let result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));
+
+//  { 를 만나면 카운트 1증가 }만나면 카운트 감소, 카운트 0됫을때 token전체를 반환
