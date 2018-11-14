@@ -77,12 +77,22 @@ class Analyze {
     }
 }
 
-class ErrorCheck {
-    constructor(token) {
-        this.token = token
+class ErrorCheck {    
+    checkString(token) {
+        
     }
-    
-    
+
+    checkBoolean(token) {
+
+    }
+
+    checkNumber(token) {
+
+    }
+
+    checkNull(token) {
+
+    }
 }
 function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
