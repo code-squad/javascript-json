@@ -1,4 +1,5 @@
-// arrayParser step6(오류 상황 탐지) commit 1
+// arrayParser step6(오류 상황 탐지) commit 2
+
 
 const ArrayParser = class {
     constructor() {
@@ -7,6 +8,7 @@ const ArrayParser = class {
 
     // 문자열 해체
     separateStringByLexer(targetStr) {
+        if (this.checkIsClosedBrace(targetStr)) return false;
         this.key = "";
         this.token = "";
         this.extractedString = ""; // 추출한 문자열 
@@ -24,6 +26,36 @@ const ArrayParser = class {
             else this.extractedString += ch;
         }
         return rootBranch;
+    }
+
+    // 정상적으로 닫히지 않은 괄호 탐지
+    checkIsClosedBrace(targetStr) {
+        const checkErrorStack = [];
+        const map = { "[": "]", "{": "}" };
+        for (let ch of targetStr) {
+            if (ch === "[" || ch === "{") checkErrorStack.push(map[ch]);
+            if (ch === "]" || ch === "}") {
+                if (ch === checkErrorStack[checkErrorStack.length - 1])
+                    checkErrorStack.pop();
+                else break;
+            }
+        }
+        if (checkErrorStack.length === 0) return false;
+        if (this.printNotClosedMsg(checkErrorStack)) return true;
+    }
+
+    // 비정상 괄호 탐지 시 에러 메시지 출력
+    printNotClosedMsg(checkErrorStack) {
+        const lastIndexValue = checkErrorStack[checkErrorStack.length - 1];
+        switch (lastIndexValue) {
+            case "]":
+                console.log(`정상적으로 닫히지 않은 배열(']')이 있습니다.`);
+                break;
+            case "}":
+                console.log(`정상적으로 닫히지 않은 객체('}')가 있습니다.`);
+                break; 
+        }
+        return true; 
     }
 
     // 괄호 체크, 브랜치 생성(중괄호, 대괄호를 만날 때 마다 호출)
@@ -237,13 +269,14 @@ const ArrayParser = class {
 
 const arrayParser = new ArrayParser();
 
-
-console.log(JSON.stringify(arrayParser.separateStringByLexer("{ person  { name : 'lee', age : 33 } ,  addr : 'Seoul' } "), null, 2));
-console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10 , 20 , {  num : [100, 200, 300 ] , num2 'aaa'  }    ,    30]  "), null, 2));
-console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10    [20] , 30]"), null, 2));
-console.log(JSON.stringify(arrayParser.separateStringByLexer("[10  [1,2,3] , 20    , 30 ]"), null, 2)); // 한 칸 이상 띄어쓴 건 상관 없다. 딱 붙있는 게 문제다. 배열이든 객체든. 
-console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10 ,  {key  ['apple'] } 20, 30 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10 ,  {key  { fruit : 'apple'} } 20, 30 ]"), null, 2));
+// 비정상 괄호 탐지
+// console.log(JSON.stringify(arrayParser.separateStringByLexer("[[]"), null, 2));
+// console.log(JSON.stringify(arrayParser.separateStringByLexer("{ person : { name : 'lee', age : 33  ,  addr : 'Seoul' } "), null, 2));
+// console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10 , 20 , {  num : [100 , 200, 300   } , { num2 : 'aaa'  } , 30]  "), null, 2));
+// console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10  ,  [20 , 30] "), null, 2));
+// console.log(JSON.stringify(arrayParser.separateStringByLexer("[10 , [1,2,3] , 20 ,  30 "), null, 2)); // 한 칸 이상 띄어쓴 건 상관 없다. 딱 붙있는 게 문제다. 배열이든 객체든. 
+// console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10 ,  {key : ['apple']  20, 30 ]"), null, 2));
+// console.log(JSON.stringify(arrayParser.separateStringByLexer("[ 10 ,  {key : { fruit : 'apple'  } , 20, 30 ]"), null, 2));
 
 
 console.log(JSON.stringify(arrayParser.separateStringByLexer("{name : 'lee', age : 33, hobby : 'photo' }"), null, 2));
