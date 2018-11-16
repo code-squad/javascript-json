@@ -135,6 +135,15 @@ class ErrorCheck {
         }
         return false
     }
+
+    printErrorMessage(type) {
+        if(type === 'string') {
+
+        }
+        if(type === 'number') {
+            
+        }
+    }
 };
 
 const print = function printJSONData(JSONData) {
