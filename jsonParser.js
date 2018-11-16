@@ -124,6 +124,11 @@ class ErrorCheck {
         return true
     }
 
+    countQueueNum() {
+        
+
+    }
+
     checkNumber(token) {
         if (isNaN(Number(token))) {
             return true
