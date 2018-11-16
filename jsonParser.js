@@ -71,6 +71,9 @@ class Analyze {
                 continue;
             } else if (checkingValue.indexOf(':') !== -1) {
                 child.push(new JSONData('object key', checkingValue.slice(0, indexOf(':')), []))
+                continue;
+            } else if (checkingValue === '}') {
+                break;
             } else if (checkingValue === ',') {
                 continue;
             } else if (checkingValue === ']') {
