@@ -52,10 +52,9 @@ class Analyze {
         while (this.queueArr.length !== 0) {
             const value = this.queueArr.shift()
             if (value === '[') {
-                return this.makeArrayChild(thid.queueArr, value)
+                return this.makeArrayChild(this.queueArr, value)
             } else if (value === '{') {
-                const objectChild = this.getChild(this.queueArr, value)
-                return new JSONData('Object', 'Object Object', objectChild)
+                return this.makeObjectChild(this.queueArr, value)
             }
         }
     }
