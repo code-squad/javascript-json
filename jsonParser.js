@@ -82,12 +82,10 @@ class Analyze {
             } else if (checkingValue.indexOf(':') !== -1) {
                 child.push(new JSONData('object key', checkingValue.slice(0, checkingValue.indexOf(':')), []))
                 continue;
-            } else if (checkingValue === '}') {
+            } else if (checkingValue === '}' || checkingValue === ']') {
                 break;
             } else if (checkingValue === ',') {
                 continue;
-            } else if (checkingValue === ']') {
-                break;
             } else if (checkingValue === 'true' || checkingValue === 'false') {
                 child.push(new JSONData('Boolean', checkingValue, []))
                 continue;
