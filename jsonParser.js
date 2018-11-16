@@ -65,8 +65,9 @@ class Analyze {
         return new JSONData('Array', 'Array Object', arrayChild)
     }
 
-    makeObjectChild() {
-
+    makeObjectChild(queueArr) {
+        const objectChild = this.getChild(queueArr, value)
+        return new JSONData('Object', 'Object Object', objectChild)
     }
 
     getChild(queueArr, checkingValue) {
