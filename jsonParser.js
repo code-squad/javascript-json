@@ -50,8 +50,11 @@ class Analyze {
         while (this.queueArr.length !== 0) {
             const value = this.queueArr.shift()
             if (value === '[') {
-                const child = this.getChild(this.queueArr, value)
-                return new JSONData('Array', 'Array Object', child)
+                const arrayChild = this.getChild(this.queueArr, value)
+                return new JSONData('Array', 'Array Object', arrayChild)
+            } else if (value === '{') {
+                const objectChild = this.getChild(this.queueArr, value)
+                return new JSONData('Object', 'Object Object', objectChild)
             }
         }
     }
@@ -63,6 +66,11 @@ class Analyze {
             if (checkingValue === '[') {
                 child.push(new JSONData('Array', 'Object Array', this.getChild(queueArr, checkingValue)))
                 continue;
+            } else if(checkingValue === '{') {
+                child.push(new JSONData('Object', 'Object Object', this.getChild(queueArr, checkingValue)))
+                continue;
+            } else if (checkingValue.indexOf(':') !== -1) {
+                child.push(new JSONData('object key', checkingValue.slice(0, indexOf(':')), []))
             } else if (checkingValue === ',') {
                 continue;
             } else if (checkingValue === ']') {
