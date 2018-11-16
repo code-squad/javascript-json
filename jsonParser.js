@@ -6,7 +6,7 @@ class JSONData {
     }
 }
 
-const sentence = "['1a'3',[22,23,[11,[112233],112],55],33]".replace(/ /gi, '')
+const sentence = "['1a3',[22,23,[11,[112233],112],55],33]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -88,14 +88,13 @@ class Analyze {
 
 class ErrorCheck {    
     checkString(token) {
-        debugger;
-        let count = 0
+        let quotesCount = 0
         for(let position of token) {
             if(position === "'") {
-                count++
+                quotesCount++
             }
         }
-        if(count === 2 && token[0] === "'" && token[token.length-1] === "'") {
+        if(quotesCount === 2 && token[0] === "'" && token[token.length-1] === "'") {
             return false
         }
         return true
