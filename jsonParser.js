@@ -60,13 +60,14 @@ class Analyze {
             }
         }
     }
-    
-    makeArrayChild() {
 
+    makeArrayChild(queueArr, value) {
+        const arrayChild = this.getChild(queueArr, value)
+        return new JSONData('Array', 'Array Object', arrayChild)
     }
 
-    makeOjbectChild() {
-        
+    makeObjectChild() {
+
     }
 
     getChild(queueArr, checkingValue) {
@@ -76,7 +77,7 @@ class Analyze {
             if (checkingValue === '[') {
                 child.push(new JSONData('Array', 'Object Array', this.getChild(queueArr, checkingValue)))
                 continue;
-            } else if(checkingValue === '{') {
+            } else if (checkingValue === '{') {
                 child.push(new JSONData('Object', 'Object Object', this.getChild(queueArr, checkingValue)))
                 continue;
             } else if (checkingValue.indexOf(':') !== -1) {
