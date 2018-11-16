@@ -52,8 +52,7 @@ class Analyze {
         while (this.queueArr.length !== 0) {
             const value = this.queueArr.shift()
             if (value === '[') {
-                const arrayChild = this.getChild(this.queueArr, value)
-                return new JSONData('Array', 'Array Object', arrayChild)
+                return this.makeArrayChild(thid.queueArr, value)
             } else if (value === '{') {
                 const objectChild = this.getChild(this.queueArr, value)
                 return new JSONData('Object', 'Object Object', objectChild)
