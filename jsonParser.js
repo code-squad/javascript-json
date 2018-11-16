@@ -7,8 +7,8 @@ class JSONData {
     }
 }
 
-const sentence = "['1a3',[22,23,[11,[112233],112],55],33]".replace(/ /gi, '')
-
+// const sentence = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
+const sentence = "'1a3',[null,false,['11',[112233],112],55, '99'],33, true]".replace(/ /gi, '')
 class Tokenize {
     constructor() {
         this.wholeDataQueue = [];
@@ -24,7 +24,7 @@ class Tokenize {
     }
 
     getToken(str) {
-        if (str[0] === '[' || str[0] === ',' || str[0] === ']') {
+        if (str[0] === '[' || str[0] === ',' || str[0] === ']' || str[0] === '{' || str[0] === '}') {
             return str.slice(0, 1)
         } else if (str.indexOf(']') < str.indexOf(',')) {
             return str.slice(0, str.indexOf(']'))
@@ -118,5 +118,6 @@ const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
 const errorCheck = new ErrorCheck
 const analyze = new Analyze(tokenizedDataArr, errorCheck)
 const jsonData = analyze.queue()
+
 printJSONData(jsonData)
 
