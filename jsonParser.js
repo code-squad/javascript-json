@@ -108,7 +108,7 @@ class Analyze {
         }
         return child
     }
-};
+}
 
 class ErrorCheck {
     checkString(token) {
