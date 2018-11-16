@@ -112,21 +112,21 @@ class Analyze {
 
 class ErrorCheck {
     checkString(token) {
-        let quotesCount = 0
-        for (let position of token) {
-            if (position === "'") {
-                quotesCount++
-            }
-        }
-        if (quotesCount === 2 && token[0] === "'" && token[token.length - 1] === "'") {
+        let quotesNum = countQueueNum(token)
+        if (quotesNum === 2 && token[0] === "'" && token[token.length - 1] === "'") {
             return false
         }
         return true
     }
 
-    countQueueNum() {
-        
-
+    countQueueNum(token) {
+        let quotesNum = 0
+        for(let position of token) {
+            if(position === "'") {
+                quotesNum++
+            }
+        }
+        return quotesNum
     }
 
     checkNumber(token) {
