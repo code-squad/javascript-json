@@ -90,8 +90,8 @@ class ErrorCheck {
     checkString(token) {
         debugger;
         let count = 0
-        for(let position = 0; position < token.length; position++) {
-            if(token[position] === "'") {
+        for(let position of token) {
+            if(position === "'") {
                 count++
             }
         }
@@ -102,7 +102,7 @@ class ErrorCheck {
     }
 
     checkNumber(token) {
-        if(isNaN(Number(token)) === true) {
+        if(isNaN(Number(token))) {
             return true
         }
         return false
