@@ -135,7 +135,7 @@ class ErrorCheck {
         }
         return false
     }
-}
+};
 
 const print = function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
