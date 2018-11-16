@@ -19,7 +19,6 @@ class Tokenize {
             this.wholeDataQueue.push(token)
             sentence = sentence.replace(token, '')
         }
-        console.log(this.wholeDataQueue)
         return this.wholeDataQueue
     }
 
@@ -70,7 +69,7 @@ class Analyze {
                 child.push(new JSONData('Object', 'Object Object', this.getChild(queueArr, checkingValue)))
                 continue;
             } else if (checkingValue.indexOf(':') !== -1) {
-                child.push(new JSONData('object key', checkingValue.slice(0, indexOf(':')), []))
+                child.push(new JSONData('object key', checkingValue.slice(0, checkingValue.indexOf(':')), []))
                 continue;
             } else if (checkingValue === '}') {
                 break;
@@ -134,5 +133,5 @@ const errorCheck = new ErrorCheck
 const analyze = new Analyze(tokenizedDataArr, errorCheck)
 const jsonData = analyze.queue()
 
-// printJSONData(jsonData)
+printJSONData(jsonData)
 
