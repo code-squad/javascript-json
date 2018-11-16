@@ -12,9 +12,9 @@ class Tokenize {
     constructor() {
         this.wholeDataQueue = [];
     }
-    
+
     getWholeDataQueue(sentence) {
-        while(sentence.length !== 0) {
+        while (sentence.length !== 0) {
             const token = this.getToken(sentence)
             this.wholeDataQueue.push(token)
             sentence = sentence.replace(token, '')
@@ -45,11 +45,11 @@ class Analyze {
         this.queueArr = queue
         this.errorCheck = errorCheck
     }
-    
+
     queue() {
-        while(this.queueArr.length !== 0) {
+        while (this.queueArr.length !== 0) {
             const value = this.queueArr.shift()
-            if(value === '[') {
+            if (value === '[') {
                 const child = this.getChild(this.queueArr, value)
                 return new JSONData('Array', 'Array Object', child)
             }
@@ -60,7 +60,7 @@ class Analyze {
         let child = [];
         while (checkingValue !== ']') {
             checkingValue = queueArr.shift()
-            if(checkingValue === '[') {
+            if (checkingValue === '[') {
                 child.push(new JSONData('Array', 'Object Array', this.getChild(queueArr, checkingValue)))
                 continue;
             } else if (checkingValue === ',') {
@@ -74,14 +74,14 @@ class Analyze {
                 child.push(new JSONData('Null', checkingValue, []))
                 continue;
             } else if (checkingValue[0] === "'") {
-                if(this.errorCheck.checkString(checkingValue)) {
+                if (this.errorCheck.checkString(checkingValue)) {
                     console.log(`${checkingValue}는 제대로된 문자열이 아닙니다.`)
-                    return 
+                    return
                 }
                 child.push(new JSONData('String', checkingValue, []))
                 continue;
             }
-            if(this.errorCheck.checkNumber(checkingValue)) {
+            if (this.errorCheck.checkNumber(checkingValue)) {
                 console.log(`${checkingValue}은 알수없는 문자열입니다.`)
                 return
             }
@@ -91,22 +91,22 @@ class Analyze {
     }
 }
 
-class ErrorCheck {    
+class ErrorCheck {
     checkString(token) {
         let quotesCount = 0
-        for(let position of token) {
-            if(position === "'") {
+        for (let position of token) {
+            if (position === "'") {
                 quotesCount++
             }
         }
-        if(quotesCount === 2 && token[0] === "'" && token[token.length-1] === "'") {
+        if (quotesCount === 2 && token[0] === "'" && token[token.length - 1] === "'") {
             return false
         }
         return true
     }
 
     checkNumber(token) {
-        if(isNaN(Number(token))) {
+        if (isNaN(Number(token))) {
             return true
         }
         return false
