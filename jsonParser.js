@@ -5,12 +5,8 @@ class JSONData {
         this.child = child
     }
 }
-// 복잡한 세부로직은 반드시 함수로 분리해본다.
-// 최대한 작은 단위의 함수로 만든다.
-// 중복된 코드역시 함수로 분리해서 일반화한다.
-// 객체형태의 class로 만든다. v
 const sentence = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:''a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
-// const sentence = "'1a3',[null,false,['11',[112233],112],55, '99'],33, true]".replace(/ /gi, '')
+
 class Tokenize {
     constructor() {
         this.wholeDataQueue = [];
@@ -152,6 +148,5 @@ const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
 const errorCheck = new ErrorCheck
 const analyze = new Analyze(tokenizedDataArr, errorCheck)
 const jsonData = analyze.queue()
-
 print(jsonData)
 
