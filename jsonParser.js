@@ -111,14 +111,6 @@ class Analyze {
 };
 
 class ErrorCheck {
-    checkString(token) {
-        let quotesNum = this.countQueueNum(token)
-        if (quotesNum === 2 && token[0] === "'" && token[token.length - 1] === "'") {
-            return false
-        }
-        return true
-    }
-    
     countQueueNum(token) {
         let quotesNum = 0
         for(let position of token) {
@@ -129,19 +121,29 @@ class ErrorCheck {
         return quotesNum
     }
 
+    checkString(token) {
+        let quotesNum = this.countQueueNum(token)
+        if (quotesNum === 2 && token[0] === "'" && token[token.length - 1] === "'") {
+            return false
+        }
+        this.printErrorMessage('string')
+        return true
+    }
+    
     checkNumber(token) {
         if (isNaN(Number(token))) {
+            this.printErrorMessage('number')
             return true
         }
         return false
     }
 
-    printErrorMessage(type) {
+    printErrorMessage(type, token) {
         if(type === 'string') {
-            console.log(`${checkingValue}는 제대로된 문자열이 아닙니다.`)
+            console.log(`${token}는 제대로된 문자열이 아닙니다.`)
         }
         if(type === 'number') {
-            console.log(`${checkingValue}은 알수없는 데이터입니다.`)
+            console.log(`${token}은 알수없는 데이터입니다.`)
         }
     }
 };
