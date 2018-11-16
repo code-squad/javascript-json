@@ -126,13 +126,13 @@ class ErrorCheck {
         if (quotesNum === 2 && token[0] === "'" && token[token.length - 1] === "'") {
             return false
         }
-        this.printErrorMessage('string')
+        this.printErrorMessage('string', token)
         return true
     }
     
     checkNumber(token) {
         if (isNaN(Number(token))) {
-            this.printErrorMessage('number')
+            this.printErrorMessage('number', token)
             return true
         }
         return false
