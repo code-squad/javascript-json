@@ -1,16 +1,17 @@
-// arrayParser step6(오류 상황 탐지) commit 3
+// arrayParser step6(오류 상황 탐지) commit 4
 
 const ArrayParser = class {
-    constructor() {
+    constructor(errorDetectObj) {
         this.accumulatedObjStack = [];
+        this.errorDetect = errorDetectObj.errorDetect;
     }
 
-    // 문자열 분리
+    // 파서 시작
     operateArrayParser(targetStr) {
         let rootBranch = {}; // 최종 분석결과
-        if (this.checkIsClosedBrace(targetStr)) return false; // 괄호 체크하고.
+        if (this.errorDetect.checkIsClosedBrace(targetStr)) return false; 
         this.initializeBeforeSeparate(); // 설정 초기화하고. 
-        rootBranch = this.separateEachString(targetStr, rootBranch); // 각각의 문자를 분려해서 처리하고 
+        rootBranch = this.separateEachString(targetStr, rootBranch); 
         return rootBranch;
     }
 
@@ -26,7 +27,7 @@ const ArrayParser = class {
     separateEachString(targetStr, rootBranch) {
         for (let ch of targetStr) {
             if (this.token === "" && this.extractedString === "" && (ch === "[" || ch === "{")) {
-                rootBranch = this.checkBrace(rootBranch, ch); // 새로운 브랜치(괄호) 생성
+                rootBranch = this.checkBrace(rootBranch, ch); 
                 continue;
             }
             else if (this.skipCharacter(this.extractedString, ch)) continue;
@@ -34,40 +35,10 @@ const ArrayParser = class {
             else if (this.reduceDepth(this.extractedString, ch)) continue;
             else if (this.parseStringByType(this.extractedString, ch)) continue;
             else if (this.identifyKey(this.extractedString, ch)) continue;
-            else if (this.checkIsMissingExp(this.token)) return false;
+            else if (this.errorDetect.checkIsMissingExp(this.token)) return false;
             else this.extractedString += ch;
         }
         return rootBranch;
-    }
-
-    // 정상적으로 닫히지 않은 괄호 탐지
-    checkIsClosedBrace(targetStr) {
-        const checkErrorStack = [];
-        const map = { "[": "]", "{": "}" };
-        for (let ch of targetStr) {
-            if (ch === "[" || ch === "{") checkErrorStack.push(map[ch]);
-            if (ch === "]" || ch === "}") {
-                if (ch === checkErrorStack[checkErrorStack.length - 1])
-                    checkErrorStack.pop();
-                else break;
-            }
-        }
-        if (checkErrorStack.length === 0) return false;
-        if (this.printNotClosedMsg(checkErrorStack)) return true;
-    }
-
-    // 비정상인 괄호 탐지 시 에러 메시지 출력
-    printNotClosedMsg(checkErrorStack) {
-        const lastIndexValue = checkErrorStack[checkErrorStack.length - 1];
-        switch (lastIndexValue) {
-            case "]":
-                console.log(`정상적으로 닫히지 않은 배열(']')이 있습니다.`);
-                break;
-            case "}":
-                console.log(`정상적으로 닫히지 않은 객체('}')가 있습니다.`);
-                break;
-        }
-        return true;
     }
 
     // 괄호 체크, 브랜치 생성(중괄호, 대괄호를 만날 때 마다 호출)
@@ -89,7 +60,7 @@ const ArrayParser = class {
     // 하위 브랜치 생성
     generateLowerBranch(branchType, ch) {
         const lowerBranch = {};
-        this.composeBranchForm(lowerBranch, ch); // lowerBranch를 리턴한다. 
+        this.composeBranchForm(lowerBranch, ch); 
         this.accumulatedObjStack.push(this.accumulatedObj);
         let accumulatedObj = this.accumulatedObj.child;
         accumulatedObj.push(lowerBranch);
@@ -147,43 +118,8 @@ const ArrayParser = class {
     // 토큰 생성
     generateToken(extractedString, ch) {
         if (ch === " " && extractedString !== "") {
-            return this.token = extractedString; // 추출 문자열을 바탕으로 토큰(분석 단위) 생성
+            return this.token = extractedString; 
         }
-    }
-
-    // 누락된 표현 탐지
-    checkIsMissingExp(token) {
-        if (this.checkIsMissingComma(token)) return true;
-        if (this.checkIsMissingColon(token)) return true;
-    }
-
-    // 누락된 콤마 탐지
-    checkIsMissingComma(token) {
-        if (token !== "" && this.accumulatedObj.value === "object Array") {
-            this.printCatchErrorMsg(',', "Array");
-            return true;
-        }
-        if (token !== "" && this.accumulatedObj.value === "object Object" && this.key !== "") {
-            this.printCatchErrorMsg(',', "Object");
-            return true;
-        }
-        if (this.markStatus.brace === "closed" && this.markStatus.comma === "unmarked") {
-            this.printCatchErrorMsg(',', "Object");
-            return true;
-        }
-    }
-
-    // 누락된 콜론 탐지
-    checkIsMissingColon(token) {
-        if (token !== "" && this.accumulatedObj.value === "object Object" && this.key === "") {
-            this.printCatchErrorMsg(':', "Object");
-            return true;
-        }
-    }
-
-    // 오류 탐지 메시지 출력
-    printCatchErrorMsg(...args) {
-        console.log(`오류를 탐지하였습니다. '${args[0]}'이(가) 누락된 ${args[1]} 표현이 있습니다.`);
     }
 
     // 단계 낮추기
@@ -209,7 +145,7 @@ const ArrayParser = class {
     // 숫자 데이터 식별 
     identifyNumber(token, ch) {
         if (isNaN(Number(token))) return false;
-        this.accumulatedObj.child.push(this.addChildInfo(token, "number")); // 숫자면 true; 
+        this.accumulatedObj.child.push(this.addChildInfo(token, "number")); 
         this.initializeAfterParsing(ch);
         return true;
     }
@@ -314,10 +250,83 @@ const ArrayParser = class {
 
 } // end class
 
-const arrayParser = new ArrayParser();
+
+const ErrorDetect = class {
+
+    // 정상적으로 닫히지 않은 괄호 탐지
+    checkIsClosedBrace(targetStr) {
+        const checkErrorStack = [];
+        const map = { "[": "]", "{": "}" };
+        for (let ch of targetStr) {
+            if (ch === "[" || ch === "{") checkErrorStack.push(map[ch]);
+            if (ch === "]" || ch === "}") {
+                if (ch === checkErrorStack[checkErrorStack.length - 1])
+                    checkErrorStack.pop();
+                else break;
+            }
+        }
+        if (checkErrorStack.length === 0) return false;
+        if (this.printNotClosedMsg(checkErrorStack)) return true;
+    }
+
+    // 비정상인 괄호 탐지 시 에러 메시지 출력
+    printNotClosedMsg(checkErrorStack) {
+        const lastIndexValue = checkErrorStack[checkErrorStack.length - 1];
+        switch (lastIndexValue) {
+            case "]":
+                console.log(`정상적으로 닫히지 않은 배열(']')이 있습니다.`);
+                break;
+            case "}":
+                console.log(`정상적으로 닫히지 않은 객체('}')가 있습니다.`);
+                break;
+        }
+        return true;
+    }
+
+    // 누락된 표현 탐지
+    checkIsMissingExp(token) {
+        if (this.checkIsMissingComma(token)) return true;
+        if (this.checkIsMissingColon(token)) return true;
+    }
+
+    // 누락된 콤마 탐지
+    checkIsMissingComma(token) {
+        if (token !== "" && arrayParser.accumulatedObj.value === "object Array") {
+            this.printCatchErrorMsg(',', "Array");
+            return true;
+        }
+        if (token !== "" && arrayParser.accumulatedObj.value === "object Object" && arrayParser.key !== "") {
+            this.printCatchErrorMsg(',', "Object");
+            return true;
+        }
+        if (arrayParser.markStatus.brace === "closed" && arrayParser.markStatus.comma === "unmarked") {
+            this.printCatchErrorMsg(',', "Object");
+            return true;
+        }
+    }
+
+    // 누락된 콜론 탐지
+    checkIsMissingColon(token) {
+        if (token !== "" && arrayParser.accumulatedObj.value === "object Object" && arrayParser.key === "") {
+            this.printCatchErrorMsg(':', "Object");
+            return true;
+        }
+    }
+
+    // 오류 탐지 메시지 출력
+    printCatchErrorMsg(...args) {
+        console.log(`오류를 탐지하였습니다. '${args[0]}'이(가) 누락된 ${args[1]} 표현이 있습니다.`);
+    }
+    
+} // end class 
+
+// 객체 주입 
+const arrayParser = new ArrayParser({
+    errorDetect : new ErrorDetect
+});
 
 // 누락된 표현 탐지
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ a : 'x'  b : 'y' , c : 'z'} "), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("{ a  'x' , b : 'y' , c : 'z'} "), null, 2));
 console.log(JSON.stringify(arrayParser.operateArrayParser("{ a  [ 1, 2, 3 ],  b : { k : 'v' , k2 : 'v2'},  k3 : 'v3' }"), null, 2));
 console.log(JSON.stringify(arrayParser.operateArrayParser("{ a : [ 1, 2, 3 ],  b  { k : 'v' , k2 : 'v2'},  k3 : 'v3' }"), null, 2));
 console.log(JSON.stringify(arrayParser.operateArrayParser("{ a : [ 1, 2, 3 ]  b : { k : 'v' , k2 : 'v2'},  k3 : 'v3' }"), null, 2));
@@ -330,17 +339,17 @@ console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10, 20 , [[[ 30 , 4
 console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10, 20 , [[[ 30 , 40, 50 ]]], [100, 200, 300] , { key : 'value'}  [ 100, 200 ], 60, 70 ]"), null, 2));
 
 // 비정상 괄호 탐지
-// console.log(JSON.stringify(arrayParser.operateArrayParser("{ x : { k : 'v' } , y : { K : 'v' , k : 'v'} "), null, 2));
-// console.log(JSON.stringify(arrayParser.operateArrayParser("[[]"), null, 2));
-// console.log(JSON.stringify(arrayParser.operateArrayParser("{ person : { name : 'lee', age : 33 ,  addr : 'Seoul' }"), null, 2));
-// console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 , 20 , {  num : [100 , 200, 300   } , { num2 : 'aaa'   , 30 ]  "), null, 2));
-// console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10  ,  [20 , 30] "), null, 2));
-// console.log(JSON.stringify(arrayParser.operateArrayParser("[10 , [1,2,3] , 20 ,  30  "), null, 2)); // 한 칸 이상 띄어쓴 건 상관 없다. 딱 붙있는 게 문제다. 배열이든 객체든. 
-// console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 ,  {key : ['apple'] ,  20, 30 ]"), null, 2));
-// console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 ,  {key : { fruit : 'apple' } } , 20, 30 "), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("{ x : { k : 'v' } , y : { K : 'v' , k : 'v'} "), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("[[]"), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("{ person : { name : 'lee', age : 33 ,  addr : 'Seoul' }"), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 , 20 , {  num : [100 , 200, 300   } , { num2 : 'aaa'   , 30 ]  "), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10  ,  [20 , 30] "), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("[10 , [1,2,3] , 20 ,  30  "), null, 2)); // 한 칸 이상 띄어쓴 건 상관 없다. 딱 붙있는 게 문제다. 배열이든 객체든. 
+console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 ,  {key : ['apple'] ,  20, 30 ]"), null, 2));
+console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 ,  {key : { fruit : 'apple' } } , 20, 30 "), null, 2));
 
 
-// 배열, 객체 혼합 타입
+// // 배열, 객체 혼합 타입
 console.log(JSON.stringify(arrayParser.operateArrayParser("{name : 'lee'  , age : 33, hobby : 'photo' }"), null, 2));
 console.log(JSON.stringify(arrayParser.operateArrayParser("{info : [{ name : 'lee', age : 34, addr : 'Seoul'} , {hobby : 'photo'}, 'endArr' ], study : 'codeSquad', place : 'Gangnam-gu'}"), null, 4));
 console.log(JSON.stringify(arrayParser.operateArrayParser("['1a3',[null,false,['11',[112233], {easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]"), null, 4));
@@ -358,7 +367,7 @@ console.log(JSON.stringify(arrayParser.operateArrayParser("[ 40, 50, 60, { name 
 console.log(JSON.stringify(arrayParser.operateArrayParser("[{ x : { y : { z : { hobby : 'photo' } } } }, [10,20,30]]"), null, 4));
 console.log(JSON.stringify(arrayParser.operateArrayParser("[{ x : [10,20,{ hobby : 'photo'} ], name : 'lee' } ]"), null, 4));
 
-// 무한 중첩 배열, 다양한 type
+// // 무한 중첩 배열, 다양한 type
 console.log(JSON.stringify(arrayParser.operateArrayParser("[10, 'apple' ,[ 20 , null,[ 30 , false , '32'], '23*6*1'], 11, 'helloween', 13, [22, ['33', [true] , 'iOS12.1'],23 , 'false'],14, 'theEnd' ]"), null, 4));
 console.log(JSON.stringify(arrayParser.operateArrayParser("[ '1a3',[ null, false,['11', [112233] , 112], 55   , 99 ], 33, true ]  "), null, 4));
 console.log(JSON.stringify(arrayParser.operateArrayParser('[1,false,\'apple\', null,5]'), null, 4));
