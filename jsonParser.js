@@ -138,10 +138,10 @@ class ErrorCheck {
 
     printErrorMessage(type) {
         if(type === 'string') {
-
+            console.log(`${checkingValue}는 제대로된 문자열이 아닙니다.`)
         }
         if(type === 'number') {
-            
+            console.log(`${checkingValue}은 알수없는 데이터입니다.`)
         }
     }
 };
