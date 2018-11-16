@@ -1,7 +1,6 @@
 class JSONData {
-    constructor(type, value, child, keyValue) {
+    constructor(type, value, child) {
         this.type = type
-        this.keyValue = keyValue
         this.value = value
         this.child = child
     }
