@@ -9,7 +9,7 @@ class JSONData {
 // 최대한 작은 단위의 함수로 만든다.
 // 중복된 코드역시 함수로 분리해서 일반화한다.
 // 객체형태의 class로 만든다. v
-const sentence = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',[null,false,['11',[112233],{easy : ['hello', {a:''a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
 // const sentence = "'1a3',[null,false,['11',[112233],112],55, '99'],33, true]".replace(/ /gi, '')
 class Tokenize {
     constructor() {
@@ -71,6 +71,7 @@ class Analyze {
 
     getChild(queueArr, checkingValue) {
         let child = [];
+        debugger;
         while (checkingValue !== ']') {
             checkingValue = queueArr.shift()
             if (checkingValue === '[') {
@@ -93,17 +94,11 @@ class Analyze {
                 child.push(new JSONData('Null', checkingValue, []))
                 continue;
             } else if (checkingValue[0] === "'") {
-                if (this.errorCheck.checkString(checkingValue)) {
-                    console.log(`${checkingValue}는 제대로된 문자열이 아닙니다.`)
-                    return
-                }
+                if (this.errorCheck.checkString(checkingValue)) return
                 child.push(new JSONData('String', checkingValue, []))
                 continue;
             }
-            if (this.errorCheck.checkNumber(checkingValue)) {
-                console.log(`${checkingValue}은 알수없는 문자열입니다.`)
-                return
-            }
+            if (this.errorCheck.checkNumber(checkingValue)) return
             child.push(new JSONData('Number', checkingValue, []))
         }
         return child
