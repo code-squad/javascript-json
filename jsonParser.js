@@ -60,6 +60,10 @@ class Analyze {
             }
         }
     }
+    
+    makeArrayChild() {
+        
+    }
 
     getChild(queueArr, checkingValue) {
         let child = [];
