@@ -62,6 +62,10 @@ class Analyze {
     }
     
     makeArrayChild() {
+
+    }
+
+    makeOjbectChild() {
         
     }
 
