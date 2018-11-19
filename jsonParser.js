@@ -67,7 +67,6 @@ class Analyze {
 
     getChild(queueArr, checkingValue) {
         let child = [];
-        debugger;
         while (checkingValue !== ']') {
             checkingValue = queueArr.shift()
             if (checkingValue === '[') {
