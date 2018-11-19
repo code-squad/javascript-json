@@ -84,18 +84,18 @@ class Analyze {
             } else if (checkingValue === '{') {
                 child.push(new JSONData('Object', 'Object Object', this.getChild(queueArr, checkingValue)))
                 continue;
-            } else if (checkingValue.indexOf(':') !== -1) {//
+            } else if (this.isObjectKey(checkingValue)) {
                 child.push(new JSONData('object key', checkingValue.slice(0, checkingValue.indexOf(':')), []))
                 continue;
             } else if (checkingValue === '}' || checkingValue === ']') {
                 break;
-            } else if (checkingValue === 'true' || checkingValue === 'false') {//
+            } else if (this.isBoolean(checkingValue)) {
                 child.push(new JSONData('Boolean', checkingValue, []))
                 continue;
             } else if (checkingValue === 'null') {
                 child.push(new JSONData('Null', checkingValue, []))
                 continue;
-            } else if (checkingValue[0] === "'") {//
+            } else if (this.isString(checkingValue)) {
                 if (this.errorCheck.checkString(checkingValue)) return
                 child.push(new JSONData('String', checkingValue, []))
                 continue;
