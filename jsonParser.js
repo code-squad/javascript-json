@@ -22,7 +22,7 @@ class Tokenize {
     }
 
     getToken(str) {
-        if (str[0] === '[' || str[0] === ',' || str[0] === ']' || str[0] === '{' || str[0] === '}') {
+        if (this.isBraceOrComma(str)) {
             return str.slice(0, 1)
         } else if (str.indexOf(']') < str.indexOf(',')) {
             return str.slice(0, str.indexOf(']'))
@@ -35,6 +35,13 @@ class Tokenize {
         } else {
             return str.slice(0, str.indexOf(','))
         }
+    }
+
+    isBraceOrComma(str) {
+        const firLocation = str[0]
+        const delimitersArr = ['[',']',',','{','}']
+        const ret = delimitersArr.some(v => v === firLocation)
+        return ret
     }
 }
 
