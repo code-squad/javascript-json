@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['12',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key: 'him', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
+const sentence = "['12',,[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key: 'him', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -125,7 +125,6 @@ class ErrorCheck {
     }
 
     isRightSentence(sentence) {
-        debugger;
         return this.checkArray(sentence) && 
             this.checkComma(sentence) &&  
             this.checkObject(sentence)
@@ -167,16 +166,15 @@ class ErrorCheck {
 
     checkObject(sentence) {
         if(this.countLettersNum(sentence,'{') === this.countLettersNum(sentence, '}')) {
-            if(this.countLettersNum(sentence, '{') === this.countLettersNum(sentence, ':')) {
-                return true
-            }
+            return true    
         }
         console.log(`올바른 객체 형태가 아닙니다.`)
     }
-
+    
+    
     checkComma(sentence) {
         for(let i of sentence) {
-            if(sentence[i] !== ',') continue;
+            if(i !== ',') continue;
             if(sentence[i] === sentence[i + 1]) {
                 console.log(`,가 연달아 붙어있는 값이 있습니다.`)
                 return false
