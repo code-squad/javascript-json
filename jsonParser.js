@@ -156,13 +156,15 @@ class ErrorCheck {
 
     checkObject(sentence) {
         if(this.countLettersNum(sentence,'{') === this.countLettersNum(sentence, '}')) {
-            return true
+            if(this.countLettersNum(sentenct, '{') === this.countLettersNum(sentence, ':')) {
+                return true
+            }
         }
         console.log(`올바른 객체 형태가 아닙니다.`)
     }
 
     checkObjectKeys(sentence) {
-        
+
     }
 
     checkComma(sentence) {
