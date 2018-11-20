@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['12',,[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key: 'him', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
+const sentence = "['12',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key: 'him', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -121,13 +121,12 @@ class Analyze {
 
 class ErrorCheck {
     constructor(sentence) {
-        this.rightSentence = isRightSentence(sentence)
+        this.rightSentence = this.isRightSentence(sentence)
     }
 
     isRightSentence(sentence) {
         return this.checkArray(sentence) && 
-            this.checkComma(sentence) && 
-            this.checkNumber(sentence) && 
+            this.checkComma(sentence) &&  
             this.checkObject(sentence)
     }
 
@@ -167,7 +166,7 @@ class ErrorCheck {
 
     checkObject(sentence) {
         if(this.countLettersNum(sentence,'{') === this.countLettersNum(sentence, '}')) {
-            if(this.countLettersNum(sentenct, '{') === this.countLettersNum(sentence, ':')) {
+            if(this.countLettersNum(sentence, '{') === this.countLettersNum(sentence, ':')) {
                 return true
             }
         }
@@ -206,6 +205,13 @@ const print = function printJSONData(JSONData) {
 // const jsonData = analyze.queue()
 // print(jsonData)
 
-const errorCheck = new ErrorCheck
+const errorCheck = new ErrorCheck(sentence)
+if(errorCheck.rightSentence) {
+    // const tokenize = new Tokenize
+    // const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+    // const analyze = new Analyze(tokenizedDataArr, errorCheck)
+    // const jsonData = analyze.queue()
+    // print(jsonData)
+}
 
 
