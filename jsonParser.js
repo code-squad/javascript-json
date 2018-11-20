@@ -148,15 +148,21 @@ class ErrorCheck {
     }
 
     checkArray(sentence) {
-        return this.countLettersNum(sentence,']') === this.countLettersNum(sentence, '[')
+        if(this.countLettersNum(sentence,']') === this.countLettersNum(sentence, '[')) {
+            return true
+        }
+        console.log(`올바로된 배열이 아닙니다.`)
     }
 
     checkObject(sentence) {
-
+        if(this.countLettersNum(sentence,'{') === this.countLettersNum(sentence, '}')) {
+            return true
+        }
+        console.log(`올바른 객체 형태가 아닙니다.`)
     }
 
     checkObjectKeys(sentence) {
-
+        
     }
 
     checkComma(sentence) {
