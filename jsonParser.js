@@ -125,6 +125,7 @@ class ErrorCheck {
     }
 
     isRightSentence(sentence) {
+        debugger;
         return this.checkArray(sentence) && 
             this.checkComma(sentence) &&  
             this.checkObject(sentence)
@@ -175,7 +176,7 @@ class ErrorCheck {
 
     checkComma(sentence) {
         for(let i of sentence) {
-            if(sentence[i] !== ',') break;
+            if(sentence[i] !== ',') continue;
             if(sentence[i] === sentence[i + 1]) {
                 console.log(`,가 연달아 붙어있는 값이 있습니다.`)
                 return false
