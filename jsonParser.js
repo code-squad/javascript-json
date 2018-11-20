@@ -147,6 +147,22 @@ class ErrorCheck {
         return false
     }
 
+    checkArray() {
+
+    }
+
+    checkObject() {
+
+    }
+
+    checkObjectKeys() {
+
+    }
+
+    checkComma() {
+        
+    }
+
     printErrorMessage(type, token) {
         if(type === 'string') {
             console.log(`${token}는 제대로된 문자열이 아닙니다.`)
