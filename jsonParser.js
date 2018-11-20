@@ -163,10 +163,6 @@ class ErrorCheck {
         console.log(`올바른 객체 형태가 아닙니다.`)
     }
 
-    checkObjectKeys(sentence) {
-
-    }
-
     checkComma(sentence) {
 
     }
