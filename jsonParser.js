@@ -120,10 +120,10 @@ class Analyze {
 };
 
 class ErrorCheck {
-    countQueueNum(token) {
+    countLetterNum(token, letter) {
         let quotesNum = 0
         for(let position of token) {
-            if(position === "'") {
+            if(position === letter) {
                 quotesNum++
             }
         }
@@ -147,20 +147,23 @@ class ErrorCheck {
         return false
     }
 
-    checkArray() {
-
-    }
-
-    checkObject() {
-
-    }
-
-    checkObjectKeys() {
-
-    }
-
-    checkComma() {
+    checkArray(wholeDataQueue) {
         
+        wholeDataQueue.filter(v => {
+
+        })
+    }
+
+    checkObject(wholeDataQueue) {
+
+    }
+
+    checkObjectKeys(wholeDataQueue) {
+
+    }
+
+    checkComma(wholeDataQueue) {
+
     }
 
     printErrorMessage(type, token) {
