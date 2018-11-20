@@ -121,17 +121,17 @@ class Analyze {
 
 class ErrorCheck {
     countLetterNum(token, letter) {
-        let quotesNum = 0
+        let lettersNum = 0
         for(let position of token) {
             if(position === letter) {
                 quotesNum++
             }
         }
-        return quotesNum
+        return lettersNum
     }
 
     checkString(token) {
-        let quotesNum = this.countQueueNum(token)
+        let quotesNum = this.countLetterNum(token, "'")
         if (quotesNum === 2 && token[0] === "'" && token[token.length - 1] === "'") {
             return false
         }
