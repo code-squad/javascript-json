@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['12',[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key: 'him', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
+const sentence = "['12',,[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key: 'him', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -124,7 +124,7 @@ class ErrorCheck {
         let lettersNum = 0
         for(let position of token) {
             if(position === letter) {
-                quotesNum++
+                lettersNum++
             }
         }
         return lettersNum
@@ -164,7 +164,14 @@ class ErrorCheck {
     }
 
     checkComma(sentence) {
-
+        for(let i of sentence) {
+            if(sentence[i] !== ',') break;
+            if(sentence[i] === sentence[i + 1]) {
+                console.log(`,가 연달아 붙어있는 값이 있습니다.`)
+                return false
+            }
+        }
+        return true
     }
 
     printErrorMessage(type, token) {
