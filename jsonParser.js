@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['12',,[null,false,['11',[112233],{easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key: 'him', newkeys: [1,2,3,4,5]}]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -120,7 +120,7 @@ class Analyze {
 };
 
 class ErrorCheck {
-    constructor(sentence) {
+    constructor(sentence, wholeDataQueue) {
         this.rightSentence = this.isRightSentence(sentence)
     }
 
@@ -158,6 +158,7 @@ class ErrorCheck {
     }
 
     checkArray(sentence) {
+        debugger;
         if(this.countLettersNum(sentence,']') === this.countLettersNum(sentence, '[')) {
             return true
         }
@@ -171,6 +172,25 @@ class ErrorCheck {
         console.log(`올바른 객체 형태가 아닙니다.`)
     }
     
+    checkObjectColon(wholeDataQueue) {
+        copiedWholeDataQueue = wholeDataQueue.map(v => v)
+        while(copiedWholeDataQueue.some(v => v === '}')) {
+            const token = copiedWholeDataQueue.unshift()
+            if(token === '{') {
+                const colonArr = [];
+                while(true) {
+                    const innerToken = copiedWholeDataQueue.unshift()
+                    if(innerToken === ':') colonArr.push(innerToken)
+                    if(innerToken === '}') break;
+                }
+                if(colonArr.length === 0) {
+                    console.log(`올바른 객체 형태가 아닙니다.`)
+                    return false
+                }
+            }
+        }
+        return true
+    }
     
     checkComma(sentence) {
         for(let i of sentence) {
@@ -206,11 +226,11 @@ const print = function printJSONData(JSONData) {
 
 const errorCheck = new ErrorCheck(sentence)
 if(errorCheck.rightSentence) {
-    // const tokenize = new Tokenize
-    // const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
-    // const analyze = new Analyze(tokenizedDataArr, errorCheck)
-    // const jsonData = analyze.queue()
-    // print(jsonData)
+    const tokenize = new Tokenize
+    const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+    const analyze = new Analyze(tokenizedDataArr, errorCheck)
+    const jsonData = analyze.queue()
+    print(jsonData)
 }
 
 
