@@ -120,6 +120,17 @@ class Analyze {
 };
 
 class ErrorCheck {
+    constructor(sentence) {
+        this.rightSentence = isRightSentence(sentence)
+    }
+
+    isRightSentence(sentence) {
+        return this.checkArray(sentence) && 
+            this.checkComma(sentence) && 
+            this.checkNumber(sentence) && 
+            this.checkObject(sentence)
+    }
+
     countLettersNum(token, letter) {
         let lettersNum = 0
         for(let position of token) {
