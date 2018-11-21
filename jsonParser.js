@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b: [912,[5656,33]], true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -30,7 +30,7 @@ class Tokenize {
             return str.slice(0, str.indexOf(']'))
         } else if (str.indexOf(':') !== -1 && str.indexOf(',') > str.indexOf(':')) {
             return str.slice(0, str.indexOf(':') + 1)
-        } else if (str.indexOf('}') < str.indexOf(',')) {
+        } else if (str.indexOf('}') < str.indexOf(',') && str.indexOf('}') !== -1) {
             return str.slice(0, str.indexOf('}'))
         } else {
             return str.slice(0, str.indexOf(','))
@@ -147,21 +147,22 @@ class ErrorCheck {
         return false
     }
     
-    checkBrace(wholeDataQueue, brace) {
+    checkBrace(wholeDataQueue, brace, closeBrace) {
         const copiedWholeDataQueue = wholeDataQueue.map(v => v)
         const braceStack = [];
-        while(copiedWholeDataQueue.length === 0) {
-            const token = wholeDataQueue.shift()
+        debugger;
+        while(copiedWholeDataQueue.length !== 0) {
+            const token = copiedWholeDataQueue.shift()
             if(token === brace) {
-                bracketStack.push(brace) 
+                braceStack.push(brace) 
                 continue
             }
-            if(token === brace) {
-                bracketStack.pop()
+            if(token === closeBrace) {
+                braceStack.pop()
                 continue
             }
         }
-        if(braceStack[0] === brace) {
+        if(braceStack.length !== 0) {
             if(brace === '[') this.printErrorMessage('array')
             if(brace === '{') this.printErrorMessage('object')
             return false
@@ -220,7 +221,7 @@ const print = function printJSONData(JSONData) {
 const errorCheck = new ErrorCheck(sentence)
 const tokenize = new Tokenize(sentence)
 const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
-if(errorCheck.checkBrace(tokenizedDataArr, '[') && errorCheck.checkBrace(tokenizedDataArr, '{') && errorCheck.checkObject(tokenizedDataArr)) {
+if(errorCheck.checkBrace(tokenizedDataArr, '[', ']') && errorCheck.checkBrace(tokenizedDataArr, '{', '}') && errorCheck.checkObject(tokenizedDataArr)) {
     const analyze = new Analyze(tokenizedDataArr, errorCheck)
     const jsonData = analyze.queue()
     print(jsonData)
