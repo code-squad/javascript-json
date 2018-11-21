@@ -147,14 +147,36 @@ class ErrorCheck {
         return false
     }
     
+    checkArray(wholeDataQueue) {
+        const copiedWholeDataQueue = wholeDataQueue.map(v => v)
+        const bracketStack = [];
+        while(copiedWholeDataQueue.length === 0) {
+            const token = wholeDataQueue.shift()
+            if(token === '[') {
+                bracketStack.push('[') 
+                continue
+            }
+            if(token === ']') {
+                bracketStack.pop()
+                continue
+            }
+        }
+        if(bracketStace[0] === '[') {
+            return false
+        }
+        return true
+    }
+
+    checkObject() {
+
+    }
     checkObjectColon(wholeDataQueue) {
-        copiedWholeDataQueue = wholeDataQueue.map(v => v)
-        while(copiedWholeDataQueue.some(v => v === '}')) {
-            const token = copiedWholeDataQueue.unshift()
+        while(wholeDataQueue.some(v => v === '}')) {
+            const token = wholeDataQueue.unshift()
             if(token === '{') {
                 const colonArr = [];
                 while(true) {
-                    const innerToken = copiedWholeDataQueue.unshift()
+                    const innerToken = wholeDataQueue.unshift()
                     if(innerToken === ':') colonArr.push(innerToken)
                     if(innerToken === '}') break;
                 }
