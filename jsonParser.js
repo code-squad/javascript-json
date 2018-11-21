@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b: [912,[5656,33]], true]".replace(/ /gi, '')
+const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b: [912,[5656,33]]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -172,17 +172,19 @@ class ErrorCheck {
 
     checkObject(wholeDataQueue) {
         const copiedWholeDataQueue = wholeDataQueue.map(v => v)
-        while(copiedWholeDataQueue.length === 0) {
-            const token = copiedWholeDataQueue.unshift()
+        while(copiedWholeDataQueue.length !== 0) {
+            const token = copiedWholeDataQueue.shift()
             if(token === '{') {
+                
                 const colonArr = [];
                 if(copiedWholeDataQueue[0] === ':') {
                     this.printErrorMessage('object')
                     return false
                 }
                 while(true) {
-                    const innerToken = copiedWholeDataQueue.unshift()
-                    if(innerToken === ':') {
+                    const innerToken = copiedWholeDataQueue.shift()
+                    console.log(innerToken[innerToken.length-1])
+                    if(innerToken[innerToken.length-1] === ':') {
                         colonArr.push(innerToken)
                         if(copiedWholeDataQueue[0] === '}'){
                             this.printErrorMessage('object')
