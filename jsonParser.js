@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b : [912,[5656,33]]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',null,false,['11',112,'99'], {a:'123', b : [912,[5656,33]]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -174,23 +174,32 @@ class ErrorCheck {
         while(copiedWholeDataQueue.length !== 0) {
             const token = copiedWholeDataQueue.shift()
             if(token === '{') {
-                if(copiedWholeDataQueue[0] === ':') {
-                    this.printErrorMessage('object')
-                    return false
-                }//check key
-                while(true) {
-                    const innerToken = copiedWholeDataQueue.shift()
-                    if(innerToken.indexOf(':') !== -1) {
-                        if(copiedWholeDataQueue[0] === '}' || copiedWholeDataQueue[0] === ',') {
-                            this.printErrorMessage('object')
-                            return false
-                        }
-                    }
-                    if(innerToken === '}') break;
-                }//check value
-
+                if(!this.checkKeys(copiedWholeDataQueue)) return false
+                if(!this.checkValues(copiedWholeDataQueue)) return false
             }
         }
+        return true
+    }
+
+    checkKeys(wholeDataQueue) {
+        if(wholeDataQueue[0] === ':') {
+            this.printErrorMessage('object')
+            return false
+        }//check key
+        return true
+    }
+
+    checkValues(wholeDataQueue) {
+        while(true) {
+            const innerToken = wholeDataQueue.shift()
+            if(innerToken.indexOf(':') !== -1) {
+                if(wholeDataQueue[0] === '}' || wholeDataQueue[0] === ',') {
+                    this.printErrorMessage('object')
+                    return false
+                }
+            }
+            if(innerToken === '}') break;
+        }//check value
         return true
     }
     
@@ -201,7 +210,6 @@ class ErrorCheck {
             if(token === '{') {
                 const colonArr = [];
                 while(true) {
-                    debugger;
                     let innerToken = copiedWholeDataQueue.shift()
                     if(innerToken === '[') {
                         while(true) {
@@ -220,7 +228,6 @@ class ErrorCheck {
                     }
                     if(innerToken === '}') break;
                 }
-                console.log(colonArr)
                 if(colonArr.length !== 1) {
                     this.printErrorMessage('ojbect')
                     return false
