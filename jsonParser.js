@@ -149,19 +149,19 @@ class ErrorCheck {
 
     checkBrace(wholeDataQueue, brace, closeBrace) {
         const copiedWholeDataQueue = wholeDataQueue.map(v => v)
-        const braceStack = [];
+        let braceNum = 0
         while (copiedWholeDataQueue.length !== 0) {
             const token = copiedWholeDataQueue.shift()
             if (token === brace) {
-                braceStack.push(brace)
+                braceNum++
                 continue
             }
             if (token === closeBrace) {
-                braceStack.pop()
+                braceNum--
                 continue
             }
         }
-        if (braceStack.length !== 0) {
+        if (braceNum !== 0) {
             if (brace === '[') this.printErrorMessage('array')
             if (brace === '{') this.printErrorMessage('object')
             return false
