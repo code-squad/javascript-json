@@ -120,16 +120,6 @@ class Analyze {
 };
 
 class ErrorCheck {
-    constructor(sentence, wholeDataQueue) {
-        this.rightSentence = this.isRightSentence(sentence)
-    }
-
-    isRightSentence(sentence) {
-        return this.checkArray(sentence) && 
-            this.checkComma(sentence) &&  
-            this.checkObject(sentence)
-    }
-
     countLettersNum(token, letter) {
         let lettersNum = 0
         for(let position of token) {
@@ -156,21 +146,6 @@ class ErrorCheck {
         }
         return false
     }
-
-    checkArray(sentence) {
-        debugger;
-        if(this.countLettersNum(sentence,']') === this.countLettersNum(sentence, '[')) {
-            return true
-        }
-        console.log(`올바로된 배열이 아닙니다.`)
-    }
-
-    checkObject(sentence) {
-        if(this.countLettersNum(sentence,'{') === this.countLettersNum(sentence, '}')) {
-            return true    
-        }
-        console.log(`올바른 객체 형태가 아닙니다.`)
-    }
     
     checkObjectColon(wholeDataQueue) {
         copiedWholeDataQueue = wholeDataQueue.map(v => v)
@@ -187,17 +162,6 @@ class ErrorCheck {
                     console.log(`올바른 객체 형태가 아닙니다.`)
                     return false
                 }
-            }
-        }
-        return true
-    }
-    
-    checkComma(sentence) {
-        for(let i of sentence) {
-            if(i !== ',') continue;
-            if(sentence[i] === sentence[i + 1]) {
-                console.log(`,가 연달아 붙어있는 값이 있습니다.`)
-                return false
             }
         }
         return true
