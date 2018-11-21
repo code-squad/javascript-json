@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',null,false,['11',112,'99'], {a:, b [912,[5656,33]]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b : [912,[5656,33]]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -150,7 +150,6 @@ class ErrorCheck {
     checkBrace(wholeDataQueue, brace, closeBrace) {
         const copiedWholeDataQueue = wholeDataQueue.map(v => v)
         const braceStack = [];
-        debugger;
         while(copiedWholeDataQueue.length !== 0) {
             const token = copiedWholeDataQueue.shift()
             if(token === brace) {
@@ -175,21 +174,55 @@ class ErrorCheck {
         while(copiedWholeDataQueue.length !== 0) {
             const token = copiedWholeDataQueue.shift()
             if(token === '{') {
-                const colonArr = [];
                 if(copiedWholeDataQueue[0] === ':') {
                     this.printErrorMessage('object')
                     return false
-                }
+                }//check key
                 while(true) {
                     const innerToken = copiedWholeDataQueue.shift()
-                    if(innerToken.indexOf(':') !== -1 && copiedWholeDataQueue[0] === ',' || copiedWholeDataQueue[0] === '}') {
-                        this.printErrorMessage('object')
-                        return false
+                    if(innerToken.indexOf(':') !== -1) {
+                        if(copiedWholeDataQueue[0] === '}' || copiedWholeDataQueue[0] === ',') {
+                            this.printErrorMessage('object')
+                            return false
+                        }
+                    }
+                    if(innerToken === '}') break;
+                }//check value
+
+            }
+        }
+        return true
+    }
+    
+    checkObjectColon(wholeDataQueue) {
+        const copiedWholeDataQueue = wholeDataQueue.map(v => v)
+        while(copiedWholeDataQueue.length !== 0) {
+            let token = copiedWholeDataQueue.shift()
+            if(token === '{') {
+                const colonArr = [];
+                while(true) {
+                    debugger;
+                    let innerToken = copiedWholeDataQueue.shift()
+                    if(innerToken === '[') {
+                        while(true) {
+                            let letter = copiedWholeDataQueue.shift()
+                            if(letter === ']') break;
+                        }
+                        continue;
+                    }
+                    if(innerToken.indexOf(':') !== -1) colonArr.push(':')
+                    if(innerToken === ',') {
+                        if(colonArr.length === 0) {
+                            this.printErrorMessage('object')
+                            return false
+                        }
+                        colonArr.pop()
                     }
                     if(innerToken === '}') break;
                 }
-                if(colonArr.length === 0) {
-                    this.printErrorMessage('object')
+                console.log(colonArr)
+                if(colonArr.length !== 1) {
+                    this.printErrorMessage('ojbect')
                     return false
                 }
             }
@@ -219,7 +252,7 @@ const print = function printJSONData(JSONData) {
 const errorCheck = new ErrorCheck(sentence)
 const tokenize = new Tokenize(sentence)
 const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
-if(errorCheck.checkBrace(tokenizedDataArr, '[', ']') && errorCheck.checkBrace(tokenizedDataArr, '{', '}') && errorCheck.checkObject(tokenizedDataArr)) {
+if(errorCheck.checkBrace(tokenizedDataArr, '[', ']') && errorCheck.checkBrace(tokenizedDataArr, '{', '}') && errorCheck.checkObject(tokenizedDataArr) && errorCheck.checkObjectColon(tokenizedDataArr)) {
     const analyze = new Analyze(tokenizedDataArr, errorCheck)
     const jsonData = analyze.queue()
     print(jsonData)
