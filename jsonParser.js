@@ -257,13 +257,6 @@ const print = function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
 }
 
-// const tokenize = new Tokenize
-// const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
-// const errorCheck = new ErrorCheck
-// const analyze = new Analyze(tokenizedDataArr, errorCheck)
-// const jsonData = analyze.queue()
-// print(jsonData)
-
 const errorCheck = new ErrorCheck(sentence)
 const tokenize = new Tokenize(sentence)
 const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
