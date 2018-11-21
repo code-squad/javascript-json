@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b : [912,[5656,33]]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',null,false,['11',112,'99'], {a:'tr', b :[912,[5656,33]], c:true}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -242,7 +242,7 @@ class ErrorCheck {
             if (innerToken === '}') break;
         }
         if (colonArr.length !== 1) {
-            this.printErrorMessage('ojbect')
+            this.printErrorMessage('object')
             return false
         }
         return true
