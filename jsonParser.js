@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b : [912,[5656,33]]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',,null,false,['11',112,'99'], {a:'str', b : [912,[5656,33]]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -147,6 +147,18 @@ class ErrorCheck {
         return false
     }
 
+    checkComma(wholeDataQueue) {
+        const copiedWholeDataQueue = wholeDataQueue.map(v => v)
+        while(copiedWholeDataQueue.length !== 0) {
+            const letter = copiedWholeDataQueue.shift()
+            if(letter === ',') {
+                copiedWholeDataQueue[0] === ','
+                this.printErrorMessage('comma')
+                return false
+            }
+        }
+    }
+
     checkBrace(wholeDataQueue, brace, closeBrace) {
         const copiedWholeDataQueue = wholeDataQueue.map(v => v)
         let braceNum = 0
@@ -250,6 +262,7 @@ class ErrorCheck {
         if (type === 'number') console.log(`${token}은 알수없는 데이터입니다.`)
         if (type === 'object') console.log(`올바른 객체 형태가 아닙니다.`)
         if (type === 'array') console.log(`올바른 배열 형태가 아닙니다.`)
+        if (type === 'comma') console.log(`없는 값이 존재합니다.`)
     }
 };
 
@@ -260,7 +273,7 @@ const print = function printJSONData(JSONData) {
 const errorCheck = new ErrorCheck(sentence)
 const tokenize = new Tokenize(sentence)
 const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
-if (errorCheck.checkBrace(tokenizedDataArr, '[', ']') && errorCheck.checkBrace(tokenizedDataArr, '{', '}') && errorCheck.checkObject(tokenizedDataArr) && errorCheck.checkObjectColon(tokenizedDataArr)) {
+if (errorCheck.checkBrace(tokenizedDataArr, '[', ']') && errorCheck.checkBrace(tokenizedDataArr, '{', '}') && errorCheck.checkObject(tokenizedDataArr) && errorCheck.checkObjectColon(tokenizedDataArr) && errorCheck.checkComma(tokenizedDataArr)) {
     const analyze = new Analyze(tokenizedDataArr, errorCheck)
     const jsonData = analyze.queue()
     print(jsonData)
