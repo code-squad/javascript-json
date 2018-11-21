@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',null,false,['11',112,'99'], {a:'str', b: [912,[5656,33]]}, true]".replace(/ /gi, '')
+const sentence = "['1a3',null,false,['11',112,'99'], {a:, b [912,[5656,33]]}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -175,7 +175,6 @@ class ErrorCheck {
         while(copiedWholeDataQueue.length !== 0) {
             const token = copiedWholeDataQueue.shift()
             if(token === '{') {
-                
                 const colonArr = [];
                 if(copiedWholeDataQueue[0] === ':') {
                     this.printErrorMessage('object')
@@ -183,12 +182,9 @@ class ErrorCheck {
                 }
                 while(true) {
                     const innerToken = copiedWholeDataQueue.shift()
-                    console.log(innerToken[innerToken.length-1])
-                    if(innerToken[innerToken.length-1] === ':') {
-                        colonArr.push(innerToken)
-                        if(copiedWholeDataQueue[0] === '}'){
-                            this.printErrorMessage('object')
-                        }
+                    if(innerToken.indexOf(':') !== -1 && copiedWholeDataQueue[0] === ',' || copiedWholeDataQueue[0] === '}') {
+                        this.printErrorMessage('object')
+                        return false
                     }
                     if(innerToken === '}') break;
                 }
@@ -202,7 +198,7 @@ class ErrorCheck {
     }
 
     printErrorMessage(type, token) {
-        if(type === 'string') console.log(`${token}는 제대로된 문자열이 아닙니다.`)
+        if(type === 'string') console.log(`${token}는 제대로된 문자열이 아닙니다.`) 
         if(type === 'number') console.log(`${token}은 알수없는 데이터입니다.`)
         if(type === 'object') console.log(`올바른 객체 형태가 아닙니다.`)
         if(type === 'array') console.log(`올바른 배열 형태가 아닙니다.`)
