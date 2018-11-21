@@ -147,29 +147,26 @@ class ErrorCheck {
         return false
     }
     
-    checkArray(wholeDataQueue) {
+    checkBrace(wholeDataQueue, brace) {
         const copiedWholeDataQueue = wholeDataQueue.map(v => v)
-        const bracketStack = [];
+        const braceStack = [];
         while(copiedWholeDataQueue.length === 0) {
             const token = wholeDataQueue.shift()
-            if(token === '[') {
-                bracketStack.push('[') 
+            if(token === brace) {
+                bracketStack.push(brace) 
                 continue
             }
-            if(token === ']') {
+            if(token === brace) {
                 bracketStack.pop()
                 continue
             }
         }
-        if(bracketStace[0] === '[') {
+        if(bracketStace[0] === brace) {
             return false
         }
         return true
     }
 
-    checkObject() {
-
-    }
     checkObjectColon(wholeDataQueue) {
         while(wholeDataQueue.some(v => v === '}')) {
             const token = wholeDataQueue.unshift()
