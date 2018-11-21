@@ -74,7 +74,7 @@ class Analyze {
 
     getChild(queueArr, checkingValue) {
         let child = [];
-        while (checkingValue !== ']') {
+        while (queueArr.length !== 0) {
             checkingValue = queueArr.shift()
             if (checkingValue === ',') {
                 continue;
@@ -218,12 +218,11 @@ const print = function printJSONData(JSONData) {
 // print(jsonData)
 
 const errorCheck = new ErrorCheck(sentence)
-if(errorCheck.rightSentence) {
-    const tokenize = new Tokenize
-    const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+const tokenize = new Tokenize(sentence)
+const tokenizedDataArr = tokenize.getWholeDataQueue(sentence)
+if(errorCheck.checkBrace(tokenizedDataArr, '[') && errorCheck.checkBrace(tokenizedDataArr, '{') && errorCheck.checkObject(tokenizedDataArr)) {
     const analyze = new Analyze(tokenizedDataArr, errorCheck)
     const jsonData = analyze.queue()
     print(jsonData)
 }
-
 
