@@ -204,7 +204,6 @@ class ErrorCheck {
     }
 
     checkObjectColon(wholeDataQueue) {
-        debugger;
         const copiedWholeDataQueue = wholeDataQueue.map(v => v)
         while (copiedWholeDataQueue.length !== 0) {
             let token = copiedWholeDataQueue.shift()
