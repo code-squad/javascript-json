@@ -161,24 +161,36 @@ class ErrorCheck {
                 continue
             }
         }
-        if(bracketStace[0] === brace) {
+        if(braceStack[0] === brace) {
+            if(brace === '[') this.printErrorMessage('array')
+            if(brace === '{') this.printErrorMessage('object')
             return false
         }
         return true
     }
 
-    checkObjectColon(wholeDataQueue) {
-        while(wholeDataQueue.some(v => v === '}')) {
-            const token = wholeDataQueue.unshift()
+    checkObject(wholeDataQueue) {
+        const copiedWholeDataQueue = wholeDataQueue.map(v => v)
+        while(copiedWholeDataQueue.length === 0) {
+            const token = copiedWholeDataQueue.unshift()
             if(token === '{') {
                 const colonArr = [];
+                if(copiedWholeDataQueue[0] === ':') {
+                    this.printErrorMessage('object')
+                    return false
+                }
                 while(true) {
-                    const innerToken = wholeDataQueue.unshift()
-                    if(innerToken === ':') colonArr.push(innerToken)
+                    const innerToken = copiedWholeDataQueue.unshift()
+                    if(innerToken === ':') {
+                        colonArr.push(innerToken)
+                        if(copiedWholeDataQueue[0] === '}'){
+                            this.printErrorMessage('object')
+                        }
+                    }
                     if(innerToken === '}') break;
                 }
                 if(colonArr.length === 0) {
-                    console.log(`올바른 객체 형태가 아닙니다.`)
+                    this.printErrorMessage('object')
                     return false
                 }
             }
@@ -187,12 +199,10 @@ class ErrorCheck {
     }
 
     printErrorMessage(type, token) {
-        if(type === 'string') {
-            console.log(`${token}는 제대로된 문자열이 아닙니다.`)
-        }
-        if(type === 'number') {
-            console.log(`${token}은 알수없는 데이터입니다.`)
-        }
+        if(type === 'string') console.log(`${token}는 제대로된 문자열이 아닙니다.`)
+        if(type === 'number') console.log(`${token}은 알수없는 데이터입니다.`)
+        if(type === 'object') console.log(`올바른 객체 형태가 아닙니다.`)
+        if(type === 'array') console.log(`올바른 배열 형태가 아닙니다.`)
     }
 };
 
