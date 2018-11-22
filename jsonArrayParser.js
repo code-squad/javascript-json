@@ -1,4 +1,4 @@
-// arrayParser step7(테스트 코드 작성) commit 1(step6 수정 요구 사항 반영) 
+// arrayParser step7(테스트 코드 작성) commit 3
 
 const ArrayParser = class {
     constructor({ errorDetector }) {
@@ -194,7 +194,7 @@ const ArrayParser = class {
     // 알 수 없는 타입 체크
     checkIsUnknownType(token) {
         if (!(token.startsWith("\'") || token.endsWith("\'"))) {
-            console.log(`오류를 탐지하였습니다. ${token}는 알 수 없는 타입입니다.`);
+            console.log(`오류를 탐지하였습니다. ${token}(은)는 알 수 없는 타입입니다.`);
             this.extractedString = "";
             this.token = "";
             return true;
@@ -206,7 +206,7 @@ const ArrayParser = class {
         if (token.match(/'/g).length > 2 ||
             (!token.startsWith("\'") && token.endsWith("\'")) ||
             (token.startsWith("\'") && !token.endsWith("\'"))) {
-            console.log(`오류를 탐지하였습니다. ${token}는 올바른 문자열이 아닙니다.`);
+            console.log(`오류를 탐지하였습니다. ${token}(은)는 올바른 문자열이 아닙니다.`);
             this.extractedString = "";
             this.token = "";
             return true;
@@ -320,66 +320,14 @@ const ErrorDetector = class {
     // 오류 탐지 메시지 출력
     printCatchedErrorMsg(...args) {
         console.log(`오류를 탐지하였습니다. '${args[0]}'이(가) 누락된 ${args[1]} 표현이 있습니다.`);
+        return true;
     }
 
 } // end class 
 
-// 객체 주입 
+//객체 주입 
 const arrayParser = new ArrayParser({
     errorDetector: new ErrorDetector
 });
 
-// 누락된 표현 탐지
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ a  'x' , b : 'y' , c : 'z'} "), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ a  [ 1, 2, 3 ],  b : { k : 'v' , k2 : 'v2'},  k3 : 'v3' }"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ a : [ 1, 2, 3 ],  b  { k : 'v' , k2 : 'v2'},  k3 : 'v3' }"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ a : [ 1, 2, 3 ]  b : { k : 'v' , k2 : 'v2'},  k3 : 'v3' }"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ a : [ 1, 2, 3 ],  b : { k : 'v' , k2 : 'v2'}  k3 : 'v3' }"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 20 , [[[ 30 , 40, 50 ]]], 60, 70 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10, 20  [[[ 30 , 40, 50 ]]], 60, 70 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10, 20 , [[[ 30 , 40, 50 ]]] 60, 70 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ [1] , [3]  60, 70 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10, 20 , [[[ 30 , 40, 50 ]]]  [100, 200, 300], [400, 500, 600], 60, 70 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10, 20 , [[[ 30 , 40, 50 ]]], [100, 200, 300] , { key : 'value'}  [ 100, 200 ], 60, 70 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ key : 'value', key2 : [10,20,30] key3 : 'value3'}"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ key : 'value', key2 : [10,20,30, { name : 'apple' } 40], key3 : 'value3'}"), null, 2));
-
-// 비정상 괄호 탐지
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ x : { k : 'v' } , y : { K : 'v' , k : 'v'} "), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[[]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ person : { name : 'lee', age : 33 ,  addr : 'Seoul' }"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 , 20 , {  num : [100 , 200, 300   } , { num2 : 'aaa'   , 30 ]  "), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10  ,  [20 , 30] "), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[10 , [1,2,3] , 20 ,  30  "), null, 2)); // 한 칸 이상 띄어쓴 건 상관 없다. 딱 붙있는 게 문제다. 배열이든 객체든. 
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 ,  {key : ['apple'] ,  20, 30 ]"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 10 ,  {key : { fruit : 'apple' } } , 20, 30 "), null, 2));
-
-// 배열, 객체 혼합 타입
-console.log(JSON.stringify(arrayParser.operateArrayParser("{name : 'lee'  , age : 33, hobby : 'photo' }"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{info : [{ name : 'lee', age : 34, addr : 'Seoul'} , {hobby : 'photo'}, 'endArr' ], study : 'codeSquad', place : 'Gangnam-gu'}"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("['1a3',[null,false,['11',[112233], {easy : ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{x:[10,20,[30,{y : 'apple'},50]]}"), null, 4)); // 
-console.log(JSON.stringify(arrayParser.operateArrayParser("[{x:'apple' , y :'samsung'},10,[[[[[[true]]]]]],30]]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{ tree1 : { tree2 : { tree3 : { tree4 : { tree5 : { tree6 : { tree7 : { tree8 : { tree9 : { tree10 : { top : [true]}}}}}}}}}}}"), null, 2));
-console.log(JSON.stringify(arrayParser.operateArrayParser("{member1:'crong',member2:'honux',member3:'jk',member4:'pobi',a:{b:1,c:2,d:3},favorite:'milkTea',music:{genre : 'rock',artist:'lifeHouse',year:2014,country:'USA'}}"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[{a:{b:1,c:2,d:3}, favorite:'milkTea'}, {name:'lee', hobby:'photo'}]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[{x:'a', y:'b', z:'c'},{a:'x', b:'y', c:'z'}]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[{x:'a', y:12, z:44}, {y:'b'},{a:1, b:2, c:3}]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[{x:'a', y:'b', z:'c'}, {x:'a', y:'b', z:'c'}]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ { x : [1, 2, 3], y : [1,2,3], z : 'apple' }, 10  ]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ { x : 10,  y : 20 }, 10, [20, [30], 200], 100 ]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ 40, 50, 60, { name : 'lee', age : false}, 70, 80, 90, { x : [10,20,30]} ]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[{ x : { y : { z : { hobby : 'photo' } } } }, [10,20,30]]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[{ x : [10,20,{ hobby : 'photo'} ], name : 'lee' } ]"), null, 4));
-
-// 무한 중첩 배열, 다양한 type
-console.log(JSON.stringify(arrayParser.operateArrayParser("[10, 'apple' ,[ 20 , null,[ 30 , false , '32'], '23*6*1'], 11, 'helloween', 13, [22, ['33', [true] , 'iOS12.1'],23 , 'false'],14, 'theEnd' ]"), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser("[ '1a3',[ null, false,['11', [112233] , 112], 55   , 99 ], 33, true ]  "), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[1,false,\'apple\', null,5]'), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[\'1\',[2,true], [4,null]]'), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[123,[\'apple\'],33, [1,2,3,4,5]]'), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[10,[20,30, [40,50,60,70]]]'), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[10,[20,[30,[40,[50,[60,[70,[80,[90, [100]]]]]]]]]]'), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[[[[[[[[8]], 7]]],6]]]'), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[10,11, [[20,21]], [[[[[[[[[true]]]]]]]]], [[22,23]]]'), null, 4));
-console.log(JSON.stringify(arrayParser.operateArrayParser('[10,11,12,[20,21,[30,31,32],233333],11,12,13,[22,[33,[40],34], 23,24],14,15]'), null, 4));
+exports.arrayParser = arrayParser;

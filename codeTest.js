@@ -1,11 +1,11 @@
-// arrayParser step7(테스트 코드 작성) codes to test commit 2
+// arrayParser step7(테스트 코드 작성) commit 3
+const importedObj = require('./jsonArrayParser.js');
 
 // CodeTest class
 const CodeTest = class {
     constructor() {
-        this.codesToTest = require('./codesToTest.js');
+        this.arrayParser = importedObj.arrayParser
     }
-
     // test 메소드
     testCodes(testRequirement, operateTest) {
         console.log(testRequirement);
@@ -25,63 +25,77 @@ const CodeTest = class {
     }
 } // end class
 
-
 // 객체 생성
 const codeTest = new CodeTest();
 
-// sum 
-codeTest.testCodes("1 + 2 는 3을 리턴한다.", () => {
-    const a = 1; b = 2;
+// 오류 탐지 메시지 출력
+codeTest.testCodes("복수의 인자를 받아 메시지를 출력하고 true를 리턴한다.", () => {
+    const args = [":", "object"];
     codeTest.showTestResult(
-        codeTest.codesToTest.sum(a, b)
-        , 3);
-});
-
-// 숫자 데이터 식별 
-codeTest.testCodes("숫자를 인자로 넘긴 경우 true를 리턴한다.", () => {
-    const token = 35;
-    codeTest.showTestResult(
-        codeTest.codesToTest.identifyNumber(token)
+        codeTest.arrayParser.errorDetector.printCatchedErrorMsg(...args)
         , true);
-});
-
-// Boolean, null 데이터 식별
-codeTest.testCodes("true가 인자인 경우 `[true, \"Boolean\"]`을 리턴한다.", () => {
-    const token = "true";
-    codeTest.showTestResult(
-        codeTest.codesToTest.identifyBoolean(token)
-        , `[true, "Boolean"]`);
 });
 
 // 올바른 문자열 체크
-codeTest.testCodes("올바르지 않은 문자열인 경우 false를 리턴한다.", () => {
-    const token = "\'ap\'ple\'";
+codeTest.testCodes("올바른 문자열인 경우 true를 리턴한다.", () => {
+    const token = "\'apple\'";
     codeTest.showTestResult(
-        codeTest.codesToTest.checkIsCorrectString(token)
-        , false);
+        codeTest.arrayParser.checkIsCorrectString(token)
+        , true);
 });
 
 // 알 수 없는 타입 체크
-codeTest.testCodes("따옴표가 없는 문자열인 경우 오류 메시지를 리턴한다.", () => {
+codeTest.testCodes("따옴표가 없는 문자열인 경우 오류 메시지를 출력하고 true를 리턴한다.", () => {
     const token = "apple"
     codeTest.showTestResult(
-        codeTest.codesToTest.checkIsUnknownType(token)
-        , `오류를 탐지하였습니다. ${token}는 알 수 없는 타입입니다.`);
+        codeTest.arrayParser.checkIsUnknownType(token)
+        , true);
 });
-
 
 // 올바르지 않은 문자열 체크
-codeTest.testCodes("올바르지 않은 문자열인 경우 true를 리턴한다.", () => {
+codeTest.testCodes("올바르지 않은 문자열인 경우 메시지를 출력하고 true를 리턴한다.", () => {
     const token = "\'apple"
     codeTest.showTestResult(
-        codeTest.codesToTest.checkIsIncorrectString(token)
+        codeTest.arrayParser.checkIsIncorrectString(token)
         , true);
 });
 
+
 // 정상적으로 닫히지 않은 괄호 탐지
-codeTest.testCodes("정상적으로 닫하지 않은 배열인 경우 true를 리턴한다", () => {
+codeTest.testCodes("정상적으로 닫하지 않은 배열인 경우 메시지를 출력하고 true를 리턴한다", () => {
     const targetStr = "[{key : 'value'}, [10, 20, 30]"
     codeTest.showTestResult(
-        codeTest.codesToTest.checkBraceStatus(targetStr)
+        codeTest.arrayParser.errorDetector.checkBraceStatus(targetStr)
         , true);
+});
+
+codeTest.testCodes("정상적으로 닫하지 않은 배열인 경우 메시지를 출력하고 true를 리턴한다", () => {
+    const targetStr = "[{key : 'value'}], [10, 20, 30]"
+    codeTest.showTestResult(
+        codeTest.arrayParser.errorDetector.checkBraceStatus(targetStr)
+        , true);
+});
+
+// 숫자 데이터 식별 
+codeTest.testCodes("token이 숫자 데이터가 아닌 경우 false를 리턴한다.", () => {
+    const token = "apple"; ch = "]";
+    codeTest.showTestResult(
+        codeTest.arrayParser.identifyBoolean(token, ch)
+        , false);
+});
+
+// Boolean, null 데이터 식별
+codeTest.testCodes("token이 'true', 'false', 'null'이 아닌 경우 false를 리턴한다.", () => {
+    const token = "apple"; ch = "]";
+    codeTest.showTestResult(
+        codeTest.arrayParser.identifyBoolean(token, ch)
+        , false);
+});
+
+// 토큰 생성
+codeTest.testCodes("추출한 문자열이 존재하고 분석할 문자열이 빈 칸인 경우 추출한 문자열로 token을 생성하여 리턴한다.", () => {
+    const extractedString = "apple"; ch = " ";
+    codeTest.showTestResult(
+        codeTest.arrayParser.generateToken(extractedString, ch)
+        , "apple");
 });
