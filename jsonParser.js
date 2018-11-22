@@ -5,7 +5,7 @@ class JSONData {
         this.child = child
     }
 }
-const sentence = "['1a3',[null,false,['11',112,'99'], {a:'tr', b :[912,[5656,33]], c:true}, true]".replace(/ /gi, '')
+const sentence = "['1a3',null,false,['11',112,'99'], {a:'tr', b :[912,[5656,33]], c:true}, true]".replace(/ /gi, '')
 
 class Tokenize {
     constructor() {
@@ -28,13 +28,20 @@ class Tokenize {
             return str.slice(0, str.indexOf(']'))
         } else if (str.indexOf(',') === -1) {
             return str.slice(0, str.indexOf(']'))
-        } else if (str.indexOf(':') !== -1 && str.indexOf(',') > str.indexOf(':')) {
+        } else if (this.isColon(str)) {
             return str.slice(0, str.indexOf(':') + 1)
         } else if (str.indexOf('}') < str.indexOf(',') && str.indexOf('}') !== -1) {
             return str.slice(0, str.indexOf('}'))
         } else {
             return str.slice(0, str.indexOf(','))
         }
+    }
+    
+    isColon(str) {
+        let ret = true
+        if(str.indexOf(':') === -1) ret = false
+        if(str.indexOf(',') < str.indexOf(':')) ret = false
+        return ret
     }
 
     isBraceOrComma(str) {
