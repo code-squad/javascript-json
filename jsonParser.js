@@ -30,13 +30,20 @@ class Tokenize {
             return str.slice(0, str.indexOf(']'))
         } else if (this.isColon(str)) {
             return str.slice(0, str.indexOf(':') + 1)
-        } else if (str.indexOf('}') < str.indexOf(',') && str.indexOf('}') !== -1) {
+        } else if (this.isObjectEnd(str)) {
             return str.slice(0, str.indexOf('}'))
         } else {
             return str.slice(0, str.indexOf(','))
         }
     }
-    
+
+    isObjectEnd(str) {
+        let ret = true
+        if(str.indexOf('}') > str.indexOf(',')) ret = false
+        if(str.indexOf('}') === -1) ret = false
+        return ret
+    }
+
     isColon(str) {
         let ret = true
         if(str.indexOf(':') === -1) ret = false
