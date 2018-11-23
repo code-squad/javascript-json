@@ -96,4 +96,8 @@ test('주어진 데이터queue배열이 끝날때까지 체크하며 Number라�
 })
 
 //test ErrorCheck
-test()
+test('주어진 값이 문자열인지 확인해준다', function() {
+    const data = "'test'"
+    const result = errorCheck.checkString(data)
+    return expect(false).toBe(result)
+})
