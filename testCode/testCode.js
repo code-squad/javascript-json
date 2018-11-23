@@ -119,3 +119,9 @@ test('주어진 인자가 배열이면 배열이 완료되었는지 확인한다
     const result = errorCheck.checkBrace(data, '[',']')
     return expect(false).toBe(result)
 })
+
+test('주어진 인자가 객체면 객체가 완료되었는지 확인한다.', function() {
+    const data = ['{','a:','11',']']
+    const result = errorCheck.checkBrace(data, '{','}')
+    return expect(false).toBe(result)
+})
