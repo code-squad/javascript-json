@@ -101,3 +101,9 @@ test('주어진 값이 문자열인지 확인해준다', function() {
     const result = errorCheck.checkString(data)
     return expect(false).toBe(result)
 })
+
+test('주어진 값이 숫자인지 확인해준다.', function () {
+    const data = "11"
+    const result = errorCheck.checkNumber(data)
+    return expect(false).toBe(result)
+})
