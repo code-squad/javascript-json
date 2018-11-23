@@ -1,5 +1,4 @@
 const JSONData = require('./jsonData.js')
-const errorCheck = require('./errorCheck.js')
 
 class Analyze {
     constructor(queue, errorCheck) {

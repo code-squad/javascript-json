@@ -39,4 +39,9 @@ test('데이터가 boolean타입인지 확인한다', function() {
     return expect(true).toBe(result)
 })
 
+test('데이터가 문자열인지 확인한다.', function() {
+    const data = "'test1'"
+    const result = analyze.isString(data)
+    return expect(true).toBe(result)
+})
 
