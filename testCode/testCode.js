@@ -127,8 +127,13 @@ test('주어진 인자가 객체면 객체가 완료되었는지 확인한다.',
 })
 
 test('주어진 배열 내 객체값의 키가 존재하는지 확인한다.', function() {
-    //               원랫값                  오류값
     const data = [':']
     const result = errorCheck.checkKeys(data)
+    return expect(false).toBe(result)
+})
+
+test('주어진 배열 내 객체값의 value가 존재하는지 확인한다.', function() {
+    const data = ['[','{','a:','}','{',':','11','}',']']
+    const result = errorCheck.checkValues(data)
     return expect(false).toBe(result)
 })
