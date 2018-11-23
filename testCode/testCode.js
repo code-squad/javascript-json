@@ -27,6 +27,7 @@ function test(message, method) {
     console.log(`${message} : ${method()}`)
 }
 
+//test Analyze
 test('객체의 key데이터인지 확인한다.', function() {
     const data = "hellow:"
     const result = analyze.isObjectKey(data)
@@ -93,3 +94,6 @@ test('주어진 데이터queue배열이 끝날때까지 체크하며 Number라�
     const result = analyze.getChild(data)[0].type
     return expect('Number').toBe(result) 
 })
+
+//test ErrorCheck
+test()
