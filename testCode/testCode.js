@@ -107,3 +107,15 @@ test('주어진 값이 숫자인지 확인해준다.', function () {
     const result = errorCheck.checkNumber(data)
     return expect(false).toBe(result)
 })
+
+test('주어진 배열에 공백이 있는지 확인해준다.', function () {
+    const data = ['11',',',',','[','11',',','12',']']
+    const result = errorCheck.checkComma(data)
+    return expect(false).toBe(result)
+})
+
+test('주어진 인자가 배열이면 배열이 완료되었는지 확인한다.', function() {
+    const data = ['[','11','[','"st"',']','11']
+    const result = errorCheck.checkBrace(data, '[',']')
+    return expect(false).toBe(result)
+})
