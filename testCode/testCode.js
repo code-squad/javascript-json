@@ -33,4 +33,10 @@ test('객체의 key데이터인지 확인한다.', function() {
     return expect(true).toBe(result)
 })
 
+test('데이터가 boolean타입인지 확인한다', function() {
+    const data = "true"
+    const result = analyze.isBoolean(data)
+    return expect(true).toBe(result)
+})
+
 
