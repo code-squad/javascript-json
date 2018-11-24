@@ -159,6 +159,13 @@ test('주어진 배열값을 보고 객체데이터의 키값과 value값에 맞
 
 //tokenize
 test('문자열 내에 객체형태의 데이터가 끝나는 괄호가 있는지 확인합니다.', function() {
-    const data = '}'
-    const result = 
+    const data = '},'
+    const result = tokenize.isObjectEnd(data);
+    return expect(true).toBe(result)
+})
+
+test('문자열 내에 콜론이 있는지 확인합니다.', function() {
+    const data = ':,'
+    const result = tokenize.isColon(data);
+    return expect(true).toBe(result)
 })

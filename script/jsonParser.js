@@ -3,7 +3,7 @@ const ErrorCheck = require('./errorCheck.js');
 const Analyze = require('./analyze.js');
 const Tokenize = require('./tokenize.js')
 
-const sentence = "['1a3',null,false,['11',112,'99'], {a:'tr', b :[912,[5656,33]], c:true}, true]".replace(/ /gi, '')
+const sentence = "[{a:'tr', b :[912,[5656,33]], c:true},]".replace(/ /gi, '')
 
 const print = function printJSONData(JSONData) {
     console.log(JSON.stringify(JSONData, null, 2))
