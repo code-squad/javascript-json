@@ -175,3 +175,9 @@ test('문자열의 첫번째 글자가 괄호이거나 콤마인지 확인합니
     const result = tokenize.isBraceOrComma(data);
     return expect(true).toBe(result)
 })
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다.', function() {
+    const data = '[11,12,13]'
+    const result = tokenize.getToken(data)
+    return expect('[').toBe(result)
+})
