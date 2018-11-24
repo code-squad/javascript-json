@@ -176,8 +176,56 @@ test('문자열의 첫번째 글자가 괄호이거나 콤마인지 확인합니
     return expect(true).toBe(result)
 })
 
-test('문자열의 형태에 따라 토큰별로 나누어줍니다.', function() {
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. "["', function() {
     const data = '[11,12,13]'
     const result = tokenize.getToken(data)
     return expect('[').toBe(result)
+})
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. "{"', function() {
+    const data = '{a:12}'
+    const result = tokenize.getToken(data)
+    return expect('{').toBe(result)
+})
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. (뒤에 쉼표가 있어도) "]"', function() {
+    const data = '],11,[11,12,13]'
+    const result = tokenize.getToken(data)
+    return expect(']').toBe(result)
+})
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. (뒤에 쉼표가 없어도)"]"', function() {
+    const data = ']'
+    const result = tokenize.getToken(data)
+    return expect(']').toBe(result)
+})
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. "}"', function() {
+    const data = '},[11,12,13]'
+    const result = tokenize.getToken(data)
+    return expect('}').toBe(result)
+})
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. ","', function() {
+    const data = ',11,12,13]'
+    const result = tokenize.getToken(data)
+    return expect(',').toBe(result)
+})
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. "(key):"', function() {
+    const data = 'a:11},11]'
+    debugger
+    const result = tokenize.getToken(data)
+    return expect('a:').toBe(result)
+})
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. "}"', function() {
+    const data = '},'
+    const result = tokenize.getToken(data)
+    return expect('}').toBe(result)
+})
+
+test('문자열의 형태에 따라 토큰별로 나누어줍니다. (그냥 값)', function() {
+    const data = '11,22,[11,22]]'
+    const result = tokenize.getToken(data)
+    return expect('11').toBe(result)
 })
