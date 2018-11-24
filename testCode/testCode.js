@@ -102,6 +102,12 @@ test('주어진 값이 문자열인지 확인해준다', function() {
     return expect(false).toBe(result)
 })
 
+test('정해진 글자의 갯수가 몇개인지 세어준다.', function() {
+    const data = "''''"
+    const result = errorCheck.countLettersNum(data, "'")
+    return expect(4).toBe(result)
+})
+
 test('주어진 값이 숫자인지 확인해준다.', function () {
     const data = "11"
     const result = errorCheck.checkNumber(data)
@@ -144,3 +150,4 @@ test('주어진 값에 배열값이 객체라면  있다면 배열값은 모두 
     const result = data[0]
     return expect(undefined).toBe(result)
 })
+
