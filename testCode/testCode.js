@@ -137,3 +137,10 @@ test('주어진 배열 내 객체값의 value가 존재하는지 확인한다.',
     const result = errorCheck.checkValues(data)
     return expect(false).toBe(result)
 })
+
+test('주어진 값에 배열값이 객체라면  있다면 배열값은 모두 제거한다.', function() {
+    const data = ['[','11',']']
+    errorCheck.shiftArrayValue(data.shift(), data)
+    const result = data[0]
+    return expect(undefined).toBe(result)
+})
