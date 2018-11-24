@@ -151,4 +151,8 @@ test('주어진 배열내에 배열 값이 있다면 배열값은 모두 제거�
     return expect(undefined).toBe(result)
 })
 
-test('')
+test('주어진 배열값을 보고 객체데이터의 키값과 value값에 맞도록 :가 있는지 객체데이터가 끝날때까지 확인한다.', function() {
+    const data = ['a:','11',',','key:','value','}']
+    const result = errorCheck.checkColonNum(data);
+    return expect(true).toBe(result)
+})
