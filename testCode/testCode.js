@@ -229,3 +229,16 @@ test('문자열의 형태에 따라 토큰별로 나누어줍니다. (그냥 값
     const result = tokenize.getToken(data)
     return expect('11').toBe(result)
 })
+
+test('문장을 토큰화해서 배열에 집에 넣음.', function() {
+    const data = '[11,22,{a:11},33]'
+    const arrayData = tokenize.getWholeDataQueue(data)
+    const expectData = ['[','11',',','22',',','{','a:','11','}',',','33',']']
+    let result = true
+    arrayData.forEach((v, i) => {
+        if(v !== expectData[i]) {
+            result = false
+        }
+    })
+    return expect(true).toBe(result)
+})
