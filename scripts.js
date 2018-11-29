@@ -34,15 +34,19 @@ function checkEnd(acc, cur) {
 };
 function arrayParser(str) {
   let tokenArray = lexer(tokenize, str);
-  console.log('입력하신 str에 대한 분석결과는...')
-  if (tokenArray) return tokenArray.reduce(tokenReducer, tokenArray[0]);
+  if (tokenArray) {
+    stackInit();
+    return tokenArray.reduce(tokenReducer, tokenArray[0]);
+  }
   return [];
 };
+function stackInit() {
+  stack = new Stack;
+}
 function lexer(fn, str) {
   let tokenArray = fn(str);
   if (checkSyntax(tokenArray)) return false;
   let lexerResult = tokenArray.map(tokenMapper);
-  console.log(lexerResult);
   return lexerResult;
 };
 function checkSyntax(tokenArray) {
@@ -76,7 +80,7 @@ const type = {
   'null': { type: 'Null', value: `null`, child: [] },
   'true': { type: 'Boolean', value: `true`, child: [] },
   'false': { type: 'Boolean', value: `false`, child: [] },
-  'bool': ['true', 'false', 'null']
+  'bool': ['true', 'false', 'null'],
 };
 function tokenMapper(value) {
   if (value.match(/{/g)) return checkType(value, 'obj');
@@ -103,26 +107,17 @@ function returnObj(value) {
   return result;
 };
 function createObj(value) {
-  let result = {}
-  let key = ''
-  let val = ''
-  let keyCount = 0;
-  let nestedCount = 0;
-  let arrayCount = 0;
+  let [result, key, val, keyCount, arrayCount] = [{}, '', '', 0, 0];
   for (indx in value) {
     let token = value[indx]
     if (token === '{' && arrayCount === 0) continue;
     if (token === ' ') continue;
     if (token === '[') arrayCount++;
-    if (token === '}'&& arrayCount === 0|| token === ',' && arrayCount === 0) {
-      result[key] = createLiteral(val);
-      key = '';
-      val = '';
-      keyCount = 0;
+    if (token === '}' && arrayCount === 0 || token === ',' && arrayCount === 0) {
+      result[key] = inObjTokenMapper(val);
+      [key, val, keyCount] = ['', '', 0];
     }
-    if (arrayCount !== 0) {
-      val += token;
-    }
+    if (arrayCount !== 0) val += token;
     if (keyCount === 0 && token !== ':' && token !== ',') key += token;
     if (keyCount !== 0 && token !== '}' && arrayCount === 0) val += token;
     if (token === ']' && arrayCount !== 0) arrayCount--;
@@ -132,7 +127,6 @@ function createObj(value) {
 }
 function tokenize(str) {
   let result = each(str, checkToken);
-  console.log(result)
   return result;
 };
 function each(str, iter) {
@@ -162,77 +156,16 @@ function checkToken(str, result, token, i) {
   if (str[i] === ',' && str[i - 1] !== ']' && stack.objCount === 0) { result.push(token); token = ''; }
   return token;
 };
-function createLiteral(val) {
-  if (isNaN(val) && val.match(/\{|\[/g) === null && val !== 'false' && val !== 'true' && val !== 'null') return String(val);
-  if (!isNaN(val)) return Number(val);
-  if (val === 'true' || val === 'false' || val === 'null') {
-    return val === 'true' ? true : val === 'false' ? false : val === 'null' ? null : undefined;
+function inObjTokenMapper(val) {
+  if (isNaN(val) && val.match(/\{|\[/g) === null && val !== 'false' && val !== 'true' && val !== 'null') {
+    return { type: 'string', value: `${val}` }
   }
-  if (val.match(/^\[/g)) return createArr(val)
+  if (!isNaN(val)) return { type: 'number', value: `${val}` };
+  if (val === 'true' || val === 'false' || val === 'null') return type[val];
+  if (val.match(/^\[/g)) return arrayParser(val);
   if (val.match(/\{/g)) return createObj(val);
 };
-function createArr(str) {
-  let value = '';
-  let result = [];
-  let stackCount = -1;
-  let endCount = 0;
-  let stack = {};
-  for (indx in str) {
-    let token = str[indx]
-    if (token === ' ') continue;
-    if (indx === `${str.length - 1}`) {
-      if (value.length !== 0) result.push(createLiteral(value))
-      continue;
-    }
-    if (token === '[' && indx === '0') continue;
-    if (token === '[' && indx !== '0') {
-      stack[stackCount] = [];
-      stackCount++;
-      endCount++;
-      continue;
-    }
-    if (token !== '[' && token !== ',' && token !== ']' && !value.match(/\{/g)) value += token;
-    if (token === ',' && stackCount === -1 && !value.match(/\{/g)) {
-      result.push(createLiteral(value));
-      value = '';
-    }
-    if (value.match(/\{/g) && token !== '{') value += token;
-    if (token === '}' && stackCount !== -1) {
-      stack[stackCount - 1].push(createLiteral(value));
-      value = '';
-    }
-    if (stackCount !== -1 && token === ',' && !value.match(/\{/g) && value.length !== 0 || token === ']' && value.length !== 0 && !value.match(/\{/g) && endCount !== 0) {
-      stack[stackCount - 1].push(createLiteral(value));
-      value = '';
-      continue;
-    }
-    if (token === ',' && stackCount !== -1) {
-      stackCount = arrReducer(stack, stackCount, result);
-      continue;
-    }
-    if (token === ']' && stackCount !== 0) {
-      stackCount = arrReducer(stack, stackCount);
-      endCount++;
-    }
-    if (stackCount === 0 && token === ',') {
-      result.push(stack[-1]);
-    }
-  }
-  return result;
-}
-function arrReducer(stack, stackCount, result) {
-  if (stackCount === 0) {
-    result.push(stack[-1])
-    stackCount--;
-    return stackCount;
-  }
-  stack[stackCount - 2].push(stack[stackCount - 1]);
-  delete stack[stackCount - 1]
-  stackCount--;
-  return stackCount;
-}
-
-let str = '[{name : [1,{name : 123}], dsod : "asd"},[1,[2,[3],4],5],6]';
+let str = '[ {a : [1,{b : 123}], c : "str"},[1,[2,[{d : 123}],4],5], 6]';
 let stack = new Stack;
 let result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));
