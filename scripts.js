@@ -157,7 +157,7 @@ function checkToken(str, result, token, i) {
   return token;
 };
 function inObjTokenMapper(val) {
-  if (isNaN(val) && val.match(/\{|\[/g) === null && val !== 'false' && val !== 'true' && val !== 'null') {
+  if (isNaN(val) && val.match(/\{|\[/g) === null && !['null', 'false', 'ture'].includes(val)) {
     return { type: 'string', value: `${val}` }
   }
   if (!isNaN(val)) return { type: 'number', value: `${val}` };
