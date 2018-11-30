@@ -35,14 +35,14 @@ function checkEnd(acc, cur) {
 function arrayParser(str) {
   let tokenArray = lexer(tokenize, str);
   if (tokenArray) {
-    stackInit();
+    initializeStack();
     return tokenArray.reduce(tokenReducer, tokenArray[0]);
   }
   return [];
 };
-function stackInit() {
+function initializeStack() {
   stack = new Stack;
-}
+};
 function lexer(fn, str) {
   let tokenArray = fn(str);
   if (checkSyntax(tokenArray)) return false;
@@ -73,7 +73,7 @@ function checkNaN(val) {
 };
 function getBoolean(val) {
   val = val.match(/\S\w*/g)
-  return type['bool'].some(function (bool) { return bool === val[0]; });
+  return type['bool'].some(bool => bool === val[0]);
 };
 const type = {
   '[': { type: 'array', value: 'ArrayObject', child: [] },
@@ -157,15 +157,23 @@ function checkToken(str, result, token, i) {
   return token;
 };
 function inObjTokenMapper(val) {
-  if (isNaN(val) && val.match(/\{|\[/g) === null && !['null', 'false', 'ture'].includes(val)) {
-    return { type: 'string', value: `${val}` }
-  }
+  if (checkString(val)) return { type: 'string', value: `${val}` };
   if (!isNaN(val)) return { type: 'number', value: `${val}` };
-  if (val === 'true' || val === 'false' || val === 'null') return type[val];
+  if (checkBool(val)) return type[val];
   if (val.match(/^\[/g)) return arrayParser(val);
   if (val.match(/\{/g)) return createObj(val);
 };
-let str = '[ {a : [1,{b : 123}], c : "str"},[1,[2,[{d : 123}],4],5], 6]';
+function checkString(val) {
+  const bool = ['null', 'false', 'ture'];
+  if (isNaN(val) && val.match(/\{|\[/g) === null && !bool.includes(val)) return true;
+  return false;
+};
+function checkBool(val) {
+  const bool = ['true', 'flase', 'null'];
+  if (bool.includes(val)) return true;
+  return false;
+};
+let str = '[ {a : [1,{b : 123}], c : "str"},[1,[2,[{d : null}],4],5], 6]';
 let stack = new Stack;
 let result = arrayParser(str);
 console.log(JSON.stringify(result, null, 2));
