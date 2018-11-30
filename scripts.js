@@ -49,6 +49,7 @@ class _Array {
     return false;
   };
   parser(str) {
+    this.checkBracket(str);
     let tokenArray = this.lexer(this.tokenize.bind(this), str);
     if (tokenArray) {
       this.initializeStack();
@@ -56,11 +57,16 @@ class _Array {
     }
     return [];
   };
+  checkBracket(str) {
+    let wrongBracket = str.match(/\[|\]/g).length % 2
+    if (wrongBracket) throw new Error('제대로 종료되지 않은 배열이 있습니다!')
+  }
   initializeStack() {
     this.stack = new Stack;
   };
   lexer(fn, str) {
     let tokenArray = fn(str);
+    console.log(tokenArray);
     if (this.checkSyntax(tokenArray)) return false;
     let lexerResult = tokenArray.map(this.tokenMapper.bind(this));
     return lexerResult;
