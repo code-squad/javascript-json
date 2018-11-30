@@ -15,12 +15,12 @@ class Type {
       'bool': ['true', 'false', 'null'],
     }
   }
-}
+};
 class _Array {
   constructor() {
     this.stack = new Stack;
     this.type = new Type;
-  }
+  };
   tokenReducer(acc, cur) {
     let arg = [acc, cur];
     return this.checkNumOrStr(...arg) || this.checkArray(...arg) || this.checkEnd(...arg) || acc;
@@ -58,15 +58,16 @@ class _Array {
     return [];
   };
   checkBracket(str) {
-    let wrongBracket = str.match(/\[|\]/g).length % 2
-    if (wrongBracket) throw new Error('제대로 종료되지 않은 배열이 있습니다!')
+    let wrongArrBracket = str.match(/\[|\]/g).length % 2;
+    if (wrongArrBracket) throw new Error('제대로 종료되지 않은 배열이 있습니다!(대괄호의 갯수가 맞지 않아요)');
+    let wrongObjBracket = str.match(/\{|\}/g).length % 2;
+    if (wrongObjBracket) throw new Error('제대로 종료되지 않은 객체가 있습니다!(중괄호의 갯수가 맞지 않아요)');
   }
   initializeStack() {
     this.stack = new Stack;
   };
   lexer(fn, str) {
     let tokenArray = fn(str);
-    console.log(tokenArray);
     if (this.checkSyntax(tokenArray)) return false;
     let lexerResult = tokenArray.map(this.tokenMapper.bind(this));
     return lexerResult;
@@ -80,24 +81,24 @@ class _Array {
   };
   checkQuote(val) {
     if (val.match(/'|"/g) !== null && val.match(/'|"/g).length % 2 !== 0) {
-      throw new Error(`${val} 는 올바른 값이 아닙니다`)
+      throw new Error(`${val} 는 올바른 값이 아닙니다`);
     }
     return false;
   };
   checkNaN(val) {
     if (this.getBoolean(val)) return false;
     if (val.match(/'|"|\{/g) === null && val !== '[' && val !== ']' && isNaN(val * 1)) {
-      throw new Error(`${val}는 알수없는 타입 입니다.`)
+      throw new Error(`${val}는 알수없는 타입 입니다.`);
     }
     if (typeof val === 'string' && val !== ']') return false;
   };
   getBoolean(val) {
-    val = val.match(/\S\w*/g)
+    val = val.match(/\S\w*/g);
     return this.type.result['bool'].some(bool => bool === val[0]);
   };
   tokenMapper(value) {
     if (value.match(/{/g)) return this.checkType(value, 'obj');
-    let conversionValue = value.match(/[^\s]\w*('|")|[^\s]\w*/)[0]
+    let conversionValue = value.match(/[^\s]\w*('|")|[^\s]\w*/)[0];
     if (this.checkType(conversionValue)) return this.deepCopyObj(this.checkType(conversionValue));
     if (Number(conversionValue)) return { type: 'number', value: `${conversionValue}`, child: [] };
     if (typeof conversionValue === 'string' && conversionValue !== ']') {
@@ -122,11 +123,12 @@ class _Array {
   createObj(value) {
     let [result, key, val, keyCount, arrayCount] = [{}, '', '', 0, 0];
     for (let indx in value) {
-      let token = value[indx]
+      let token = value[indx];
       if (token === '{' && arrayCount === 0) continue;
       if (token === ' ') continue;
       if (token === '[') arrayCount++;
       if (token === '}' && arrayCount === 0 || token === ',' && arrayCount === 0) {
+        this.checkKeyType(key);
         result[key] = this.inObjTokenMapper(val);
         [key, val, keyCount] = ['', '', 0];
       }
@@ -138,6 +140,9 @@ class _Array {
     }
     return result;
   }
+  checkKeyType(key){
+    if(key.match(/\[|\{|\]|\}/g)) throw new Error('key 값에 허용되지 않는 값이 있습니다.');
+  };
   tokenize(str) {
     let result = this.each(str, this.checkToken.bind(this));
     return result;
@@ -179,8 +184,8 @@ class _Array {
   };
   checkInObjValue(val) {
     this.checkQuote(val);
-    this.checkNaN(val)
-  }
+    this.checkNaN(val);
+  };
   checkString(val) {
     const bool = ['null', 'false', 'ture'];
     if (isNaN(val) && val.match(/\{|\[/g) === null && !bool.includes(val)) return true;
@@ -188,11 +193,10 @@ class _Array {
   };
   checkBool(val) {
     const bool = ['true', 'flase', 'null'];
-    if (bool.includes(val)) return true;
-    return false;
+    return bool.includes(val);
   };
-}
-let str = '[ "a" ,{a : ["1a3",{b : "12as3"}], c : "str"},[1,[2,[{d : null}],4],5], 6]';
+};
+let str = '[ "a" , {a : ["1a3", {b : "2as3"}], c : "str"}, [1, [2, [{d : null}], 4], 5], 6]';
 let _array = new _Array();
 let result = _array.parser(str);
 console.log(JSON.stringify(result, null, 2));
