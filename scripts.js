@@ -16,7 +16,7 @@ class Type {
     }
   }
 };
-class _Array {
+class ArrParser {
   constructor() {
     this.stack = new Stack;
     this.type = new Type;
@@ -77,7 +77,7 @@ class _Array {
       if (this.checkQuote(v)) return true;
       if (this.checkNaN(v)) return true;
     })
-    return result ? true : false;
+    return !!result;
   };
   checkQuote(val) {
     if (val.match(/'|"/g) !== null && val.match(/'|"/g).length % 2 !== 0) {
@@ -197,6 +197,6 @@ class _Array {
   };
 };
 let str = '[ "a" , {a : ["1a3", {b : "2as3"}], c : "str"}, [1, [2, [{d : null}], 4], 5], 6]';
-let _array = new _Array();
+let _array = new ArrParser();
 let result = _array.parser(str);
 console.log(JSON.stringify(result, null, 2));
