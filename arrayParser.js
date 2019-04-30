@@ -20,12 +20,33 @@ class Tokenizer {
 }
 
 class Lexer {
+    decideType(str) {
+        if (str === '[') {
+            const obj = {
+                type: 'array',
+                child: []
+            }
+            return obj;
+        }
+        if (!isNaN(str) && str !== null) {
+            const obj = {
+                type: 'number',
+                value: str,
+                child: []
+            }
+            return obj;
+        }
+        if (str === ']') {
+            return 'end'
+        }
+    }
 }
 
 class ArrayParser {
     constructor(tokenizer, lexer) {
         this.tokenizer = tokenizer;
         this.lexer = lexer;
+        this.nodeQueue = []
     }
 
 }
