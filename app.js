@@ -25,7 +25,8 @@ const parser = {
       const word = str[i];
 
       if (word === '[') {
-        node.child.push(this.parseArray(str.slice(i + 1)));
+        const arrayNode = this.parseArray(str.slice(i + 1));
+        node.child.push(arrayNode);
         break; // 이 부분이 중첩 시 문제 발생
       }
 
@@ -54,5 +55,10 @@ const parser = {
 
 const str = '[123, 3, 4]';
 const result = parser.parse(str);
-
 console.log(JSON.stringify(result, null, 2));
+
+console.log('==========================================');
+
+const str2 = '[123, [3, 4]]';
+const result2 = parser.parse(str2);
+console.log(JSON.stringify(result2, null, 2));
