@@ -1,4 +1,5 @@
 const str = "[123, 22, 33]";
+
 class Tokenizer {
     seperateBrackets(str) {
         str = str.replace(/\[/g, '[,');
@@ -48,7 +49,28 @@ class ArrayParser {
         this.lexer = lexer;
         this.nodeQueue = []
     }
+    parseToken(str) {
+        const arr = this.tokenizer.tokenizeByChar(str, ',');
 
+        arr.forEach(el => this.nodeQueue.push(this.lexer.decideType(el)));
+
+        let parentNode = {};
+        while (!this.isQueueEmpty(this.nodeQueue)) {
+            const node = this.nodeQueue.shift();
+            if (node === 'end') break;
+            if (node.type === 'array') {
+                parentNode = node;
+            } else {
+                parentNode.child.push(node);
+            }
+        }
+        return parentNode;
+    }
+
+    isQueueEmpty(nodeQueue) {
+        if (nodeQueue.length === 0) return true;
+        return false;
+    }
 }
 
 const tokenizer = new Tokenizer();
