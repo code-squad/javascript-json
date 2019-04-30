@@ -62,7 +62,6 @@ class Parser {
     }
     const decomposedDataArr = this.unparsedData.split("");
     this.tokenizedData = parserUtils.joinLiterals(decomposedDataArr);
-    log(this.tokenizedData);
   }
 
   lexing() {
@@ -83,18 +82,42 @@ class Parser {
         return word;
       }
     });
-    log(this.lexedData);
   }
 
-  parsing() {
-    log("parser executed");
+  parsing(parsingDataObj) {
+    //구분자를 확인해서 JSON 객체 데이터 생성
+    let word = this.lexedData[0];
+    if(word === separators.endOfArray) {
+      this.lexedData.shift();
+      return;
+    } else if(word === separators.startOfArray) {
+      const newArrObj = {
+        type:"array",
+        child:[]
+      }
+      parsingDataObj.child.push(newArrObj);
+      this.lexedData.shift();
+      this.parsing(newArrObj);
+    } else if (typeof word === "object") {
+      parsingDataObj.child.push(word);
+      this.lexedData.shift();
+      this.parsing(parsingDataObj);
+    } else {
+      this.lexedData.shift();
+      this.parsing(parsingDataObj);
+    }
   }
 
   array(unparsedArray) {
     this.unparsedData = unparsedArray;
     this.tokenizing();
     this.lexing();
-    // this.parsing();
+    const resultObj = {
+      child: []
+    }
+    this.parsing(resultObj);
+    const resultText = JSON.stringify(resultObj.child[0], null, 2);
+    log(resultText);
   }
 }
 
