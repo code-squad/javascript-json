@@ -1,7 +1,8 @@
-const separators = require('./separators');
-const errorMessages = require('./errorMessages');
+const separators = require("./separators");
+const literals = require("./literals");
+const errorMessages = require("./errorMessages");
 
-const {log} = console;
+const { log } = console;
 
 const parserUtils = {
   isSeparator: function(letter) {
@@ -31,8 +32,20 @@ const parserUtils = {
       })
       .filter(letter => letter !== undefined);
     return literalsJoinedArr;
+  },
+
+  getLiteralsType(word) {
+    if (Number.isFinite(Number(word))) {
+      return literals.number;
+    } else if (word === "false" || word === "true") {
+      return literals.boolean;
+    } else if (word === "null") {
+      return literals.null;
+    } else {
+      return literals.string;
+    }
   }
-}
+};
 
 class Parser {
   constructor() {
@@ -43,7 +56,7 @@ class Parser {
   tokenizing() {
     //unparsedData를 모두 분해한 뒤, 토큰화(의미 있는 묶음으로 만듦)한다.
     //결과를 tokenizedData에 저장
-    if(this.unparsedData === undefined) {
+    if (this.unparsedData === undefined) {
       log(errorMessages.NO_PARSING_DATA);
       return;
     }
@@ -55,7 +68,22 @@ class Parser {
   lexing() {
     //tokenizedData의 요소들을 검사하여 의미를 부여한다.
     //결과를 lexedData에 저장
-    log("lexer executed");
+    if(this.tokenizedData === undefined) {
+      log(errorMessages.NO_TOKENIZED_DATA);
+      return;
+    }
+    const lexedObj = {};
+    this.lexedData = this.tokenizedData.map(word => {
+      if (!parserUtils.isSeparator(word)) {
+        lexedObj.type = parserUtils.getLiteralsType(word);
+        lexedObj.value = word;
+        lexedObj.child = []; //array인 경우 추가
+        return { ...lexedObj };
+      } else {
+        return word;
+      }
+    });
+    log(this.lexedData);
   }
 
   parsing() {
@@ -65,7 +93,7 @@ class Parser {
   array(unparsedArray) {
     this.unparsedData = unparsedArray;
     this.tokenizing();
-    // this.lexing();
+    this.lexing();
     // this.parsing();
   }
 }
