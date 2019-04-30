@@ -1,4 +1,36 @@
+const separators = require('./separators');
 const {log} = console;
+
+const parserUtils = {
+  isSeparator: function(letter) {
+    for (let separator of Object.values(separators)) {
+      if (letter === separator) return true;
+    }
+    return false;
+  },
+
+  joinLiterals: function(decomposedDataArr) {
+    let data = "";
+    const literalsJoinedArr = decomposedDataArr
+      .map((letter, idx) => {
+        if (this.isSeparator(letter)) {
+          data = "";
+          return letter;
+        } else {
+          data += letter;
+          if (
+            idx < decomposedDataArr.length - 1 &&
+            (decomposedDataArr[idx + 1] === separators.rest ||
+              decomposedDataArr[idx + 1] === separators.endOfArray)
+          ) {
+            return data.trim();
+          }
+        }
+      })
+      .filter(letter => letter !== undefined);
+    return literalsJoinedArr;
+  }
+}
 
 class Parser {
   constructor() {
@@ -9,7 +41,13 @@ class Parser {
   tokenizing() {
     //unparsedData를 모두 분해한 뒤, 토큰화(의미 있는 묶음으로 만듦)한다.
     //결과를 tokenizedData에 저장
-    log("tokenizer executed");
+    if(this.unparsedData === undefined) {
+      log("error");
+      return;
+    }
+    const decomposedDataArr = this.unparsedData.split("");
+    this.tokenizedData = parserUtils.joinLiterals(decomposedDataArr);
+    log(this.tokenizedData);
   }
 
   lexing() {
@@ -24,11 +62,9 @@ class Parser {
 
   array(unparsedArray) {
     this.unparsedData = unparsedArray;
-    log(this.tokenizedData);
-    log(this.lexedData);
     this.tokenizing();
-    this.lexing();
-    this.parsing();
+    // this.lexing();
+    // this.parsing();
   }
 }
 
