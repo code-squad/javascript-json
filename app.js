@@ -15,7 +15,34 @@ const parser = {
   },
 
   parseArray(str) {
-    //
+    let elem = '';
+
+    const node = new Node({
+      type: 'Array'
+    });
+
+    for (let i = 0; i < str.length; i++) {
+      const word = str[i];
+
+      if (word === '[') {
+        node.child.push(this.parseArray(str.slice(i + 1)));
+        break; // 이 부분이 중첩 시 문제 발생
+      }
+
+      if (word === ',') {
+        node.child.push(this.makeNode(elem, node));
+        elem = '';
+        continue;
+      }
+
+      if (word === ']') {
+        node.child.push(this.makeNode(elem, node));
+        return node;
+      }
+
+      elem += word;
+    }
+    return node;
   },
 
   parse(str) {
@@ -25,7 +52,7 @@ const parser = {
   }
 };
 
-const str = '[123, [3, 4], [22, 33]]';
+const str = '[123, 3, 4]';
 const result = parser.parse(str);
 
 console.log(JSON.stringify(result, null, 2));
