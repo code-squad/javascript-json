@@ -1,6 +1,8 @@
 const separators = require("./separators");
 const literals = require("./literals");
 const errorMessages = require("./errorMessages");
+const Stack = require("./Stack");
+const parentObjStack = new Stack();
 
 const { log } = console;
 
@@ -101,9 +103,19 @@ class Parser {
   parsing(parsingDataObj) {
     //구분자를 확인해서 JSON 객체 데이터 생성
     let word = this.lexedData[0];
+    if(word === undefined) {
+      return;
+    }
+
     if (word === separators.endOfArray) {
       this.lexedData.shift();
-      return;
+      const parentObj = parentObjStack.pop();
+      if(parentObj !== false) {
+        this.parsing(parentObj);
+      } else {
+        throw ("underflow!");
+      }
+      // this.parsing(parsingDataObj);
     } else if (word === separators.startOfArray) {
       const newArrObj = {
         type: "array",
@@ -111,6 +123,7 @@ class Parser {
       };
       parsingDataObj.child.push(newArrObj);
       this.lexedData.shift();
+      parentObjStack.push(parsingDataObj);
       this.parsing(newArrObj);
     } else if (typeof word === "object") {
       parsingDataObj.child.push(word);
