@@ -65,7 +65,7 @@ const parser = 함수(input) {
     첫번째변수명 = lexer(input);
     두번째변수명;
     세번째변수명 = 숫자배열
-    네번째변수명 = 첫번째변수명.map( letter => {
+    네번째변수명 = 첫번째변수명.forEach( letter => {
         if(letter === '[' or '{') 두번째변수명 배열선언
         if(letter === ']'or '}') return
         if(letter === 세번째배열.includes()) parseInt();

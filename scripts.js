@@ -1,5 +1,3 @@
-import { strict } from "assert";
-
 // const readline = require('readline');
 // const rl = readline.createInterface({
 //   input: process.stdin,
@@ -15,40 +13,24 @@ import { strict } from "assert";
 
 const lexer = (inputString) => {
   const splitLetters = inputString.split('');
-  const parsedLetters = [];
-  const arraySetters = ["[", "]"];
-  const seperators = [",", " "]
-  // const numberSetter = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-  // const stringSetter = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-  
+  const lexedItems = [];
+  const seperators = ["[", "]", ",", " "];
+    
   splitLetters.reduce( (acc, cur) => {
-    if(arraySetters.includes(cur)) {
-      return "";
-    }
-    if(seperators.includes(acc)) {
-      return cur;
-    } else {
-      if(seperators.includes(cur)) {
-        parsedLetters.push(acc)
-        return cur;
-      } else {
-        return acc+cur;
-      }
-    }
-  },"");
-  return parsedLetters;
+    if(!seperators.includes(acc) && seperators.includes(cur)) lexedItems.push(acc);
+    if(!seperators.includes(acc) && !seperators.includes(cur)) return acc+cur;
+    return cur
+  });
+  return lexedItems;
 }
 
 const parser = (inputString) => {
   const lexedItem = lexer(inputString);
-  const numberSetter = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
   const result = lexedItem.map( letter => {
-    for(let i = 0; i < letter.length; i++) {
-      if(!numberSetter.includes(letter)) {
-        return letter;
-      } else {
-        return Number(letter);
-      }
+    if(Number(letter) === NaN) {
+      return letter;
+    } else {
+      return Number(letter);
     }
   })
   print(result);
@@ -65,10 +47,11 @@ const print = (lexedArray) => {
 
   lexedArray.forEach( elem => {
     const typeOfLetter = typeChecker(elem);
-    result.chlid.push({'type': typeOfLetter, value: elem});
+    const typeAndValue = {'type': typeOfLetter, 'value': elem}
+    result.child.push(typeAndValue);
   })
   console.log(result);
 }
 
-console.log(lexer("[123, 123, 123, 123]"))
+parser("[123, 123, 123, 123]")
 //"[123, 123, 123, 123]"
