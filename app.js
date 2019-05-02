@@ -10,16 +10,24 @@ const tokenizer = {
 };
 
 const lexer = {
-  lex: word => {
+  makeNode(element) {
+    element = Number(element);
+    return new Node({
+      type: 'number',
+      value: element
+    });
+  },
+
+  lex(word) {
     if (word === '[') {
-      return 'node';
+      return { context: 'ArrayOpen', newNode: new Node({ type: 'Array' }) };
     }
 
     if (word === ']') {
-      return 'end';
+      return { context: 'ArrayClose', newNode: undefined };
     }
 
-    return 'element';
+    return { context: 'Element', newNode: this.makeNode(word) };
   }
 };
 
@@ -30,31 +38,20 @@ class Parser {
     this.queue = [];
   }
 
-  makeNode(element) {
-    element = Number(element);
-    return new Node({
-      type: 'number',
-      value: element
-    });
-  }
-
   arrayParse(node) {
     while (this.queue.length !== 0) {
       const word = this.queue.shift();
-      const context = this.lexer.lex(word);
+      const lexedData = this.lexer.lex(word);
 
-      if (context === 'node') {
-        const newNode = new Node({ type: 'Array' });
-        node.pushChild(this.arrayParse(newNode));
-        continue;
+      if (lexedData.context === 'ArrayClose') {
+        return node;
       }
 
-      if (context === 'element') {
-        node.pushChild(this.makeNode(word));
-        continue;
+      if (lexedData.context === 'ArrayOpen') {
+        lexedData.newNode = this.arrayParse(lexedData.newNode);
       }
 
-      return node;
+      node.pushChild(lexedData.newNode);
     }
 
     return node;
