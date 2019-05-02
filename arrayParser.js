@@ -3,6 +3,12 @@ class ArrayParser {
 		this.result = defaultResult;
 	}
 
+	lexer(str) {
+		const strToken = str.split(' ');
+
+		return strToken;
+	}
+
 	printResult() {
 		console.log(this.result);
 	}
