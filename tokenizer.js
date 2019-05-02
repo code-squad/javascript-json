@@ -11,7 +11,6 @@ class Tokenizer {
     const tokens = [];
     let lexemeBegin = 0;
     let forward = 0;
-    let readyToPush = false;
 
     while(lexemeBegin < this.text.length){
       while(forward < this.text.length){
