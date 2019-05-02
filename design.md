@@ -23,7 +23,7 @@
 
 ## 3차 design
 
-1. node input 가능 코드
+1. node input 가능 코드 (삭제)
    
 ```js
 const readline = require('readline');
@@ -33,7 +33,7 @@ const rl = readline.createInterface({
 });
 ```
 
-2. `init()` sudo
+2. `init()` sudo (삭제)
 
 ```js
 const init =  함수() {
@@ -74,6 +74,8 @@ const parser = 함수(input) {
 }
 ```
 
+5. print 함수 (추가)
+
 ```js
 const print(배열또는객체) {
     첫번째변수 = isArray() || typeof
@@ -95,5 +97,16 @@ const print(배열또는객체) {
             두번째변수.child.push({type: _첫번째변수, key: key, value: 첫번재변수[key]})
     }
     console.log(두번째변수)
+}
+```
+
+6. type 체크 함수 (추가)
+
+```js
+const typeChecker(체크할데이터) {
+    if(Array.isArray(체크할데이터) === array) return "array"
+    if(체크할데이터 === 'null') return 'object'
+    if(체크할데이터 === 'true' or 'false') return 'array'
+    return typeof 체크할데이터
 }
 ```
