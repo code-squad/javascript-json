@@ -50,6 +50,15 @@ const parserUtils = {
     return result;
   },
 
+  isCorrectType(literalStr) {
+    const literalStrLen = literalStr.length;
+    for(let i =0; i<literalStrLen; i++) {
+      if (isFinite(literalStr[i]))
+        throw(`${literalStr}${errorMessages.UNKNOWN_TYPE}`);
+    }
+    return true;
+  },
+
   isCorrentStringForm(literalStr) {
     const literalStrLen = literalStr.length;
     let cnt = 0;
@@ -69,7 +78,7 @@ const parserUtils = {
       return literals.boolean;
     } else if (word === "null") {
       return literals.null;
-    } else if(this.isCorrentStringForm(word)){
+    } else if(this.isCorrectType(word) && this.isCorrentStringForm(word)){
       return literals.string;
     }
   }
