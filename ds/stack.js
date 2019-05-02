@@ -29,8 +29,7 @@ class Stack {
     if(this.cur){
       return this.container[this.cur - 1];
     } 
-    // throw new Error('Stack is empty');
-    console.error('Stack is emptyh now');
+    throw new Error('Stack is empty now');
   }
 }
 
