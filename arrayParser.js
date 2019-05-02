@@ -15,7 +15,6 @@ class ArrayParser {
         const stack = [];
         let pointer = -1;
         arr.forEach((val) => {
-            // console.log(stack)
             if(val === '[') {
                 pointer++;
                 stack.push([]);
@@ -27,5 +26,25 @@ class ArrayParser {
             }
         });
         this.lexedData = stack[0];
+    }
+
+    parser(arr) {
+        const resultObj = {
+            type: 'array',
+            child: []
+        }
+        arr.forEach((val) => {
+            if (typeof val === 'string') {
+                const obj = {
+                    type : 'number',
+                    value : val,
+                    child : []
+                }
+                resultObj.child.push(obj);
+            } else if (Array.isArray(val)) {
+                resultObj.child.push(this.parser(val));
+            }
+        });
+        return resultObj;
     }
 }
