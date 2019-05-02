@@ -3,8 +3,6 @@ class ArrayParser {
         this.bracketStack = [];
     }
     tokenizer(inputString) {
-        // 스트링을 배열에 하나씩 넣기
-        // 공백은 제외
         const tokenArray = [];
         for (let i in inputString) {
             if (inputString[i] !== ' ' && inputString[i] !== "\n") {
@@ -15,8 +13,10 @@ class ArrayParser {
     }
 
     typeCheck(string) {
-        if (string === "true" || string === "falsde") return "boolean";
+        if (string === "true" || string === "false") return "boolean";
         if (string[0] === "'" && string[string.length - 1] === "'")return "string";
+        if (string === ",") return "separator";
+        if (string === "[" || string === "]") return "arrayOperator";
         return "number";
     }
 
@@ -26,10 +26,10 @@ class ArrayParser {
             if (value === "[" || value === "]" || value === ",") {
                 if (acc !== "") {
                     lexerArray.push({"value" : acc, "type" : this.typeCheck(acc)});
-                    lexerArray.push({"value" : value, "type" : "operator"});
+                    lexerArray.push({"value" : value, "type" : this.typeCheck(value)});
                     acc = "";
                 } else {
-                    lexerArray.push({"value" : value, "type" : "operator"});
+                    lexerArray.push({"value" : value, "type" : this.typeCheck(value)});
                 }
             } else {
                 acc += value;
@@ -40,6 +40,7 @@ class ArrayParser {
     }
 
     parser(inputArray, inputIndex = 0, resultArray) {
+        
         // [ 만나면 스택에 추가
         // 배열 생성
         // ] 만나면 배열 닫기
