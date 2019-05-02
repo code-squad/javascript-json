@@ -6,7 +6,13 @@ class ArrayParser {
     tokenizer(inputString){
         // 스트링을 배열에 하나씩 넣기
         // 공백은 제외
-        return array
+        const tokenArray = [];
+        for(let i in inputString){
+            if(inputString[i] !== ' ' && inputString[i] !== "\n"){
+                tokenArray.push(inputString[i]);
+            }
+        }
+        return tokenArray;
     }
 
     lexer(inputArray){
@@ -31,3 +37,11 @@ class ArrayParser {
         return result;
     }    
 }
+
+
+const arrParser = new ArrayParser();
+const testCode = (input) =>{
+    return arrParser.tokenizer(input);
+}
+
+console.log(testCode("[a , b , c]"));
