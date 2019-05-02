@@ -15,14 +15,10 @@ const parserUtils = {
   },
 
   isEndofLiteral: function(idx, decomposedDataArr) {
-    if (
+    return (
       decomposedDataArr[idx + 1] === separators.rest ||
       decomposedDataArr[idx + 1] === separators.endOfArray
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    )
   },
 
   getTokenizedWord: function(letter, idx, decomposedDataArr) {
