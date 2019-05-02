@@ -13,7 +13,7 @@ class ArrayParser{
   }
   arrayParse(input){
     input = input.trim()
-    if(input[0] === '[' && input[input.length-1] === ']'){
+    if(input[0] === '[' && input[input.length-1] === ']'){  // array
       let result = {type: 'array', child: []}
       let token = input.slice(1,input.length-1)
       
@@ -23,10 +23,12 @@ class ArrayParser{
       });
       return result
     }
-    if(!isNaN((input.trim())*1)){
+    
+    if(!isNaN((input.trim())*1)){                         //number value 
       let result = {type: 'number', value: input.trim()}
       return result
     }
+
     throw new Error('Invalid Token')
   }
 }
@@ -37,7 +39,7 @@ const arrayParser = new ArrayParser();
   rl.question('ArrayParser 사용자 입력 : ', (userInput) => {
     try{
       let result = arrayParser.arrayParse(userInput)
-      console.log(result)
+      console.log(JSON.stringify(result, null, 2)); 
     }catch(e){
       console.log(e.message)
     }
