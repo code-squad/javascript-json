@@ -48,3 +48,15 @@ class ArrayParser {
         return resultObj;
     }
 }
+
+const parser = new ArrayParser();
+// parser.tokenizer("[123, 22, 33]")
+// console.log(parser.tokenizedData);
+parser.tokenizer("[123, [22, 44], [11, 22, [33, 44, 55], 66], 33]");
+// console.log(parser.tokenizedData);
+// parser.tokenizer("[[123, 22, 33], [1, 2, 3]]");
+// console.log(parser.tokenizedData);
+parser.lexer(parser.tokenizedData);
+console.log(parser.lexedData);
+console.log(parser.parser(parser.lexedData));
+console.log(parser.parser(parser.lexedData).child[2].child[2]);
