@@ -10,7 +10,7 @@ class Stack {
 
   pop() {
     if(this.stack.length <= 0) {
-      return false;
+      throw("underflow");
     } else {
       return this.stack.pop();
     }

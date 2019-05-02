@@ -123,27 +123,28 @@ class Parser {
     if(word === undefined) {
       return;
     }
+
     this.lexedData.shift();
     if (word === separators.endOfArray) {
       const parentObj = parentObjStack.pop();
-      if(parentObj !== false) {
-        this.parsing(parentObj);
-      } else {
-        throw ("underflow!");
-      }
+      this.parsing(parentObj);
+
     } else if (word === separators.startOfArray) {
-      const newArrObj = {
+      const childObj = {
         type: "array",
         child: []
       };
-      parsingDataObj.child.push(newArrObj);
+      parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
-      this.parsing(newArrObj);
+      this.parsing(childObj);
+
     } else if (typeof word === "object") {
       parsingDataObj.child.push(word);
       this.parsing(parsingDataObj);
+
     } else {
       this.parsing(parsingDataObj);
+
     }
   }
 
