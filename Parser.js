@@ -106,9 +106,8 @@ class Parser {
     if(word === undefined) {
       return;
     }
-
+    this.lexedData.shift();
     if (word === separators.endOfArray) {
-      this.lexedData.shift();
       const parentObj = parentObjStack.pop();
       if(parentObj !== false) {
         this.parsing(parentObj);
@@ -122,15 +121,12 @@ class Parser {
         child: []
       };
       parsingDataObj.child.push(newArrObj);
-      this.lexedData.shift();
       parentObjStack.push(parsingDataObj);
       this.parsing(newArrObj);
     } else if (typeof word === "object") {
       parsingDataObj.child.push(word);
-      this.lexedData.shift();
       this.parsing(parsingDataObj);
     } else {
-      this.lexedData.shift();
       this.parsing(parsingDataObj);
     }
   }
