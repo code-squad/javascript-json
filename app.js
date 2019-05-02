@@ -2,7 +2,11 @@ const Node = require('./node');
 
 const tokenizer = {
   removeWhiteSpace: str => str.replace(/\s/g, ''),
-  tokenize: str => str.split(/([\[\]])|,/).filter(Boolean)
+
+  tokenize(str) {
+    strWithoutSpace = this.removeWhiteSpace(str);
+    return strWithoutSpace.split(/([\[\]])|,/).filter(Boolean);
+  }
 };
 
 const lexer = {
@@ -20,9 +24,10 @@ const lexer = {
 };
 
 class Parser {
-  constructor({ queue, lexer }) {
+  constructor({ tokenizer, lexer }) {
     this.lexer = lexer;
-    this.queue = queue;
+    this.tokenizer = tokenizer;
+    this.queue = [];
   }
 
   makeNode(element) {
@@ -55,20 +60,25 @@ class Parser {
     return node;
   }
 
-  parse() {
+  parse(str) {
+    this.queue = tokenizer.tokenize(str);
     const word = this.queue.shift();
     if (word === '[') {
       const root = new Node({ type: 'Array' });
-      this.arrayParse(root);
-      return root;
+      const parsedTree = this.arrayParse(root);
+      return parsedTree;
     }
   }
 }
 
-let str = '[123, [22, 33], 444]';
-str = tokenizer.removeWhiteSpace(str);
-const tokens = tokenizer.tokenize(str);
+const str = '[123, [22, 33], 444]';
+const str2 = '[123, 22, 33, 444]';
 
-const parser = new Parser({ queue: tokens, lexer });
-const result = parser.parse();
+const parser = new Parser({ lexer, tokenizer });
+const result = parser.parse(str);
 console.log(JSON.stringify(result, null, 2));
+
+console.log('======================================');
+
+const result2 = parser.parse(str2);
+console.log(JSON.stringify(result2, null, 2));
