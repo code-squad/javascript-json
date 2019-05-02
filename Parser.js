@@ -50,6 +50,18 @@ const parserUtils = {
     return result;
   },
 
+  isCorrentStringForm(literalStr) {
+    const literalStrLen = literalStr.length;
+    let cnt = 0;
+    for(let i =0; i<literalStrLen; i++) {
+      if(literalStr[i] === "'") cnt += 1;
+    }
+    if(cnt !== 0 && cnt % 2 == 0) return true;
+    else {
+      throw(`${literalStr}${errorMessages.INCORRECT_STRING}`);
+    }
+  },
+
   getLiteralsType(word) {
     if (Number.isFinite(Number(word))) {
       return literals.number;
@@ -57,7 +69,7 @@ const parserUtils = {
       return literals.boolean;
     } else if (word === "null") {
       return literals.null;
-    } else {
+    } else if(this.isCorrentStringForm(word)){
       return literals.string;
     }
   }
@@ -114,7 +126,6 @@ class Parser {
       } else {
         throw ("underflow!");
       }
-      // this.parsing(parsingDataObj);
     } else if (word === separators.startOfArray) {
       const newArrObj = {
         type: "array",
