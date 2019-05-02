@@ -11,7 +11,7 @@ rl.on('line', line => {
   try{
     const arrayParser = new ArrayParser(line);
     const result = arrayParser.analysis();
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(result, null, 4));
   } catch(error){
     console.error(`Error: ${error.message}`);
   }

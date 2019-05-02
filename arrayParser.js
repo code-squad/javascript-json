@@ -14,29 +14,40 @@ class ArrayParser {
   analysis(){
     const tokens = this.requestTokens();
     const stack = new Stack();
-    const result = {};
+    let result = {};
     let resultPtr = result;
+    let isPtrArray = false;
 
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
       switch (token.type) {
         case Types.ArrayStart:
-          resultPtr.type = Types.ArrayStart;
-          resultPtr.child = [];
-          resultPtr = resultPtr.child;
-          stack.push(token);
+          let beforePtr = resultPtr;
+          if(isPtrArray){
+            resultPtr.push(new Object({type: Types.ArrayStart, child: []}));
+            beforePtr = resultPtr;
+            resultPtr = resultPtr[resultPtr.length - 1].child;
+          } else {
+            resultPtr.type = Types.ArrayStart;
+            resultPtr.child = [];
+            beforePtr = resultPtr;
+            resultPtr = resultPtr.child;
+            isPtrArray = true;
+          }
+          stack.push({type: Types.ArrayStart, beforePtr});
           break;
         case Types.ArrayEnd:
           if(stack.top().type !== Types.ArrayStart){
             throw new Error('Parsing failed.');
           }
+          resultPtr = stack.top().beforePtr;
           stack.pop();
           break;
         case Types.Number:
-          if(!Array.isArray(resultPtr)){
+          if(!isPtrArray){
             throw new Error('Left brace not found.');
           }
-          resultPtr.push({type: Types.Number, value: token.value, child: []});
+          resultPtr.push({type: Types.Number, value: token.value});
           break;
         default:
           throw new Error('Unexpected Error occured');
