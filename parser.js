@@ -1,5 +1,5 @@
 
-class Arraypaser {
+class ArrayParser {
     constructor(){
         this.bracketStack = [];
     }
@@ -21,10 +21,13 @@ class Arraypaser {
         // ] 만나면 배열 닫기
         // 숫자 만나면 배열에 추가
         // 쉼표만나면 인덱스 넘기기
-    
-        return inputArray,inputIndex,resultArray
-
+        parser(inputArray,inputIndex,resultArray);
+        return resultArray
     }
 
-
+    parserExcuter(inputString){
+        const result = this.parser(this.lexer(this.tokenizer(inputString)));
+        this.bracketStack.length !== 0 ? result = false : 0;
+        return result;
+    }    
 }
