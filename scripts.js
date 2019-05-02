@@ -54,8 +54,20 @@ const parser = (inputString) => {
   print(result);
 }
 
-const print = () => {
-  
+const typeChecker = thingsToCheck => {
+  if(Array.isArray(thingsToCheck)) return "array"
+  return typeof thingsToCheck
+}
+
+const print = (lexedArray) => {
+  const typeOfContainer = typeChecker(lexedArray);
+  const result = {'type': typeOfContainer, 'child': []};
+
+  lexedArray.forEach( elem => {
+    const typeOfLetter = typeChecker(elem);
+    result.chlid.push({'type': typeOfLetter, value: elem});
+  })
+  console.log(result);
 }
 
 console.log(lexer("[123, 123, 123, 123]"))
