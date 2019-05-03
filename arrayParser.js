@@ -21,9 +21,7 @@ class ArrayParser {
     lexer(arr) {
         this.stack = [];
         this.stackPointer = -1;
-        arr.forEach((val) => {
-            if (this.checkDataType(val)) { this.makeArrData(val); }
-        });
+        arr.forEach((val) => { if (this.checkDataType(val)) { this.makeArrData(val); } });
         this.lexedData = this.stack[0];
     }
 
