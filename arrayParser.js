@@ -36,7 +36,7 @@ class ArrayParser {
         console.log(`${val}은 잘못된 문자열 입니다.`)
     }
 
-    addValueToStack(val) {
+    makeArrData(val) {
         if (val === '[') {
             this.stackPointer++;
             this.stack.push([]);
@@ -53,7 +53,7 @@ class ArrayParser {
         this.stackPointer = -1;
         arr.forEach((val) => {
             if(this.checkDataType(val)) {
-                this.addValueToStack(val);
+                this.makeArrData(val);
             }});
         this.lexedData = this.stack[0];
     }
