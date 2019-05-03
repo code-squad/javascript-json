@@ -14,77 +14,48 @@ console.log(JSON.stringify(result, null, 2));
 // }
 
 function ArrayParser(arrString) {
-    const result = {};
-    const frame = {
-        type: '',
-        value: '',
-        child: []
-    }
     function tokenizer(str) {
         str = str.replace(/\[/g, '[, ');
         str = str.replace(/\]/g, ', ]');
         return str.split(', ');
     }
-    // ['[', '123' , '12' , '[', '22', '[', '3', '5', ']', '[', '55', '66', ']', '4', '33', ']', '44', ']']
-    // if (something === '[') {
-    //     const itme = {
-    //         type: 'array',
-    //         child: []
-    //     }
-    // }
 
-    function findLittleArray(str) {
-        const endBracket = str.indexOf(']')
-        const startBracket = str.lastIndexOf('[', endBracket);
+    function findLittleArray(arr) {
+        const endBracket = arr.indexOf(']')
+        const startBracket = arr.lastIndexOf('[', endBracket);
         return [startBracket, endBracket];
     }
 
-    //{
-    //     type: 'array',
-    //     child: [{ type: 'number', value: '123', child: [] },
-    //     { type: 'number', value: '22', child: [] },
-    //     { type: 'number', value: '33', child: [] }
-    //     ]
-    // }
-    function makeNumberObject(val) {
-        return { type: 'number', value: val, child: [] };
+    function makeElementObject(element) {
+        return typeof element === 'object' ? element : { type: 'number', value: element, child: [] };
     }
 
-    function makeArrayObject(str, index) {
+    function makeArrayObject(arr, index) {
         [startBracket, endBracket] = index;
         const arrayObject = {
             type: 'array',
             child: []
         }
         for (let i = startBracket + 1; i < endBracket; i++) {
-            arrayObject.child.push(makeNumberObject(str[i]));
+            arrayObject.child.push(makeElementObject(arr[i]));
         }
         return arrayObject;
     }
 
-    function joinElements(str, arrayObject, index) {
+    function joinElements(arr, arrayObject, index) {
         [startBracket, endBracket] = index;
         const numberOfElements = endBracket - startBracket + 1;
-        str.splice(startBracket, numberOfElements, arrayObject);
-        return str;
+        arr.splice(startBracket, numberOfElements, arrayObject);
+        return arr;
     }
 
-    // const bracketsBox = {
-    //     array: "[]",
-    //     object: "{}"
-    // }
-
-    // function findBrackets(onTable) {
-    //     for (key in bracketsBox) {
-    //         if (bracketsBox[key].includes(onTable)) return key;
-    //     }
-    //     return ontable;
-    // }
-
-    const toArr = arrString.split(' ');
-    const waitingLine = [];
-    let onTable = toArr.pop();
-    waitingLine.includes();
-    // waitingLine.push(findBrackets(onTable));
+    function runArrayParser(arrString) {
+        if (arrString.length === 1) return arrString[0];
+        const arr = tokenizer(arrString);
+        const index = findLittleArray(arr);
+        const arrayObject = makeArrayObject(arr, index);
+        arr = joinElements(arr, arrayObject, index);
+        runArrayParser(arr);
+    }
 
 }
