@@ -29,4 +29,11 @@ class ArrayParser {
         }
         return arrayObject;
     }
+
+    joinElements(arr, arrayObject, index) {
+        const [startBracket, endBracket] = index;
+        const numberOfElements = endBracket - startBracket + 1;
+        arr.splice(startBracket, numberOfElements, arrayObject);
+        return arr;
+    }
 }
