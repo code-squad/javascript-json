@@ -4,11 +4,10 @@ class ArrayParser {
     tokenizer(str) {
         const splitedStr = str.split(', ')
         .reduce((acc, cur) => {
-            isNaN(Number(cur)) !== 'number' ? acc.push(...cur.match(/\[|\]|\d+/g)) : acc.push(cur)
+            acc.push(...cur.match(/\[|\]|\d+/g))
             return acc
         }, []);
-        this.tokenizedData = splitedStr
-        
+        this.tokenizedData = splitedStr;
     }
 
     lexer(arr) {
@@ -49,14 +48,14 @@ class ArrayParser {
     }
 }
 
-const parser = new ArrayParser();
-// parser.tokenizer("[123, 22, 33]")
-// console.log(parser.tokenizedData);
-parser.tokenizer("[123, [22, 44], [11, 22, [33, 44, 55], 66], 33]");
-// console.log(parser.tokenizedData);
-// parser.tokenizer("[[123, 22, 33], [1, 2, 3]]");
-// console.log(parser.tokenizedData);
-parser.lexer(parser.tokenizedData);
-console.log(parser.lexedData);
-console.log(parser.parser(parser.lexedData));
-console.log(parser.parser(parser.lexedData).child[2].child[2]);
+const arrayParser = new ArrayParser();
+// arrayParser.tokenizer("[123, 22, 33]")
+// console.log(arrayParser.tokenizedData);
+arrayParser.tokenizer("[123, [22, 44], [11, 22, [33, 44, 55], 66], 33]");
+// console.log(arrayParser.tokenizedData);
+// arrayParser.tokenizer("[[123, 22, 33], [1, 2, 3]]");
+// console.log(arrayParser.tokenizedData);
+arrayParser.lexer(arrayParser.tokenizedData);
+console.log(arrayParser.lexedData);
+console.log(arrayParser.parser(arrayParser.lexedData));
+console.log(arrayParser.parser(arrayParser.lexedData).child[2].child[2]);
