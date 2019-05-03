@@ -1,7 +1,6 @@
 class ArrayParser {
     constructor() {
         this.bracketStack = [];
-        this.inputIndex = 0;
     }
     tokenizer(inputString) {
         const tokenArray = [];
@@ -47,78 +46,31 @@ class ArrayParser {
             }
             return acc
         }, "");
-        return this.makeTree(lexerArray);
+        return lexerArray;
     }
                                         
-    makeTree(inputArray ,resultArray = []) {
+    parser(inputArray ,resultArray = []) {
         let inputData;
         while(inputArray.length > 0){
             inputData = inputArray.shift();
             if(inputData.type === "arrayStartOperator" ){
-                resultArray.push({type : "array", child : this.makeTree(inputArray, [])});
+                this.bracketStack.push("[");
+                resultArray.push({type : "array", child : this.parser(inputArray, [])});
             }else if(inputData.type === 'number'){
                 resultArray.push({type : 'number', value : inputData.value});
             }else if(inputData.type === "arrayEndOperator" ) {
+                this.bracketStack.pop();
                 return resultArray;
             }
         }
 
         return resultArray;
     }
-    
-    
-    
-        parser(inputArray, result = {}) {
-        // if(inputArray[this.inputIndex++].value === "]"){
-        //     this.bracketStack.pop();
-        //     return result;
-        // }
-        if(this.inputIndex > inputArray.length-1){
-            return;
-        }
-
-        if(inputArray[this.inputIndex].value === "["){
-            if(this.inputIndex === 0){
-                result.type = "array";
-                result.child = [];
-                this.bracketStack.push("[");
-                this.inputIndex++;
-                result.child = this.parser(inputArray, result.child);
-            }else{
-                result.push({"type" : "array", "child" : []});
-                this.bracketStack.push("[");
-                this.inputIndex++;
-                result[result.length-1].child = this.parser(inputArray, result[result.length-1].child);
-            }
-
-
-        } else if(inputArray[this.inputIndex].value === "]"){
-            this.bracketStack.pop();
-            this.inputIndex++;
-            return result = this.parser(inputArray,result);
-
-        }else if(inputArray[this.inputIndex].value === ","){
-            this.inputIndex++;
-            this.parser(inputArray,result);
-        }else{
-            result.push(inputArray[this.inputIndex++]);
-            this.parser(inputArray, result);
-        }
-
-            // return result;
-        // [ 만나면 스택에 추가
-        // 배열 생성
-        // ] 만나면 배열 닫기
-        // 숫자 만나면 배열에 추가
-        // 쉼표만나면 인덱스 넘기기
-        // parser(inputArray, inputIndex, result);
-        // return resultArray
-    }
 
     parserExcuter(inputString) {
         this.inputIndex = 0;
-        let result = this.parser(this.lexer(this.tokenizer(inputString)));
-        this.bracketStack.length !== 0 ? result = false : 0;
+        let result = this.parser(this.lexer(this.tokenizer(inputString)))[0];
+        this.bracketStack.length !== 0 ? result = "유효하지 않은 텍스트" : 0;
         return result;
     }
 }
@@ -126,17 +78,7 @@ class ArrayParser {
 
 const arrParser = new ArrayParser();
 const testCode = (input) => {
-    // return arrParser.tokenizer(input);
-    return arrParser.lexer(input);
-    // return arrParser.parserExcuter(input);
+    return arrParser.parserExcuter(input);
 }
 
-// console.log(testCode('[123,12,[3],1]'));
-console.log(testCode(['[', '1', '2', '3', ',', '1', '2', ',', '[', '3', ']', ',', '1', ']' ])[0].child);
-// console.log(testCode([ { value: '[', type: 'arrayOperator' },
-// { value: '123', type: 'number' },
-// { value: ',', type: 'separator' },
-// { value: '12', type: 'number' },
-// { value: ',', type: 'separator' },
-// { value: '1', type: 'number' },
-// { value: ']', type: 'arrayOperator' } ]));
+console.log(testCode('[123,12,[3],1]'));
