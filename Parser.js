@@ -7,6 +7,7 @@ const parentObjStack = new Stack();
 const { log } = console;
 
 const parserUtils = {
+  tokenizedWord : "",
   isSeparator(letter) {
     for (let separator of Object.values(separators)) {
       if (letter === separator) return true;
@@ -23,12 +24,12 @@ const parserUtils = {
 
   getTokenizedWord(letter, idx, decomposedDataArr) {
     if (this.isSeparator(letter)) {
-      data = "";
+      this.tokenizedWord = "";
       return letter;
     } else {
-      data += letter;
+      this.tokenizedWord += letter;
       if (this.isEndofLiteral(idx, decomposedDataArr)) {
-        return data.trim();
+        return this.tokenizedWord.trim();
       }
     }
   },
@@ -41,7 +42,7 @@ const parserUtils = {
 
   makeTokenizedData(decomposedDataArr) {
     const literalsJoinedArr = this.joinLiterals(decomposedDataArr);
-
+    console.log(`makeTokenizedData called!!`);
     const result = literalsJoinedArr.filter(letter => letter !== undefined);
     return result;
   },
