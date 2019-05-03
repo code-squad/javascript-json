@@ -4,22 +4,22 @@ class ArrayParser {
 
     tokenizer(str) {
         const splitedStr = str.split(', ')
-        .reduce((acc, cur) => {
-            acc.push(...cur.match(/\[|\]|\d+/g))
-            return acc
-        }, []);
+            .reduce((acc, cur) => {
+                acc.push(...cur.match(/\[|\]|\d+/g))
+                return acc
+            }, []);
         this.tokenizedData = splitedStr;
     }
 
     lexer(arr) {
         let pointer = -1;
         const stack = arr.reduce((acc, cur) => {
-            if(cur === '[') {
+            if (cur === '[') {
                 pointer++;
                 acc.push([]);
-            }else if (!isNaN(Number(cur))) {
+            } else if (!isNaN(Number(cur))) {
                 acc[pointer].push(cur);
-            }else if(cur === ']' && pointer !== 0) {
+            } else if (cur === ']' && pointer !== 0) {
                 pointer--;
                 acc[pointer].push(acc.pop());
             }
