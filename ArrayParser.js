@@ -15,11 +15,18 @@ class ArrayParser {
     }
 
     makeElementObject(element) {
-        return elementObject;
+        return { type: 'number', value: element, child: [] };
     }
 
     makeArrayObject(arr, index) {
         const [startBracket, endBracket] = index;
+        const arrayObject = {
+            type: 'array',
+            child: []
+        }
+        for (let i = startBracket + 1; i < endBracket; i++) {
+            arrayObject.child.push(this.makeElementObject(arr[i]));
+        }
         return arrayObject;
     }
 }
