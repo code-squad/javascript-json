@@ -1,17 +1,18 @@
-
-const utils = require('./utils.js');
+const checker = require('./typeCheckers')
 
 const tokenizer = (inputString) => {
   const splitLetters = inputString.split('');
   const tokenizedItems = [];
-    
-  splitLetters.reduce( (acc, cur) => {
-    if(!utils.sepertorChecker(acc) && !utils.sepertorChecker(cur)) return acc+cur;
-    if(!utils.sepertorChecker(acc) && utils.sepertorChecker(cur)) tokenizedItems.push(acc);
-    if(cur === ']' || cur === '[') {
-      tokenizedItems.push(cur);
+  let data = "";
+  splitLetters.forEach( letter => {
+    if(letter === ",") {
+      tokenizedItems.push(data);
+      data = "";
+    } else if(checker.sepertorChecker(letter)) {
+      data !== "" ? tokenizedItems.push(data, letter) : tokenizedItems.push(letter)
+    } else {
+      data += letter;
     }
-    return cur
   }, "");
   return tokenizedItems;
 }
@@ -20,8 +21,8 @@ const lexer = (inputString) => {
   const tokenizedItems = tokenizer(inputString);
   const lexedItems = [];
   tokenizedItems.forEach( letter => {
-    if(!utils.sepertorChecker(letter)) {
-      const typeOfLetter = utils.typeChecker(letter);
+    if(!checker.sepertorChecker(letter)) {
+      const typeOfLetter = checker.typeChecker(letter);
       if(isNaN(Number(letter))) {
         lexedItems.push([typeOfLetter, letter])
       } else {
