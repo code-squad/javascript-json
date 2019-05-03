@@ -27,6 +27,26 @@ class ArrayParser {
         }, []);
         this.lexedData = stack[0];
     }
+
+    parser(arr) {
+        const resultObj = {
+            type: 'array',
+            child: []
+        };
+        arr.forEach((val) => {
+            if (Array.isArray(val)) {
+                resultObj.child.push(this.parser(val));
+            } else {
+                const obj = {
+                    type: 'number',
+                    value: val,
+                    child: []
+                };
+                resultObj.child.push(obj);
+            }
+        });
+        return resultObj;
+    }
 }
 
 const arrayParser = new ArrayParser();
@@ -40,3 +60,5 @@ console.log(arrayParser.tokenizedData);
 
 arrayParser.lexer(arrayParser.tokenizedData);
 // console.log(arrayParser.lexedData);
+
+console.log(arrayParser.parser(arrayParser.lexedData));
