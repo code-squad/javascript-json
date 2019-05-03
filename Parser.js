@@ -63,6 +63,10 @@ const parserUtils = {
     else throw `${literalStr}${errorMessages.INCORRECT_STRING}`;
   },
 
+  isCorrectString(word) {
+    return this.isString(word) && this.isCorrectStringForm(word)
+  },
+
   getLiteralsType(word) {
     if (Number.isFinite(Number(word))) {
       return literals.number;
@@ -70,7 +74,7 @@ const parserUtils = {
       return literals.boolean;
     } else if (word === "null") {
       return literals.null;
-    } else if (this.isString(word) && this.isCorrectStringForm(word)) {
+    } else if (this.isCorrectString(word)) {
       return literals.string;
     } else {
       throw `${word}${errorMessages.UNKNOWN_TYPE}`;
