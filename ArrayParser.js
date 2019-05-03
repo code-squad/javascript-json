@@ -7,4 +7,10 @@ class ArrayParser {
         arr = arr.replace(/\]/g, ',]');
         return arr.split(',');
     }
+
+    findLittleArray(arr) {
+        const endBracket = arr.indexOf(']')
+        const startBracket = arr.lastIndexOf('[', endBracket);
+        return [startBracket, endBracket];
+    }
 }
