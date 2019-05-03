@@ -26,12 +26,12 @@ function ArrayParser(arrString) {
         return str.split(', ');
     }
     // ['[', '123' , '12' , '[', '22', '[', '3', '5', ']', '[', '55', '66', ']', '4', '33', ']', '44', ']']
-    if (something === '[') {
-        const itme = {
-            type: 'array',
-            child: []
-        }
-    }
+    // if (something === '[') {
+    //     const itme = {
+    //         type: 'array',
+    //         child: []
+    //     }
+    // }
 
     function findLittleArray(str) {
         const endBracket = str.indexOf(']')
@@ -50,8 +50,8 @@ function ArrayParser(arrString) {
         return { type: 'number', value: val, child: [] };
     }
 
-    function makeArrayObject(str, arr) {
-        [startBracket, endBracket] = arr;
+    function makeArrayObject(str, index) {
+        [startBracket, endBracket] = index;
         const arrayObject = {
             type: 'array',
             child: []
@@ -60,6 +60,13 @@ function ArrayParser(arrString) {
             arrayObject.child.push(makeNumberObject(str[i]));
         }
         return arrayObject;
+    }
+
+    function joinElements(str, arrayObject, index) {
+        [startBracket, endBracket] = index;
+        const numberOfElements = endBracket - startBracket + 1;
+        str.splice(startBracket, numberOfElements, arrayObject);
+        return str;
     }
 
     // const bracketsBox = {
