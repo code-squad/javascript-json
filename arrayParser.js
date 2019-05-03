@@ -74,5 +74,11 @@ class ArrayParser {
         if (!isNaN(val)) { return Number(val) }
         return val
     }
+
+    executeParser(data) {
+        this.tokenizer(data);
+        this.lexer(this.tokenizedData);
+        return this.parser(this.lexedData);
+    }
 }
 
