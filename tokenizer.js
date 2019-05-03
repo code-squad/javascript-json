@@ -17,10 +17,7 @@ const tokenizer = (input) => {
       }
       
       if (tc.isBraket(char)) {
-        tokens.push({
-          type: 'braket',
-          value: char,
-        });
+        tokens.push({type: 'braket', value: char,});
         index++;
         continue;
       }
