@@ -1,6 +1,7 @@
 class ArrayParser {
     constructor() {
     }
+
     tokenizer(str) {
         const splitedStr = str.split(', ')
         .reduce((acc, cur) => {
@@ -11,19 +12,19 @@ class ArrayParser {
     }
 
     lexer(arr) {
-        const stack = [];
         let pointer = -1;
-        arr.forEach((val) => {
-            if(val === '[') {
+        const stack = arr.reduce((acc, cur) => {
+            if(cur === '[') {
                 pointer++;
-                stack.push([]);
-            }else if (!isNaN(Number(val))) {
-                stack[pointer].push(val);
-            }else if(val === ']' && pointer !== 0) {
+                acc.push([]);
+            }else if (!isNaN(Number(cur))) {
+                acc[pointer].push(cur);
+            }else if(cur === ']' && pointer !== 0) {
                 pointer--;
-                stack[pointer].push(stack.pop());
+                acc[pointer].push(acc.pop());
             }
-        });
+            return acc
+        }, []);
         this.lexedData = stack[0];
     }
 
