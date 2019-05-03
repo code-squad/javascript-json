@@ -18,21 +18,22 @@ class ArrayParser {
         this.tokenizedData = tempStr.split(',').map((val) => val.trim());
     }
 
+    addValueToStack(val) {
+        if (val === '[') {
+            this.stackPointer++;
+            this.stack.push([]);
+        } else if (val === ']') {
+            this.stackPointer--;
+            if(this.stackPointer > - 1) {this.stack[this.stackPointer].push(this.stack.pop());}
+        } else {
+            this.stack[this.stackPointer].push(val);
+        }
+    }
     lexer(arr) {
-        let pointer = -1;
-        const stack = arr.reduce((acc, cur) => {
-            if(cur === '[') {
-                pointer++;
-                acc.push([]);
-            }else if (!isNaN(Number(cur))) {
-                acc[pointer].push(cur);
-            }else if(cur === ']' && pointer !== 0) {
-                pointer--;
-                acc[pointer].push(acc.pop());
-            }
-            return acc
-        }, []);
-        this.lexedData = stack[0];
+        this.stack = [];
+        this.stackPointer = -1;
+        arr.forEach((val) => {this.addValueToStack(val)});
+        this.lexedData = this.stack[0];
     }
 
     parser(arr) {
