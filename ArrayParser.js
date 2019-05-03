@@ -46,8 +46,20 @@ function ArrayParser(arrString) {
     //     { type: 'number', value: '33', child: [] }
     //     ]
     // }
-    function makeObject(val) {
+    function makeNumberObject(val) {
         return { type: 'number', value: val, child: [] };
+    }
+
+    function makeArrayObject(str, arr) {
+        [startBracket, endBracket] = arr;
+        const arrayObject = {
+            type: 'array',
+            child: []
+        }
+        for (let i = startBracket + 1; i < endBracket; i++) {
+            arrayObject.child.push(makeNumberObject(str[i]));
+        }
+        return arrayObject;
     }
 
     // const bracketsBox = {
