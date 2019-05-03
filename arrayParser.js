@@ -18,12 +18,22 @@ class ArrayParser {
         this.tokenizedData = tempStr.split(',').map((val) => val.trim());
     }
 
-    checkSyntaxError(val) {
-        if(val[0] === 't') {return 'true' === val;}
-        if(val[0] === 'f') {return 'false' === val;}
-        if(val[0] === 'n') {return 'null' === val;}
-        if(val[0] === "'") {return !val.slice(1, val.length-1).split('').some((el) => el === "'");}
-        return !isNaN(val);
+    checkDataType(val) {
+        let isString = null;
+        if(val[0] === "'") {isString = !val.slice(1, val.length-1).split('').some((el) => el === "'");}
+        
+        if(val === 'true' || val === 'false') {
+            return 'boolean'
+        }else if(val === 'null') {
+            return 'object'
+        }else if(isString) {
+            return 'string'
+        }else if(!isNaN(val)) {
+            return 'number'
+        }else if(val === '[' || val === ']') {
+            return true;
+        }
+        console.log(`${val}은 잘못된 문자열 입니다.`)
     }
 
     addValueToStack(val) {
@@ -34,15 +44,17 @@ class ArrayParser {
             this.stackPointer--;
             if(this.stackPointer > - 1) {this.stack[this.stackPointer].push(this.stack.pop());}
         } else {
-            if(this.checkSyntaxError(val)) {return this.stack[this.stackPointer].push(val)}
-            console.log(`${val}은 잘못된 문자열 입니다.`)
+            this.stack[this.stackPointer].push(val);
         }
     }
 
     lexer(arr) {
         this.stack = [];
         this.stackPointer = -1;
-        arr.forEach((val) => {this.addValueToStack(val)});
+        arr.forEach((val) => {
+            if(this.checkDataType(val)) {
+                this.addValueToStack(val);
+            }});
         this.lexedData = this.stack[0];
     }
 
