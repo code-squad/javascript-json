@@ -6,11 +6,11 @@ class ArrayParser {
         let tempStr = '';
         let index = 0
         while (index < str.length) {
-            if(str[index] === '[') {
+            if (str[index] === '[') {
                 tempStr += '[' + ',';
-            }else if(str[index] === ']') {
+            } else if (str[index] === ']') {
                 tempStr += ',' + ']';
-            }else {
+            } else {
                 tempStr += str[index];
             }
             index++;
@@ -18,22 +18,53 @@ class ArrayParser {
         this.tokenizedData = tempStr.split(',').map((val) => val.trim());
     }
 
+    lexer(arr) {
+        this.stack = [];
+        this.stackPointer = -1;
+        arr.forEach((val) => {
+            if (this.checkDataType(val)) { this.makeArrData(val); }
+        });
+        this.lexedData = this.stack[0];
+    }
+
+    parser(arr) {
+        const resultObj = {
+            type: 'array',
+            child: []
+        };
+        const obj = {
+            type: null,
+            value: null,
+            child: []
+        };
+        arr.forEach((val) => {
+            if (Array.isArray(val)) {
+                resultObj.child.push(this.parser(val));
+            } else {
+                obj.type = this.checkDataType(val);
+                obj.value = this.changeDataType(val);
+                resultObj.child.push(obj);
+            }
+        });
+        return resultObj
+    }
+
     checkDataType(val) {
         let isString = null;
-        if(val[0] === "'") {isString = !val.slice(1, val.length-1).split('').some((el) => el === "'");}
-        
-        if(val === 'true' || val === 'false') {
+        if (val[0] === "'") { isString = !val.slice(1, val.length - 1).split('').some((el) => el === "'"); }
+
+        if (val === 'true' || val === 'false') {
             return 'boolean'
-        }else if(val === 'null') {
+        } else if (val === 'null') {
             return 'object'
-        }else if(isString) {
+        } else if (isString) {
             return 'string'
-        }else if(!isNaN(val)) {
+        } else if (!isNaN(val)) {
             return 'number'
-        }else if(val === '[' || val === ']') {
+        } else if (val === '[' || val === ']') {
             return true;
         }
-        console.log(`${val}은 잘못된 문자열 입니다.`)
+        console.log(`${val}은 잘못된 문자열 입니다.`);
     }
 
     makeArrData(val) {
@@ -42,20 +73,10 @@ class ArrayParser {
             this.stack.push([]);
         } else if (val === ']') {
             this.stackPointer--;
-            if(this.stackPointer > - 1) {this.stack[this.stackPointer].push(this.stack.pop());}
+            if (this.stackPointer > - 1) { this.stack[this.stackPointer].push(this.stack.pop()); }
         } else {
             this.stack[this.stackPointer].push(val);
         }
-    }
-
-    lexer(arr) {
-        this.stack = [];
-        this.stackPointer = -1;
-        arr.forEach((val) => {
-            if(this.checkDataType(val)) {
-                this.makeArrData(val);
-            }});
-        this.lexedData = this.stack[0];
     }
 
     changeDataType(val) {
