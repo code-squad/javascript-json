@@ -34,4 +34,9 @@ const arrayParser = new ArrayParser();
 
 //testCase//
 arrayParser.tokenizer("[123, 22, 33]")
+// arrayParser.tokenizer("[123, [22, 44], [11, 22, [33, 44, 55], 66], 33]");
+// arrayParser.tokenizer("[[123, 22, 33], [1, 2, 3]]");
 console.log(arrayParser.tokenizedData);
+
+arrayParser.lexer(arrayParser.tokenizedData);
+// console.log(arrayParser.lexedData);
