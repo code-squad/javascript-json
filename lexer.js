@@ -26,10 +26,15 @@ class Lexer {
 
     isString(token) {
         if (token.startsWith("'") && token.endsWith("'")) {
-            return true;
+            const counts = this.countQuotes(token, "'");
+            if (counts) throw Error(`${token}은 올바른 문자열이 아닙니다.`);
+            return counts || true;
         }
         return false;
     }
-
+    
+    countQuotes(token, quote) {
+        return token.slice(1, token.length - 1).split(quote).length - 1;
+    }
 }
 module.exports = Lexer;
