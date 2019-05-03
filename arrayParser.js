@@ -68,10 +68,11 @@ class ArrayParser {
                 resultObj.child.push(this.parser(val));
             } else {
                 const obj = {
-                    type: 'number',
+                    type: null,
                     value: val,
                     child: []
                 };
+                obj.type = this.checkDataType(val);
                 resultObj.child.push(obj);
             }
         });
