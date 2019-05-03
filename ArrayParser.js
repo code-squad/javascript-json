@@ -44,4 +44,13 @@ class ArrayParser {
         arr = this.joinElements(arr, arrayObject, index);
         return this.runArrayParser(arr);
     }
+
+    start(str) {
+        const arr = this.tokenizer(str);
+        return this.runArrayParser(arr);
+    }
 }
+
+const arrayParser = new ArrayParser();
+// "[123, 12, [22, [3, 5], [55, 66], 4, 33], 44]"
+console.log(arrayParser.start(str));
