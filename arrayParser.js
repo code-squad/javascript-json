@@ -74,40 +74,5 @@ class ArrayParser {
         if (!isNaN(val)) { return Number(val) }
         return val
     }
-
-    parser(arr) {
-        const resultObj = {
-            type: 'array',
-            child: []
-        };
-        const obj = {
-            type: null,
-            value: null,
-            child: []
-        };
-        arr.forEach((val) => {
-            if (Array.isArray(val)) {
-                resultObj.child.push(this.parser(val));
-            } else {
-                obj.type = this.checkDataType(val);
-                obj.value = this.changeDataType(val);
-                resultObj.child.push(obj);
-            }
-        });
-        return resultObj;
-    }
 }
 
-const arrayParser = new ArrayParser();
-
-
-//testCase//
-arrayParser.tokenizer("[123, 22, 33]")
-// arrayParser.tokenizer("[123, [22, 44], [11, 22, [33, 44, 55], 66], 33]");
-// arrayParser.tokenizer("[[123, 22, 33], [1, 2, 3]]");
-console.log(arrayParser.tokenizedData);
-
-arrayParser.lexer(arrayParser.tokenizedData);
-// console.log(arrayParser.lexedData);
-
-console.log(arrayParser.parser(arrayParser.lexedData));
