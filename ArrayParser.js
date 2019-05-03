@@ -15,7 +15,7 @@ class ArrayParser {
     }
 
     makeElementObject(element) {
-        return { type: 'number', value: element, child: [] };
+        return typeof element === 'object' ? element : { type: 'number', value: element, child: [] };
     }
 
     makeArrayObject(arr, index) {
@@ -35,5 +35,13 @@ class ArrayParser {
         const numberOfElements = endBracket - startBracket + 1;
         arr.splice(startBracket, numberOfElements, arrayObject);
         return arr;
+    }
+
+    runArrayParser(arr) {
+        if (arr.length === 1) return arr[0];
+        const index = this.findLittleArray(arr);
+        const arrayObject = this.makeArrayObject(arr, index);
+        arr = this.joinElements(arr, arrayObject, index);
+        return this.runArrayParser(arr);
     }
 }
