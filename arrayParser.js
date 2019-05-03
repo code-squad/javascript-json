@@ -15,7 +15,7 @@ class ArrayParser {
             }
             index++;
         }
-        this.tokenizedData = tempStr.split(',');
+        this.tokenizedData = tempStr.split(',').map((val) => val.trim());
     }
 
     lexer(arr) {
