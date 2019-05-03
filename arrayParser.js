@@ -35,6 +35,12 @@ class ArrayParser {
 		}
 	}
 
+	arrayParser(str) {
+		const token = this.lexer(str);
+		this.parser(token);
+		this.printResult();
+	}
+
 	printResult() {
 		console.log(this.result);
 	}
