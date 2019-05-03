@@ -42,9 +42,7 @@ const parserUtils = {
 
   makeTokenizedData(decomposedDataArr) {
     const literalsJoinedArr = this.joinLiterals(decomposedDataArr);
-    console.log(`makeTokenizedData called!!`);
-    const result = literalsJoinedArr.filter(letter => letter !== undefined);
-    return result;
+    return literalsJoinedArr.filter(letter => letter !== undefined);
   },
 
   isString(literalStr) {
@@ -113,9 +111,7 @@ class Parser {
   parsing(lexedArray, parsingDataObj) {
     //구분자를 확인해서 JSON 객체 데이터 생성
     let word = lexedArray[0];
-    if (word === undefined) {
-      return;
-    }
+    if (word === undefined) return;
 
     lexedArray.shift();
     if (word === separators.endOfArray) {
