@@ -58,6 +58,14 @@ class ArrayParser {
         this.lexedData = this.stack[0];
     }
 
+    changeDataType(val) {
+        if (val === 'true') { return true }
+        if (val === 'false') { return false }
+        if (val === 'null') { return null }
+        if (!isNaN(val)) { return Number(val) }
+        return val
+    }
+
     parser(arr) {
         const resultObj = {
             type: 'array',
@@ -69,10 +77,11 @@ class ArrayParser {
             } else {
                 const obj = {
                     type: null,
-                    value: val,
+                    value: null,
                     child: []
                 };
                 obj.type = this.checkDataType(val);
+                obj.value = this.changeDataType(val);
                 resultObj.child.push(obj);
             }
         });
