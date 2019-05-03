@@ -52,12 +52,10 @@ const parserUtils = {
   },
 
   isCorrectStringForm(literalStr) {
-    const literalStrArr = [...literalStr];
     let cnt = 0;
-    cnt = literalStrArr.reduce(
-      (acc, currStr) => (acc += (currStr === "'") ? 1 : 0),
-      cnt
-    );
+    for(letter of literalStr) {
+      cnt = (letter === "'") ? cnt + 1 : cnt;
+    }
 
     if (cnt === 2) return true;
     else throw `${literalStr}${errorMessages.INCORRECT_STRING}`;
