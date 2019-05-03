@@ -3,12 +3,19 @@ class ArrayParser {
     }
 
     tokenizer(str) {
-        const splitedStr = str.split(', ')
-        .reduce((acc, cur) => {
-            acc.push(...cur.match(/\[|\]|\d+/g))
-            return acc
-        }, []);
-        this.tokenizedData = splitedStr;
+        let tempStr = '';
+        let index = 0
+        while (index < str.length) {
+            if(str[index] === '[') {
+                tempStr += '[' + ',';
+            }else if(str[index] === ']') {
+                tempStr += ',' + ']';
+            }else {
+                tempStr += str[index];
+            }
+            index++;
+        }
+        this.tokenizedData = tempStr.split(',');
     }
 
     lexer(arr) {
