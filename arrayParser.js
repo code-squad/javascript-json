@@ -82,3 +82,5 @@ class ArrayParser {
     }
 }
 
+const arrayParser = new ArrayParser();
+console.log(arrayParser.executeParser("['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"));
