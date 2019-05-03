@@ -18,7 +18,7 @@ const parserUtils = {
     return (
       decomposedDataArr[idx + 1] === separators.rest ||
       decomposedDataArr[idx + 1] === separators.endOfArray
-    )
+    );
   },
 
   getTokenizedWord: function(letter, idx, decomposedDataArr) {
@@ -48,21 +48,20 @@ const parserUtils = {
 
   isString(literalStr) {
     const literalStrLen = literalStr.length;
-    if(literalStr[0] === "'" &&
-      literalStr[literalStrLen-1] === "'") return true;
+    if (literalStr[0] === "'" && literalStr[literalStrLen - 1] === "'")
+      return true;
   },
 
   isCorrectStringForm(literalStr) {
-    const literalStrLen = literalStr.length;
+    const literalStrArr = [...literalStr];
     let cnt = 0;
-    for(let i =0; i<literalStrLen; i++) {
-      if(literalStr[i] === "'") cnt += 1;
-    }
+    cnt = literalStrArr.reduce(
+      (acc, currStr) => (acc += (currStr === "'") ? 1 : 0),
+      cnt
+    );
 
-    if(cnt === 2) return true;
-    else {
-      throw(`${literalStr}${errorMessages.INCORRECT_STRING}`);
-    }
+    if (cnt === 2) return true;
+    else throw `${literalStr}${errorMessages.INCORRECT_STRING}`;
   },
 
   getLiteralsType(word) {
@@ -72,10 +71,10 @@ const parserUtils = {
       return literals.boolean;
     } else if (word === "null") {
       return literals.null;
-    } else if(this.isString(word) && this.isCorrectStringForm(word)){
+    } else if (this.isString(word) && this.isCorrectStringForm(word)) {
       return literals.string;
     } else {
-      throw(`${word}${errorMessages.UNKNOWN_TYPE}`);
+      throw `${word}${errorMessages.UNKNOWN_TYPE}`;
     }
   }
 };
@@ -120,7 +119,7 @@ class Parser {
   parsing(parsingDataObj) {
     //구분자를 확인해서 JSON 객체 데이터 생성
     let word = this.lexedData[0];
-    if(word === undefined) {
+    if (word === undefined) {
       return;
     }
 
@@ -128,7 +127,6 @@ class Parser {
     if (word === separators.endOfArray) {
       const parentObj = parentObjStack.pop();
       this.parsing(parentObj);
-
     } else if (word === separators.startOfArray) {
       const childObj = {
         type: "array",
@@ -137,14 +135,11 @@ class Parser {
       parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
       this.parsing(childObj);
-
     } else if (typeof word === "object") {
       parsingDataObj.child.push(word);
       this.parsing(parsingDataObj);
-
     } else {
       this.parsing(parsingDataObj);
-
     }
   }
 
