@@ -33,7 +33,22 @@ function ArrayParser(arrString) {
         }
     }
 
+    function findLittleArray(str) {
+        const endBracket = str.indexOf(']')
+        const startBracket = str.lastIndexOf('[', endBracket);
+        return [startBracket, endBracket];
+    }
 
+    //{
+    //     type: 'array',
+    //     child: [{ type: 'number', value: '123', child: [] },
+    //     { type: 'number', value: '22', child: [] },
+    //     { type: 'number', value: '33', child: [] }
+    //     ]
+    // }
+    function makeObject(val) {
+        return { type: 'number', value: val, child: [] };
+    }
 
     // const bracketsBox = {
     //     array: "[]",
@@ -51,6 +66,6 @@ function ArrayParser(arrString) {
     const waitingLine = [];
     let onTable = toArr.pop();
     waitingLine.includes();
-    waitingLine.push(findBrackets(onTable));
+    // waitingLine.push(findBrackets(onTable));
 
 }
