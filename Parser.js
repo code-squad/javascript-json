@@ -7,21 +7,21 @@ const parentObjStack = new Stack();
 const { log } = console;
 
 const parserUtils = {
-  isSeparator: function(letter) {
+  isSeparator(letter) {
     for (let separator of Object.values(separators)) {
       if (letter === separator) return true;
     }
     return false;
   },
 
-  isEndofLiteral: function(idx, decomposedDataArr) {
+  isEndofLiteral(idx, decomposedDataArr) {
     return (
       decomposedDataArr[idx + 1] === separators.rest ||
       decomposedDataArr[idx + 1] === separators.endOfArray
     );
   },
 
-  getTokenizedWord: function(letter, idx, decomposedDataArr) {
+  getTokenizedWord(letter, idx, decomposedDataArr) {
     if (this.isSeparator(letter)) {
       data = "";
       return letter;
@@ -33,13 +33,13 @@ const parserUtils = {
     }
   },
 
-  joinLiterals: function(decomposedDataArr) {
+  joinLiterals(decomposedDataArr) {
     return decomposedDataArr.map((letter, idx, arr) =>
       this.getTokenizedWord(letter, idx, arr)
     );
   },
 
-  makeTokenizedData: function(decomposedDataArr) {
+  makeTokenizedData(decomposedDataArr) {
     const literalsJoinedArr = this.joinLiterals(decomposedDataArr);
 
     const result = literalsJoinedArr.filter(letter => letter !== undefined);
