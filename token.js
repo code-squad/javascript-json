@@ -6,6 +6,4 @@ class Token {
   }
 }
 
-Token.prototype.tokenArr = []; // prototype data properties
-
 module.exports = Token;

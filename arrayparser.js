@@ -1,6 +1,10 @@
 const Token = require("./token.js");
 
 class ArrayParser {
+  constructor() {
+    this.tokenArr = [];
+  }
+
   removeWhiteSpace(inputStr) {
     inputStr = inputStr.replace(/\s/g, "");
     return inputStr;
@@ -24,18 +28,16 @@ class ArrayParser {
 
   lexer(token) {
     if (token === "[") {
-      Token.prototype.tokenArr.push(new Token("array", "", []));
+      this.tokenArr.push(new Token("array", "", []));
     } else {
-      Token.prototype.tokenArr.push(new Token("number", token, []));
+      this.tokenArr.push(new Token("number", token, []));
     }
   }
 
   parse() {
-    const parentToken = Token.prototype.tokenArr.find(
-      token => token._type === "array"
-    );
+    const parentToken = this.tokenArr.find(token => token._type === "array");
 
-    Token.prototype.tokenArr.forEach(token => {
+    this.tokenArr.forEach(token => {
       if (token._type === "number") {
         parentToken._child.push(token);
       }
