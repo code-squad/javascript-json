@@ -38,13 +38,10 @@ class ArrayParser {
             child: []
         };
         arr.forEach((val) => {
-            if (Array.isArray(val)) {
-                resultObj.child.push(this.parser(val));
-            } else {
-                obj.type = this.checkDataType(val);
-                obj.value = this.changeDataType(val);
-                resultObj.child.push(obj);
-            }
+            if (Array.isArray(val)) { return resultObj.child.push(this.parser(val)); }
+            obj.type = this.checkDataType(val);
+            obj.value = this.changeDataType(val);
+            resultObj.child.push(obj);
         });
         return resultObj
     }
