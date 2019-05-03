@@ -8,7 +8,7 @@ class ArrayParser {
 
   tokenizer(inputStr) {
     const splitedStr = inputStr.split(",");
-    console.log(splitedStr);
+
     splitedStr.forEach(element => {
       for (let char of element) {
         if (char === "[") {
@@ -29,9 +29,24 @@ class ArrayParser {
       Token.prototype.tokenArr.push(new Token("number", token, []));
     }
   }
+
+  parse() {
+    const parentToken = Token.prototype.tokenArr.find(
+      token => token._type === "array"
+    );
+
+    Token.prototype.tokenArr.forEach(token => {
+      if (token._type === "number") {
+        parentToken._child.push(token);
+      }
+    });
+    return parentToken;
+  }
 }
 
-const parser = new ArrayParser();
-const tergetStr = parser.removeWhiteSpace("[123, 22, 33]");
-parser.tokenizer(tergetStr);
-console.log(Token.prototype.tokenArr);
+const arrayParser = new ArrayParser();
+const tergetStr = arrayParser.removeWhiteSpace("[123, 22, 33]");
+
+arrayParser.tokenizer(tergetStr);
+const afterParsingData = arrayParser.parse();
+console.log(afterParsingData);

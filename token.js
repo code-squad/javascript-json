@@ -6,7 +6,6 @@ class Token {
   }
 }
 
-Token.stackCnt = 0; // Static class-side properties
 Token.prototype.tokenArr = []; // prototype data properties
 
 module.exports = Token;
