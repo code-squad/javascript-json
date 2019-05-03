@@ -3,19 +3,19 @@ class ArrayParser {
     }
 
     tokenizer(str) {
-        let tempStr = '';
+        let changedStr = '';
         let index = 0
         while (index < str.length) {
             if (str[index] === '[') {
-                tempStr += '[' + ',';
+                changedStr += '[' + ',';
             } else if (str[index] === ']') {
-                tempStr += ',' + ']';
+                changedStr += ',' + ']';
             } else {
-                tempStr += str[index];
+                changedStr += str[index];
             }
             index++;
         }
-        this.tokenizedData = tempStr.split(',').map((val) => val.trim());
+        this.tokenizedData = changedStr.split(',').map((val) => val.trim());
     }
 
     lexer(arr) {
