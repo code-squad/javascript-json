@@ -13,4 +13,13 @@ class ArrayParser {
         const startBracket = arr.lastIndexOf('[', endBracket);
         return [startBracket, endBracket];
     }
+
+    makeElementObject(element) {
+        return elementObject;
+    }
+
+    makeArrayObject(arr, index) {
+        const [startBracket, endBracket] = index;
+        return arrayObject;
+    }
 }
