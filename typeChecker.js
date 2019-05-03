@@ -41,4 +41,4 @@ const typeChecker = {
         return value === 'true' || value === "false";
     },   
 }
-exports.module = typeChecker;
+module.exports = typeChecker;

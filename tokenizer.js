@@ -1,49 +1,45 @@
-function tokenizer(input) {
+const tc = require('./typeChecker')
+
+const _deleteFirstLastBraket = (arrayTypeString) => {
+    return arrayTypeString.substring(1, arrayTypeString.length -1)
+}
+
+const tokenizer = (input) => {
+    input = _deleteFirstLastBraket(input);
     let index = 0;
     const tokens = [];
     while (index < input.length) {
       let char = input[index];
-      const WHITESPACE = /\s/;
-      const NUMBERS = /[0-9]/;
-      const LETTERS = /[a-z]/i;
 
-      if (WHITESPACE.test(char) || char === ",") {
+      if (tc.isWhiteSpace(char) || tc.isComma(char)) {
         index++;
         continue;
       }
       
-      if (char === '[') {
+      if (tc.isBraket(char)) {
         tokens.push({
           type: 'braket',
-          value: '[',
+          value: char,
         });
         index++;
         continue;
       }
 
-      if (char === ']') {
-        tokens.push({
-          type: 'braket',
-          value: ']',
-        });
-        index++;
-        continue;
-      }
-
-      if (NUMBERS.test(char)) {
+      if (tc.isNumber(char)) {
         let value = '';
-        while (NUMBERS.test(char)) {
+        while (tc.isNumber(char)) {
           value += char;
           char = input[++index];
         }
         tokens.push({ type: 'number', value });
         continue;
       }
-  
-      if (char === '"') {
+
+      //TODO STPE 6-2  
+      if (tc.isQuote(char)) {
         let value = '';
         char = input[++index];
-        while (char !== '"') {
+        while (!tc.isQuote(char)) {
           value += char;
           char = input[++index];
         }
@@ -51,10 +47,10 @@ function tokenizer(input) {
         tokens.push({ type: 'string', value });
         continue;
       }
-  
-      if (LETTERS.test(char)) {
+      //TODO STPE 6-2    
+      if (tc.isString(char)) {
         let value = '';
-        while (LETTERS.test(char)) {
+        while (tc.isString(char)) {
           value += char;
           char = input[++index];
         }
@@ -67,3 +63,4 @@ function tokenizer(input) {
   
     return tokens;
   }
+  module.exports = tokenizer;
