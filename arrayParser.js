@@ -18,6 +18,14 @@ class ArrayParser {
         this.tokenizedData = tempStr.split(',').map((val) => val.trim());
     }
 
+    checkSyntaxError(val) {
+        if(val[0] === 't') {return 'true' === val;}
+        if(val[0] === 'f') {return 'false' === val;}
+        if(val[0] === 'n') {return 'null' === val;}
+        if(val[0] === "'") {return !val.slice(1, val.length-1).split('').some((el) => el === "'");}
+        return !isNaN(val);
+    }
+
     addValueToStack(val) {
         if (val === '[') {
             this.stackPointer++;
@@ -26,9 +34,11 @@ class ArrayParser {
             this.stackPointer--;
             if(this.stackPointer > - 1) {this.stack[this.stackPointer].push(this.stack.pop());}
         } else {
-            this.stack[this.stackPointer].push(val);
+            if(this.checkSyntaxError(val)) {return this.stack[this.stackPointer].push(val)}
+            console.log(`${val}은 잘못된 문자열 입니다.`)
         }
     }
+
     lexer(arr) {
         this.stack = [];
         this.stackPointer = -1;
