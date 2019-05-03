@@ -1,4 +1,4 @@
-const str = "[123, 12, [22, [55, 66], 4, 33], 44]";
+const str = "[123, 12, [22, [3, 5], [55, 66], 4, 33], 44]";
 const result = ArrayParser(str);
 console.log(JSON.stringify(result, null, 2));
 
@@ -25,14 +25,15 @@ function ArrayParser(arrString) {
         str = str.replace(/\]/g, ', ]');
         return str.split(', ');
     }
-
+    // ['[', '123' , '12' , '[', '22', '[', '3', '5', ']', '[', '55', '66', ']', '4', '33', ']', '44', ']']
     if (something === '[') {
         const itme = {
             type: 'array',
             child: []
         }
-
     }
+
+
 
     // const bracketsBox = {
     //     array: "[]",
