@@ -13,19 +13,24 @@ class ArrayParser {
 
     tokenizing() {
         //문자열 분리 (좀 더 엄격한 파싱 방법 생각해보기)
-        let token = this.rawData.match(/\w+/g);
-        
-        return token;
+        let input = this.rawData;
+        let length = input.length - 1;
+        let firstWord = input[0]
+        let token;
+
+        if(firstWord === ('[' || '{')) {
+            token = input.slice(1, length).split(',');
+        }
+
+        return [firstWord ,token];
     }
 
-    lexing(token) {
+    lexing(tokenData) {
+        let [type, token] = tokenData;
+
         // 데이터의 타입 체크
-        let wrapType;
-        if(Array.isArray(token)) {
-            wrapType = 'Array';
-        } else {
-            wrapType = 'Object';
-        }
+        let wrapType = "";
+        (type === '[') ? wrapType = 'Array' : wrapType = 'Object';
 
         let lexedData = [];
         token.forEach(function(v) {
