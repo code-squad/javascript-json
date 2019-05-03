@@ -81,24 +81,24 @@ const parserUtils = {
 };
 
 class Parser {
-  tokenizing(unparsedData) {
+  tokenizing(unparsedJson) {
     //unparsedData를 모두 분해한 뒤, 토큰화(의미 있는 묶음으로 만듦)한다.
-    if (unparsedData === undefined) {
+    if (unparsedJson === undefined) {
       log(errorMessages.NO_PARSING_DATA);
       return;
     }
-    const decomposedDataArr = unparsedData.split("");
+    const decomposedDataArr = unparsedJson.split("");
     return parserUtils.makeTokenizedData(decomposedDataArr);
   }
 
-  lexing(tokenizedArray) {
+  lexing(tokenizedJson) {
     //tokenizedData의 요소들을 검사하여 의미를 부여한다.
-    if (tokenizedArray === undefined) {
+    if (tokenizedJson === undefined) {
       log(errorMessages.NO_TOKENIZED_DATA);
       return;
     }
     const lexedObj = {};
-    return tokenizedArray.map(word => {
+    return tokenizedJson.map(word => {
       if (!parserUtils.isSeparator(word)) {
         lexedObj.type = parserUtils.getLiteralsType(word);
         lexedObj.value = word;
@@ -110,15 +110,15 @@ class Parser {
     });
   }
 
-  parsing(lexedArray, parsingDataObj) {
+  parsing(lexedJson, parsingDataObj) {
     //구분자를 확인해서 JSON 객체 데이터 생성
-    let word = lexedArray[0];
+    let word = lexedJson[0];
     if (word === undefined) return;
 
-    lexedArray.shift();
+    lexedJson.shift();
     if (word === separators.endOfArray) {
       const parentObj = parentObjStack.pop();
-      this.parsing(lexedArray, parentObj);
+      this.parsing(lexedJson, parentObj);
     } else if (word === separators.startOfArray) {
       const childObj = {
         type: "array",
@@ -126,22 +126,22 @@ class Parser {
       };
       parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
-      this.parsing(lexedArray, childObj);
+      this.parsing(lexedJson, childObj);
     } else if (typeof word === "object") {
       parsingDataObj.child.push(word);
-      this.parsing(lexedArray, parsingDataObj);
+      this.parsing(lexedJson, parsingDataObj);
     } else {
-      this.parsing(lexedArray, parsingDataObj);
+      this.parsing(lexedJson, parsingDataObj);
     }
   }
 
-  array(unparsedArray) {
-    const tokenizedArray = this.tokenizing(unparsedArray);
-    const lexedArray = this.lexing(tokenizedArray);
+  getJson(unparsedJson) {
+    const tokenizedJson = this.tokenizing(unparsedJson);
+    const lexedJson = this.lexing(tokenizedJson);
     const resultObj = {
       child: []
     };
-    this.parsing(lexedArray, resultObj);
+    this.parsing(lexedJson, resultObj);
     const resultText = JSON.stringify(resultObj.child[0], null, 2);
     log(resultText);
   }
