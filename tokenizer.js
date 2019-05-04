@@ -21,7 +21,7 @@ const _decideTokenType = (char) => {
 
     if (tc.isOpenBraket(char))return new Token('openBraket', char);
     
-    if (tc.iscloseBraket(char))return new Token('closeBraket', char);
+    if (tc.isCloseBraket(char))return new Token('closeBraket', char);
 
     if (tc.isNumber(char)) return new Token('number', _getSeriesToken(_readChar, char, tc.isNumber))
     //TODO STPE 6-2  
