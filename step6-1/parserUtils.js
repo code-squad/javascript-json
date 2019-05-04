@@ -1,5 +1,6 @@
 const parserUtils = {
     dataType : {
+        decimalPoint : 'decimalPoint',
         sign : 'sign',
         number : 'number',
         startArray : 'array',
@@ -11,8 +12,9 @@ const parserUtils = {
     getDataType(token) {
 
         typeRegexp = {
+            decimalPoint : /[.]/g,
             sign : /[-|+]/g,
-            number : /^[-|+]?\d+/g,
+            number : /^[-|+]?\d+[.]?\d+/g,
             startArray : /[\[]/g,
             endArray : /[\]]/g,
             seperator : /[,]+/g,
