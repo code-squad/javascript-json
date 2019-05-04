@@ -1,5 +1,11 @@
+const parserutils = require('./parserUtils.js');
+const ParseTree = require('./parseTree.js');
+const Stack = require('./stack.js');
+
 const ArrayParser = class {
     constructor(str) {
+        this.parseTree = new ParseTree();
+        this.stack = new Stack();
         this.str = str;
     }
 
@@ -40,4 +46,15 @@ const ArrayParser = class {
 
         return lexicalObjArr;
     }
+
+    parser() {
+        this.lexer().forEach((obj) => {
+            this.parseTree.insert(obj, this.stack);
+        });
+
+        if (!this.stack.isEmpty()) throw new Error('올바른 데이터 형식이 아닙니다 (시작 괄호가 더 많습니다)');
+        return this.parseTree;
+    }
 }
+
+module.exports = ArrayParser;
