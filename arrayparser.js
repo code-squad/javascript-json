@@ -14,16 +14,15 @@ class ArrayParser {
 
   lexer(tokenizeredData) {
     tokenizeredData.forEach(element => {
-      for (let char of element) {
-        if (char === "[") {
-          this.tokenArr.push(new Token("array"));
-          element = element.replace(char, "");
-        } else if (char === "]") {
-          element = element.replace(char, "");
-        }
+      if (element[0] === "[") {
+        this.tokenArr.push(new Token("array"));
+      } else if (element[0] === "]") {
+      } else {
+        this.tokenArr.push(new Token("number", element));
       }
-      this.tokenArr.push(new Token("number", element));
     });
+
+    return this.tokenArr;
   }
 
   parse() {
@@ -42,18 +41,19 @@ class ArrayParser {
     const tokenizeredData = this.tokenizer(inputStr);
     console.log(tokenizeredData);
 
-    // // 3. lexer
-    // this.lexer(tokenizeredData);
+    // 2. lexer
+    const lexeredData = this.lexer(tokenizeredData);
+    console.log(lexeredData);
 
-    // // 4. parse
+    // 3. parse
 
-    // const result = this.parse();
-    // return result;
+    const result = this.parse();
+    return result;
   }
 }
 
-// const targetStr = "[123, 22, 33]";
-const targetStr = "[123, 22, [33]]";
+const targetStr = "[123, 22, 33]";
+// const targetStr = "[123, 22, [33]]";
 
 const arrayParser = new ArrayParser();
 const result = arrayParser.startParsing(targetStr);
