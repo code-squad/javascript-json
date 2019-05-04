@@ -12,26 +12,21 @@ class ArrayParser {
 
   tokenizer(inputStr) {
     const splitedStr = inputStr.split(",");
+    return splitedStr;
+  }
 
-    splitedStr.forEach(element => {
+  lexer(tokenizeredData) {
+    tokenizeredData.forEach(element => {
       for (let char of element) {
         if (char === "[") {
-          this.lexer(char);
+          this.tokenArr.push(new Token("array", "", []));
           element = element.replace(char, "");
         } else if (char === "]") {
           element = element.replace(char, "");
         }
       }
-      this.lexer(element);
+      this.tokenArr.push(new Token("number", element, []));
     });
-  }
-
-  lexer(token) {
-    if (token === "[") {
-      this.tokenArr.push(new Token("array", "", []));
-    } else {
-      this.tokenArr.push(new Token("number", token, []));
-    }
   }
 
   parse() {
@@ -44,11 +39,25 @@ class ArrayParser {
     });
     return parentToken;
   }
+
+  startParsing(inputStr) {
+    // 1. removeWhiteSpace
+    const spaceRemovedData = this.removeWhiteSpace(inputStr);
+
+    // 2. tokenizer
+    const tokenizeredData = this.tokenizer(spaceRemovedData);
+
+    // 3. lexer
+    this.lexer(tokenizeredData);
+
+    // 4. parse
+
+    const result = this.parse();
+    return result;
+  }
 }
 
+const targetStr = "[123, 22, 33]";
 const arrayParser = new ArrayParser();
-const tergetStr = arrayParser.removeWhiteSpace("[123, 22, 33]");
-
-arrayParser.tokenizer(tergetStr);
-const afterParsingData = arrayParser.parse();
-console.log(afterParsingData);
+const result = arrayParser.startParsing(targetStr);
+console.log(result);
