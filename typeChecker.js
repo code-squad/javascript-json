@@ -2,6 +2,9 @@ const typeChecker = {
     isQuote (value) {
         return value === "\'" || value === "\""
     },
+    isNotQuote(value){
+        return !(value === "\'" || value === "\"")
+    },
     
     isBraket (value){
         return value === "[" || value === "]"
@@ -39,6 +42,9 @@ const typeChecker = {
     // Returns if a value is a boolean
     isBoolean (value) {
         return value === 'true' || value === "false";
-    },   
+    }, 
+    isSkipChar(value){
+        return this.isComma(value) || this.isWhiteSpace(value)
+    }  
 }
 module.exports = typeChecker;
