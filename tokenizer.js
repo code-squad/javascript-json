@@ -16,9 +16,11 @@ class Tokenizer {
     const char = this.text[this.textIdx];
     const tokenType = getTokenType(char);
 
-    this.textIdx++;
+    return { type: tokenType, value: char } ;
+  }
 
-    return { tokenType, value: char } ;
+  readyToNextTask(){
+    this.textIdx++;
   }
 
 }
