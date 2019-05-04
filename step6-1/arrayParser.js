@@ -14,12 +14,15 @@ const ArrayParser = class {
         const tokenArr = charArr.reduce((acc, val, index) => {
             let numberCount = 0;
             
-            if (parserutils.isType(val, parserutils.dataType.number) || parserutils.isType(val, parserutils.dataType.sign)) {
+            if ((parserutils.isType(val, parserutils.dataType.number)) || (parserutils.isType(val, parserutils.dataType.sign))) {
                 let [numberElement, idx] = [`${val}`, index+1];
 
-                while (parserutils.isType(charArr[idx], parserutils.dataType.number || parserutils.dataType.sign)) {
+                while (parserutils.isType(charArr[idx], parserutils.dataType.number || parserutils.dataType.sign)
+                        || parserutils.isType(charArr[idx] ,parserutils.dataType.decimalPoint)) {
+                    
                     [numberElement, idx, numberCount] = [numberElement+charArr[idx], idx+1, numberCount+1]
                 }
+                
                 acc.push(numberElement);
 
             } else {
