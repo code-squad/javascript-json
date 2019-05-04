@@ -1,10 +1,12 @@
-const tokenizer = require('./tokenizer');
-const parser = require('./parser');
+const tokenize = require('./tokenizer');
+const lex = require('./lexer');
+const parse = require('./parser');
 
-const  arrayParser = (input) => {
-    const tokens = tokenizer(input);
-    const resultOfParse = parser(tokens); 
-    return resultOfParse
+const arrayParser = (input) => {
+    const lexedtokens = tokenize(input).map(v => lex(v))
+    const rootNode = lexedtokens.shift();
+    parse(rootNode, lexedtokens); 
+    return rootNode;
 }
 
-arrayParser("[123, 22, 33]") 
+console.dir(arrayParser("['1a3',[null,false,['11',[112233],112],55, '99'],33, true]") )
