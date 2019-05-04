@@ -32,13 +32,10 @@ class ArrayParser {
         };
         arr.forEach((val) => {
             if (Array.isArray(val)) { return resultObj.child.push(this.parser(val)); }
-            const obj = {
-                type: null,
-                value: null,
-                child: []
-            };
+            const obj = {};
             obj.type = this.checkDataType(val);
             obj.value = this.changeDataType(val);
+            obj.child = [];
             resultObj.child.push(obj);
         });
         return resultObj
