@@ -6,10 +6,12 @@ const typeChecker = {
         return !(value === "\'" || value === "\"")
     },
     
-    isBraket (value){
-        return value === "[" || value === "]"
+    isOpenBraket (value){
+        return value === "["
     },
-    
+    isCloseBraket(value){
+        return value === "]"
+    },
     isComma (value){
         return value === ","
     },
@@ -28,21 +30,6 @@ const typeChecker = {
         return /[a-z]/i.test(value)
     },
     
-    
-    // Returns if a value is null
-    isNull (value) {
-        return value === 'null';
-    },
-    
-    // Returns if a value is undefined
-    isUndefined (value) {
-        return value === 'undefined';
-    },
-    
-    // Returns if a value is a boolean
-    isBoolean (value) {
-        return value === 'true' || value === "false";
-    }, 
     isSkipChar(value){
         return this.isComma(value) || this.isWhiteSpace(value)
     }  

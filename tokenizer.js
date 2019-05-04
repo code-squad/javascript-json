@@ -19,19 +19,22 @@ const _getSeriesStrToken = (readChar, char, conditionFunc) => {
 const _decideTokenType = (char) => {
     if (tc.isSkipChar(char)) return
 
-    if (tc.isBraket(char)) return new Token('braket', char)
+    if (tc.isOpenBraket(char))return new Token('openBraket', char);
+    
+    if (tc.iscloseBraket(char))return new Token('closeBraket', char);
 
     if (tc.isNumber(char)) return new Token('number', _getSeriesToken(_readChar, char, tc.isNumber))
     //TODO STPE 6-2  
     if (tc.isQuote(char)) return new Token("string", _getSeriesStrToken(_readChar, _readChar(++_currentLength), tc.isQuote))
     //TODO STPE 6-2    
     if (tc.isString(char)) {
-        return new Token("otherType", _getSeriesToken(_readChar, char, tc.isString))
+        let token = _getSeriesToken(_readChar, char, tc.isString)
+        return new Token(token, token)
     }
     throw new TypeError(char + " 는 토근화 할 수 없는 문자 입니다.")
 }
 
-const _isTokentypeSkipOrBraket =(token) => token === undefined || token.type === 'braket'
+const _isTokentypeSkipOrBraket =(token) => token === undefined || /Braket/.test(token.type)
 
 const tokenize = (input) => {
     _inputStr = input;
