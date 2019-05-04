@@ -12,13 +12,12 @@ const ArrayParser = class {
     tokenizer() {
         const charArr = this.str.split("").filter((char) => !parserutils.isType(char, parserutils.dataType.whitespace));
         const tokenArr = charArr.reduce((acc, val, index) => {
-            
             let numberCount = 0;
             
-            if (parserutils.isType(val, parserutils.dataType.number)) {
-                let [numberElement, idx] = [``, index];
+            if (parserutils.isType(val, parserutils.dataType.number) || parserutils.isType(val, parserutils.dataType.sign)) {
+                let [numberElement, idx] = [`${val}`, index+1];
 
-                while (parserutils.isType(charArr[idx], parserutils.dataType.number)) {
+                while (parserutils.isType(charArr[idx], parserutils.dataType.number || parserutils.dataType.sign)) {
                     [numberElement, idx, numberCount] = [numberElement+charArr[idx], idx+1, numberCount+1]
                 }
                 acc.push(numberElement);
@@ -27,7 +26,7 @@ const ArrayParser = class {
                 acc.push(val);
             }
 
-            charArr.splice(index, numberCount-1);
+            charArr.splice(index, numberCount);
             return acc;
 
         }, []);
