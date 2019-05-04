@@ -14,7 +14,7 @@ const parserUtils = {
         typeRegexp = {
             decimalPoint : /[.]/g,
             sign : /[-|+]/g,
-            number : /^[-|+]?\d+[.]?\d+/g,
+            number : /^[-|+]?\d?[.]?\d+/g,
             startArray : /[\[]/g,
             endArray : /[\]]/g,
             seperator : /[,]+/g,
