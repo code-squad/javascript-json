@@ -25,6 +25,11 @@ const parserUtils = {
 
         return dataType;
     },
+
+    isType(char, type) {
+        const charType = this.getDataType(char);
+        return charType === type
+    }
 }
 
 module.exports = parserUtils;
