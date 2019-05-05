@@ -24,9 +24,10 @@ class ArrayParser {
         }
     }
 
-    parser(type, token) {
-        // 토큰과 그 타입이 들어오면 자료형태로 바꾸어 반환하자.
-        return { type: type, value: token, child: [] };
+    parser(_type, token) {
+        if (token === '[') return token;
+        if (token === ']') return { type: _type, child: [] };
+        return { type: _type, value: token, child: [] };
     }
 
     run(array) {
