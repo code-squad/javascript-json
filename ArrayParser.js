@@ -10,8 +10,18 @@ class ArrayParser {
     }
 
     lexer(token) {
-        // 토큰이 들어오면 type을 구분하여 반환하자.
-        return [type, token];
+        const typeBox = {
+            array: "[]",
+            boolean: 'true, false',
+            null: 'null',
+            string: `'"`,
+            number: '0123456789'
+        }
+
+        for (let type in typeBox) {
+            if (typeBox[type].includes(token)) return [type, token];
+            if (typeBox[type].includes(token[0])) return [type, token];
+        }
     }
 
     parser(type, token) {
