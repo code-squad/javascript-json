@@ -1,8 +1,8 @@
 class Token {
-  constructor(type, value, child) {
+  constructor(type, value) {
     this._type = type;
     this._value = value;
-    this._child = child;
+    this._child = [];
   }
 }
 
