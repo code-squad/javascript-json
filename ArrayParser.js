@@ -6,8 +6,7 @@ class ArrayParser {
     }
 
     tokenizer(string) {
-        // 문자로 들어온 배열을 각각의 토큰으로 나누어 배열로 반환하자.
-        return array;
+        return string.split(' ').join('').replace(/\[/g, '[,').replace(/\]/g, ',]').split(',');
     }
 
     lexer(token) {
@@ -30,3 +29,4 @@ class ArrayParser {
         stack.push(_stack);
         return array
     }
+}
