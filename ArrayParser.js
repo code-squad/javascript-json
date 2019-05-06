@@ -16,7 +16,11 @@ class Tokenizer {
 }
 
 class Lexer {
-    lex() { }
+    lex(token) {
+        if (token === '[') return new Node('array');
+        if (token === ']') return new Node('endOfArray');
+        return new Node('number', Number(token));
+    }
 }
 
 class ArrayParser {
