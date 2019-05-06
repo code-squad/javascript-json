@@ -62,7 +62,9 @@ class ArrayParser {
 class tokenError {
     isString(token) {
         // 'a2'3' 과 같이 문자열 안에 따옴표가 더 있으면 에러를 발생하도록 하자
-        const length = token.length;
+        const lastIndex = token.length - 2;
+        if (token.lastIndexOf("'", lastIndex) > 0 || token.lastIndexOf('"', lastIndex) > 0) throw new Error('It is not a string')
+
     }
 
     isNumber(token) {
