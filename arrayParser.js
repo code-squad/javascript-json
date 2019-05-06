@@ -1,62 +1,59 @@
-const Tokenizer = require('./tokenizer');
-const Stack = require('./ds/stack');
-const Types = require('./type/types');
+const Lexer = require('./lexer');
+const TokenType = require('./tokenUtil/tokenType');
+const WordType = require('./wordUtil/wordType');
 
 class ArrayParser {
-  constructor(text){
-    this.tokenizer = new Tokenizer(text);
+  constructor(lexer){
+    this.lexer = lexer;
+    this.skipToken = [ TokenType.Whitespace, TokenType.Comma ];
   }
 
   requestTokens(){
     return this.tokenizer.getTokens();
   }
 
-  analysis(){
-    const tokens = this.requestTokens();
-    const stack = new Stack();
-    let result = {};
-    let resultPtr = result;
-    let isPtrArray = false;
+  analysisRecursively(){
+    const partialResult = [];
+    let encounterArrayEnd = false;
 
-    for (let i = 0; i < tokens.length; i++) {
-      const token = tokens[i];
-      switch (token.type) {
-        case Types.ArrayStart:
-          let beforePtr = resultPtr;
-          if(isPtrArray){
-            resultPtr.push(new Object({type: Types.ArrayStart, child: []}));
-            beforePtr = resultPtr;
-            resultPtr = resultPtr[resultPtr.length - 1].child;
-          } else {
-            resultPtr.type = Types.ArrayStart;
-            resultPtr.child = [];
-            beforePtr = resultPtr;
-            resultPtr = resultPtr.child;
-            isPtrArray = true;
-          }
-          stack.push({type: Types.ArrayStart, beforePtr});
-          break;
-        case Types.ArrayEnd:
-          if(stack.top().type !== Types.ArrayStart){
-            throw new Error('Parsing failed.');
-          }
-          resultPtr = stack.top().beforePtr;
-          stack.pop();
-          break;
-        case Types.Number:
-          if(!isPtrArray){
-            throw new Error('Left brace not found.');
-          }
-          resultPtr.push({type: Types.Number, value: token.value});
-          break;
-        default:
-          throw new Error('Unexpected Error occured');
+    while(!this.lexer.isFinish()){
+      const word = this.lexer.getWord();
+
+      if(this.skipToken.some(type => type === word.type)){
+        continue;
+      }
+
+      if(word.type === TokenType.ArrayEnd){
+        encounterArrayEnd = true;
+        break;
+      }
+
+      if(word.type === TokenType.ArrayStart){
+        const newArrayWord = { type: 'Array' };
+        newArrayWord.children = this.analysisRecursively();
+        partialResult.push(newArrayWord);
+      } else {
+        partialResult.push(word);
       }
     }
-
-    if(!stack.empty()){
-      throw new Error('Right brace not found.');
+    
+    if(!encounterArrayEnd){
+      throw new Error('배열의 형식이 잘못 되었습니다.');
     }
+
+    return partialResult;
+  }
+
+  analysis(){
+    const firstWord = this.lexer.getWord();
+
+    if(firstWord.type !== TokenType.ArrayStart){
+      throw new Error('문장의 시작이 배열의 시작이 아닙니다.');
+    }
+
+    const result = {type: 'Array' };
+    result.children = this.analysisRecursively();
+
 
     return result;
   }
