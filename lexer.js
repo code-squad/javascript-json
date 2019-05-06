@@ -32,11 +32,6 @@ class Lexer {
   lex(word) {
     if (this.keyword.hasOwnProperty(word)) {
       const { context, type, value } = this.keyword[word];
-
-      if (word === ']') {
-        return { context, newNode: undefined };
-      }
-
       return { context, newNode: this.makeNode(type, value) };
     }
 
