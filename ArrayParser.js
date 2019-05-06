@@ -58,6 +58,17 @@ class ArrayParser {
     }
 }
 
+class tokenError {
+    isString(token) {
+        // 'a2'3' 과 같이 문자열 안에 따옴표가 더 있으면 에러를 발생하도록 하자
+        const length = token.length;
+    }
+
+    isNumber(token) {
+        // 3d3 과 같은 문자열이 있을때 에러를 발생시키자.
+    }
+}
+
 const arrayParser = new ArrayParser();
 const str = "['1a3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]";
 
