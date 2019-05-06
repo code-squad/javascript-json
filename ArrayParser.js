@@ -69,6 +69,7 @@ class tokenError {
 
     isNumber(token) {
         // 3d3 과 같은 문자열이 있을때 에러를 발생시키자.
+        if (isNaN(token)) throw new Error('It is not a number');
     }
 }
 
