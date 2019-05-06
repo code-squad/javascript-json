@@ -1,8 +1,9 @@
 const Node = require('./node');
 
 class Lexer {
-  constructor({ keyword }) {
+  constructor({ keyword, messageObj }) {
     this.keyword = keyword;
+    this.messageObj = messageObj;
   }
 
   makeNode(type, value) {
@@ -43,7 +44,7 @@ class Lexer {
       word = word.substring(1, word.length - 1);
 
       if (!this.isValidString(word)) {
-        throw new Error(`${word} 올바른 문자열이 아닙니다.`);
+        throw new Error(`${word} ${this.messageObj.INVALID_STRING}`);
       }
 
       return {
@@ -53,7 +54,7 @@ class Lexer {
     }
 
     if (!this.isValidNumber(word)) {
-      throw new Error(`${word} 알 수 없는 타입입니다.`);
+      throw new Error(`${word} ${this.messageObj.INVALID_TYPE}`);
     }
 
     return { context: 'Element', newNode: this.makeNode('Number', Number(word)) };
