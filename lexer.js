@@ -14,11 +14,18 @@ class Lexer {
 
   isString(element) {
     return (
-      element.startsWith("'") ||
-      element.endsWith("'") ||
-      element.startsWith('"') ||
-      element.endsWith('"')
+      (element.startsWith("'") && element.endsWith("'")) ||
+      (element.startsWith('"') && element.endsWith('"'))
     );
+  }
+
+  isValidNumber(element) {
+    const numberElement = Number(element);
+    return typeof numberElement === 'number' && !Number.isNaN(numberElement);
+  }
+
+  isValidString(element) {
+    return element.includes('"') || element.includes("'") ? false : true;
   }
 
   lex(word) {
@@ -33,13 +40,22 @@ class Lexer {
     }
 
     if (this.isString(word)) {
+      word = word.substring(1, word.length - 1);
+
+      if (!this.isValidString(word)) {
+        throw new Error(`${word} 올바른 문자열이 아닙니다.`);
+      }
+
       return {
         context: 'Element',
-        newNode: this.makeNode('String', word.substring(1, word.length - 1))
+        newNode: this.makeNode('String', word)
       };
     }
 
-    // if (Number.isNaN(Number(word))) 에러
+    if (!this.isValidNumber(word)) {
+      throw new Error(`${word} 알 수 없는 타입입니다.`);
+    }
+
     return { context: 'Element', newNode: this.makeNode('Number', Number(word)) };
   }
 }
