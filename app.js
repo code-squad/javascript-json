@@ -10,6 +10,15 @@ const tokenizer = {
 };
 
 const lexer = {
+  keyword: {
+    '[': { context: 'ArrayOpen', type: 'Array' },
+    ']': { context: 'ArrayClose', type: undefined },
+    null: { context: 'Element', type: 'Null', value: null },
+    true: { context: 'Element', type: 'Boolean', value: true },
+    false: { context: 'Element', type: 'Boolean', value: false },
+    undefined: { context: 'Element', type: 'Undefined', value: undefined }
+  },
+
   makeNode(type, value) {
     return new Node({
       type: type,
@@ -27,28 +36,14 @@ const lexer = {
   },
 
   lex(word) {
-    if (word === '[') {
-      return { context: 'ArrayOpen', newNode: this.makeNode('Array') };
-    }
+    if (this.keyword.hasOwnProperty(word)) {
+      const { context, type, value } = this.keyword[word];
 
-    if (word === ']') {
-      return { context: 'ArrayClose', newNode: undefined };
-    }
+      if (word === ']') {
+        return { context, newNode: undefined };
+      }
 
-    if (word === 'null') {
-      return { context: 'Element', newNode: this.makeNode('Null', null) };
-    }
-
-    if (word === 'true') {
-      return { context: 'Element', newNode: this.makeNode('Boolean', true) };
-    }
-
-    if (word === 'false') {
-      return { context: 'Element', newNode: this.makeNode('Boolean', false) };
-    }
-
-    if (word === 'undefined') {
-      return { context: 'Element', newNode: this.makeNode('Undefined', undefined) };
+      return { context, newNode: this.makeNode(type, value) };
     }
 
     if (this.isString(word)) {
