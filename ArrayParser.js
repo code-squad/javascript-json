@@ -30,14 +30,25 @@ class ArrayParser {
         return { type: _type, value: token, child: [] };
     }
 
+    tokenJoiner(_stack) {
+        // ']'가 왔을 때, stack에서 '[' 가 나올때까지 빼서, array객체 안에 넣어서 다시 반환하는 함수가 필요하다.
+        while (stack.length === 0) {
+            const arrayChild = stack.pop()
+            if (arrayChild === '[') break;
+            _stack.child.push(arrayChild)
+        }
+        return _stack;
+    }
+
     run(array) {
         // tokenizer한 배열이 들어오면 하나씩 빼서 lexer와 parser를 이용해 stack에 쌓고 빼는 작업을 해주자. (아마 재귀로 구현될것 같음.)
         // 그리고 stack의 요소들이 모두 합쳐지면 그것을 반환하도록 하자.
         if (typeof stack[0] === 'object') return stack[0];
         const token = array.pop();
-        [type, token] = lexer(token);
-        const _stack = parser(type, token);
+        [type, token] = this.lexer(token);
+        let _stack = this.parser(type, token);
+        if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
         stack.push(_stack);
-        return array
+        return this.run(array);
     }
 }
