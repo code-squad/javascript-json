@@ -4,6 +4,12 @@ class Parser {
     this.result;
   }
 
+  completeCondition() {
+    if (this.tokenStack.length === 0) {
+      return true;
+    }
+  }
+
   findParentToken() {
     return this.tokenStack.pop();
   }
@@ -35,14 +41,11 @@ class Parser {
       } else if (token._type === "number") {
         this.updateTokenStack(token);
       } else if (token._type === "array-end") {
-        // currentChildToken = this.tokenStack.pop();
         topToken = this.tokenStack.pop();
 
-        if (this.tokenStack.length === 0) {
+        if (this.completeCondition) {
           this.result = topToken;
-        }
-
-        if (this.tokenStack.length > 0) {
+        } else {
           this.updateTokenStack(topToken);
         }
       }
