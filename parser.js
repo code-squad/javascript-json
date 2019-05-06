@@ -8,8 +8,8 @@ class Parser {
     return this.tokenStack.pop();
   }
 
-  addChildTokenToParentToken(currentParentToken, childToken) {
-    currentParentToken._child.push(childToken);
+  addChildTokenToParentToken(currentParentToken, currentChildToken) {
+    currentParentToken._child.push(currentChildToken);
     return currentParentToken;
   }
 
@@ -17,33 +17,33 @@ class Parser {
     this.tokenStack.push(updateParentToken);
   }
 
-  test(childToken) {
+  updateTokenStack(currentChildToken) {
     const currentParentToken = this.findParentToken();
     const updateParentToken = this.addChildTokenToParentToken(
       currentParentToken,
-      childToken
+      currentChildToken
     );
     this.pushParentToken(updateParentToken);
   }
 
   parsing(lexeredData) {
-    let currentParentToken;
-    let currentChildToken;
+    let topToken;
 
     lexeredData.forEach((token, index) => {
       if (token._type === "array") {
         this.tokenStack.push(token);
       } else if (token._type === "number") {
-        this.test(token);
+        this.updateTokenStack(token);
       } else if (token._type === "array-end") {
-        currentChildToken = this.tokenStack.pop();
+        // currentChildToken = this.tokenStack.pop();
+        topToken = this.tokenStack.pop();
 
         if (this.tokenStack.length === 0) {
-          this.result = currentChildToken;
+          this.result = topToken;
         }
 
         if (this.tokenStack.length > 0) {
-          this.test(currentChildToken);
+          this.updateTokenStack(topToken);
         }
       }
     });
