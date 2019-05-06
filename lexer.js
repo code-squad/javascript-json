@@ -21,8 +21,7 @@ class Lexer {
   }
 
   isValidNumber(element) {
-    const numberElement = Number(element);
-    return typeof numberElement === 'number' && !Number.isNaN(numberElement);
+    return typeof element === 'number' && !Number.isNaN(element);
   }
 
   isValidString(element) {
@@ -36,6 +35,7 @@ class Lexer {
     }
 
     if (this.isString(word)) {
+      const { context, type } = this.keyword.string;
       word = word.substring(1, word.length - 1);
 
       if (!this.isValidString(word)) {
@@ -43,16 +43,19 @@ class Lexer {
       }
 
       return {
-        context: 'Element',
-        newNode: this.makeNode('String', word)
+        context,
+        newNode: this.makeNode(type, word)
       };
     }
 
-    if (!this.isValidNumber(word)) {
+    const numberElement = Number(word);
+    const { context, type } = this.keyword.number;
+
+    if (!this.isValidNumber(numberElement)) {
       throw new Error(`${word} ${this.messageObj.INVALID_TYPE}`);
     }
 
-    return { context: 'Element', newNode: this.makeNode('Number', Number(word)) };
+    return { context, newNode: this.makeNode(type, numberElement) };
   }
 }
 
