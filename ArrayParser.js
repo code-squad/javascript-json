@@ -4,7 +4,8 @@ class ArrayParser {
     }
 
     tokenizer(string) {
-        return string.split(' ').join('').replace(/\[/g, '[,').replace(/\]/g, ',]').split(',');
+        string = string.replace(/\[/g, '[,').replace(/\]/g, ',]').split(',');
+        return string.map(x => x.trim());
     }
 
     lexer(token) {
