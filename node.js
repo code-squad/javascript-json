@@ -1,5 +1,5 @@
 class Node {
-  constructor({ type, value = '' }) {
+  constructor({ type, value }) {
     this.type = type;
     this.value = value;
     this.child = [];
