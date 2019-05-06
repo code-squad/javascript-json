@@ -7,7 +7,12 @@ class Node {
 }
 
 class Tokenizer {
-    tokenize() { }
+    tokenize(str) {
+        str = str.replace(/\s/g, '')
+        str = str.replace(/\[/g, '[,')
+        str = str.replace(/\]/g, ',]');
+        return str.split(',')
+    }
 }
 
 class Lexer {
