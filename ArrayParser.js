@@ -1,5 +1,3 @@
-const str = "['1a3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]";
-
 class ArrayParser {
     constructor() {
         this.stack = [];
@@ -19,36 +17,48 @@ class ArrayParser {
         }
 
         for (let type in typeBox) {
-            if (typeBox[type].includes(token)) return [type, token];
-            if (typeBox[type].includes(token[0])) return [type, token];
+            if (typeBox[type].includes(token)) return type;
+            if (typeBox[type].includes(token[0])) return type;
         }
     }
 
     parser(_type, token) {
         if (token === '[') return token;
         if (token === ']') return { type: _type, child: [] };
+
         return { type: _type, value: token, child: [] };
     }
 
     tokenJoiner(_stack) {
-        // ']'가 왔을 때, stack에서 '[' 가 나올때까지 빼서, array객체 안에 넣어서 다시 반환하는 함수가 필요하다.
-        while (stack.length === 0) {
-            const arrayChild = stack.pop()
+        while (this.stack.length > 0) {
+            const arrayChild = this.stack.pop()
             if (arrayChild === '[') break;
-            _stack.child.push(arrayChild)
+            _stack.child.unshift(arrayChild)
         }
+
         return _stack;
     }
 
-    run(array) {
-        // tokenizer한 배열이 들어오면 하나씩 빼서 lexer와 parser를 이용해 stack에 쌓고 빼는 작업을 해주자. (아마 재귀로 구현될것 같음.)
-        // 그리고 stack의 요소들이 모두 합쳐지면 그것을 반환하도록 하자.
-        if (typeof stack[0] === 'object') return stack[0];
-        const token = array.pop();
-        [type, token] = this.lexer(token);
-        let _stack = this.parser(type, token);
+    app(array) {
+        if (typeof this.stack[0] === 'object') return this.stack[0];
+
+        const token = array.shift();
+        const _type = this.lexer(token);
+        let _stack = this.parser(_type, token);
         if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
-        stack.push(_stack);
-        return this.run(array);
+        this.stack.push(_stack);
+
+        return this.app(array);
+    }
+
+    run(input) {
+        const array = this.tokenizer(input);
+
+        return this.app(array);
     }
 }
+
+const arrayParser = new ArrayParser();
+const str = "['1a3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]";
+
+console.log(arrayParser.run(str));
