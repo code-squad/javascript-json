@@ -1,13 +1,5 @@
 const Node = require('./node');
-
-const tokenizer = {
-  removeWhiteSpace: str => str.replace(/\s/g, ''),
-
-  tokenize(str) {
-    strWithoutSpace = this.removeWhiteSpace(str);
-    return strWithoutSpace.split(/([\[\]])|,/).filter(Boolean);
-  }
-};
+const Tokenizer = require('./tokenizer');
 
 const lexer = {
   keyword: {
@@ -97,6 +89,9 @@ class Parser {
 
 // const str = '[123, [22, 33], 444]';
 // const str2 = '[123, 22, 33, 444]';
+const str3 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+
+const tokenizer = new Tokenizer({ rawString: str3 });
 
 const parser = new Parser({ lexer, tokenizer });
 // const result = parser.parse(str);
@@ -107,6 +102,5 @@ const parser = new Parser({ lexer, tokenizer });
 // const result2 = parser.parse(str2);
 // console.log(JSON.stringify(result2, null, 2));
 
-const str3 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const result3 = parser.parse(str3);
 console.log(JSON.stringify(result3, null, 2));
