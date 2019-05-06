@@ -1,6 +1,7 @@
 class ArrayParser {
-    constructor() {
+    constructor(tokenError) {
         this.stack = [];
+        this.errorChecker = tokenError;
     }
 
     tokenizer(string) {
@@ -9,18 +10,16 @@ class ArrayParser {
     }
 
     lexer(token) {
-        const typeBox = {
-            array: "[]",
-            boolean: 'true, false',
-            null: 'null',
-            string: `'"`,
-            number: '0123456789'
+        // 더 쉽고 간단한 방법이 있을지 고민해보자.
+        if ("[]".includes(token)) return 'array';
+        if (token === true || token === false) return 'boolean';
+        if (token === null) return 'null';
+        if (`'"`.includes(token[0]) && `'"`.includes(token[token.length - 1])) {
+            this.errorChecker.isString(token);
+            return 'string';
         }
-
-        for (let type in typeBox) {
-            if (typeBox[type].includes(token)) return type;
-            if (typeBox[type].includes(token[0])) return type;
-        }
+        this.errorChecker.isNumber(token);
+        return 'number';
     }
 
     parser(_type, token) {
@@ -59,21 +58,19 @@ class ArrayParser {
     }
 }
 
-class tokenError {
+class TokenError {
     isString(token) {
-        // 'a2'3' 과 같이 문자열 안에 따옴표가 더 있으면 에러를 발생하도록 하자
         const lastIndex = token.length - 2;
-        if (token.lastIndexOf("'", lastIndex) > 0 || token.lastIndexOf('"', lastIndex) > 0) throw new Error('It is not a string')
-
+        if (token.lastIndexOf("'", lastIndex) > 0 || token.lastIndexOf('"', lastIndex) > 0) throw new Error(`${token} is not a string.`)
     }
 
     isNumber(token) {
-        // 3d3 과 같은 문자열이 있을때 에러를 발생시키자.
-        if (isNaN(token)) throw new Error('It is not a number');
+        if (isNaN(token)) throw new Error(`${token} is a unknown type.`);
     }
 }
 
-const arrayParser = new ArrayParser();
+const tokenError = new TokenError();
+const arrayParser = new ArrayParser(tokenError);
 const str = "['1a3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]";
 
 console.log(arrayParser.run(str));
