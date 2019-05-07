@@ -42,11 +42,11 @@ class Lexer {
 
 module.exports = Lexer;
 
-// const validation = require('./validation');
-// const lexer = new Lexer(validation);
-// console.log(lexer.getBracketDepth('[[98]]'));  // 2
-// console.log(lexer.getValueOfRemovedBracket('[[[null]]]]')); // null
-// console.log(lexer.getTypeOf('123'));
-// console.log(lexer.getTypeOf([1,2,3]));
-// console.log(lexer.getTypeOf("'aa'"));
-// console.log(lexer.analyze(["[12", "'1a3'", "'2abs3'"]));
+const validation = require('./validation');
+const lexer = new Lexer(validation);
+console.log(lexer.getBracketDepth('[[98]]'));  // 2
+console.log(lexer.getValueOfRemovedBracket('[[[null]]]]')); // null
+console.log(lexer.getTypeOf('123'));
+console.log(lexer.getTypeOf([1,2,3]));
+console.log(lexer.getTypeOf("'aa'"));
+console.log(lexer.analyze(["[12", "'1a3'", "'2abs3'"]));
