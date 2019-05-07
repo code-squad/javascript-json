@@ -3,16 +3,16 @@ class ArrayParser {
         this.bracketStack = [];
         this.quoteStack = [];
     }
-    tokenizer(inputString) {    
+    tokenizer(inputString) {
         const tokenArray = [];
         let value = "";
-        for(let i  = 0; i< inputString.length; i++){
-            if(inputString[i] === "[" || inputString[i] === "]" || inputString[i] === ","){
-                if(value !== ""){
+        for (let i = 0; i < inputString.length; i++) {
+            if (inputString[i] === "[" || inputString[i] === "]" || inputString[i] === ",") {
+                if (value !== "") {
                     tokenArray.push(value);
                     tokenArray.push(inputString[i]);
                     value = "";
-                }else{
+                } else {
                     tokenArray.push(inputString[i]);
                 }
             } else {
@@ -30,46 +30,35 @@ class ArrayParser {
         if (string === "]") return "arrayEndOperator";
         return "number";
     }
-    
+
     lexer(inputArray) {
         const lexerArray = [];
-        inputArray.reduce((acc, value) => {
-            if (value === "[" || value === "]" || value === ",") {
-                if (acc !== "") {
-                    lexerArray.push({
-                        "value": acc,
-                        "type": this.typeCheck(acc)
-                    });
-                    lexerArray.push({
-                        "value": value,
-                        "type": this.typeCheck(value)
-                    });
-                    acc = "";
-                } else {
-                    lexerArray.push({
-                        "value": value,
-                        "type": this.typeCheck(value)
-                    });
-                }
-            } else {
-                acc += value;
-            }
-            return acc
-        }, "");
+        inputArray.forEach(element => {
+            lexerArray.push({
+                "value": element,
+                "type": this.typeCheck(element)
+            });
+        });
         return lexerArray;
     }
-                                        
+
     parser(inputArray) {
         const resultArray = [];
         let inputData;
-        while(inputArray.length > 0){
+        while (inputArray.length > 0) {
             inputData = inputArray.shift();
-            if(inputData.type === "arrayStartOperator" ){
+            if (inputData.type === "arrayStartOperator") {
                 this.bracketStack.push("[");
-                resultArray.push({type : "array", child : this.parser(inputArray)});
-            }else if(inputData.type === 'number'){
-                resultArray.push({type : 'number', value : inputData.value});
-            }else if(inputData.type === "arrayEndOperator" ) {
+                resultArray.push({
+                    type: "array",
+                    child: this.parser(inputArray)
+                });
+            } else if (inputData.type === 'number') {
+                resultArray.push({
+                    type: 'number',
+                    value: inputData.value
+                });
+            } else if (inputData.type === "arrayEndOperator") {
                 this.bracketStack.pop();
                 return resultArray;
             }
@@ -89,8 +78,8 @@ class ArrayParser {
 
 const arrParser = new ArrayParser();
 const testCode = (input) => {
-    return arrParser.tokenizer(input);
-    // return arrParser.parserExcuter(input);
+    // return arrParser.tokenizer(input);
+    return arrParser.parserExcuter(input);
 }
 
 console.log(testCode('[123,12,[3],1]'));
