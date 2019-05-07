@@ -10,16 +10,18 @@ class Parser {
     initTokenArrayVisited(tokenArray) {
         this.tokenArrayVisited = new Array(tokenArray.length);
         this.tokenArrayVisited.fill(false);
-        console.log(this.tokenArrayVisited);
     }
 
     execute(strValue) {
         const strArray = this.tokenizer.split(this.tokenizer.removeWhiteSpace(strValue));
-        console.log(strArray);
         const tokenArray = this.lexer.analyze(strArray);
-        console.log(tokenArray);
         this.initTokenArrayVisited(tokenArray);
     }
+
+    // 재귀 호출 하면서 loop를 순회하는데 방문한적이 있는지 확인해주는 메소드
+    isVisited(tokenArray, token) { return this.tokenArrayVisited[tokenArray.indexOf(token)]; }
+
+    setVisit(tokenArray, token) { this.tokenArrayVisited[tokenArray.indexOf(token)] = true; }
 }
 
 module.exports = Parser;
