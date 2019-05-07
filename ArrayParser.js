@@ -13,6 +13,33 @@ class ArrayParser {
         const tokens = this.tokenizer.tokenize(input);
         tokens.forEach(token => this.queue.push(this.lexer.lex(token)));
         const firstNode = this.queue.shift();
+
+        if (firstNode.type === 'arrStart') {
+            const rootNode = new Node('Array');
+            this.arrayParse(rootNode);
+            return rootNode;
+        } else {
+            throw Error(`${firstNode.value} invalid array type error`);
+        }
+    }
+
+    arrayParse(parentNode) {
+        while (this.queue.length !== 0) {
+            const node = this.queue.shift();
+            if (node.type === 'arrEnd') {
+                return parentNode;
+            }
+            if (node.type === 'arrStart') {
+                node.type = 'childArray';
+                let childNode;
+                while (!childNode) {
+                    childNode = this.arrayParse(node);
+                }
+                parentNode.child.push(childNode);
+            } else {
+                parentNode.child.push(node)
+            }
+        }
     }
 }
 
