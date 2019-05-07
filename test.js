@@ -9,8 +9,11 @@ function Statistics() {
 
 const printStatistics = () => {
   const statistics = statisticsStack.pop();
-  log(`\n${statistics.successCnt} passing.`);
-  log(`${statistics.failCnt} failing.`);
+  const {successCnt, failCnt} = statistics;
+  if(successCnt !== 0 || failCnt !== 0) {
+    log(`\n${successCnt} passing.`);
+    log(`${failCnt} failing.`);
+  }
 }
 
 const test = {
