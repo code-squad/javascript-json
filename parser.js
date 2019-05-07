@@ -31,23 +31,24 @@ class ArrayParser {
     typeCheck(string) {
         if (string === "true" || string === "false") return "boolean";
         if (string[0] === "'" && string[string.length - 1] === "'" || string[0] === '"' && string[string.length - 1] === '"') return "string";
+        if (string === "null") return "null";
         if (string === ",") return "separator";
         if (string === "[") return "arrayStartOperator"
         if (string === "]") return "arrayEndOperator";
         return "number";
     }
-    
-    getDataObject(element){
+
+    getDataObject(element) {
         const resultObject = {};
         resultObject.type = this.typeCheck(element);
-        if(resultObject.type == "boolean"){
+        if (resultObject.type === "boolean") {
             resultObject.value = Boolean(element === "true");
-        }else if(resultObject.type == "number"){
-            resultObject.value =Number(element);
-        }else if(resultObject.type == "null"){
-            resultObject.value =null;
-        }else if(resultObject.type == "string"){
-            resultObject.value =String(this.removeQuotes(element));
+        } else if (resultObject.type === "number") {
+            resultObject.value = Number(element);
+        } else if (resultObject.type === "null") {
+            resultObject.value = null;
+        } else if (resultObject.type === "string") {
+            resultObject.value = String(this.removeQuotes(element));
         }
         return resultObject;
     }
@@ -75,14 +76,16 @@ class ArrayParser {
                     type: "array",
                     child: this.parser(inputArray)
                 });
-            } else if (inputData.type === 'number') {
+            } else if (inputData.type === "arrayEndOperator") {
+                this.bracketStack.pop();
+                return resultArray;
+            }else if(inputData.type === 'separator'){
+                continue;
+            } else {
                 resultArray.push({
                     type: inputData.type,
                     value: inputData.value
                 });
-            } else if (inputData.type === "arrayEndOperator") {
-                this.bracketStack.pop();
-                return resultArray;
             }
         }
 
@@ -104,4 +107,5 @@ const testCode = (input) => {
     return arrParser.parserExcuter(input);
 }
 
-console.log(testCode('[ 123,12,[3],1]'));
+// console.log(testCode('[" 123",12,[3],1]'));
+console.log(testCode("['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"));
