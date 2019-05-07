@@ -8,6 +8,6 @@ class Tokenizer {
 
 module.exports = Tokenizer;
 
-const tokenizer = new Tokenizer();
-console.log(tokenizer.removeWhiteSpace('[1, [2, 4], 5, [3, 5], 7, 7]'));
-console.log(tokenizer.split('[1,2,[3,4],5,6,[7]]'));
+// const tokenizer = new Tokenizer();
+// console.log(tokenizer.removeWhiteSpace('[1, [2, 4], 5, [3, 5], 7, 7]'));
+// console.log(tokenizer.split('[1,2,[3,4],5,6,[7]]'));
