@@ -1,33 +1,31 @@
 const Node = require('./node');
 
 class Parser {
-  constructor({ lexer, tokens }) {
-    this.lexer = lexer;
-    this.queue = tokens;
+  constructor({ lexedData }) {
+    this.lexedData = lexedData;
   }
 
   arrayParse(node) {
-    while (this.queue.length !== 0) {
-      const word = this.queue.shift();
-      const lexedData = this.lexer.lex(word);
+    while (this.lexedData.length !== 0) {
+      const lexedToken = this.lexedData.shift();
 
-      if (lexedData.context === 'ArrayClose') {
+      if (lexedToken.context === 'ArrayClose') {
         return node;
       }
 
-      if (lexedData.context === 'ArrayOpen') {
-        lexedData.newNode = this.arrayParse(lexedData.newNode);
+      if (lexedToken.context === 'ArrayOpen') {
+        lexedToken.newNode = this.arrayParse(lexedToken.newNode);
       }
 
-      node.pushChild(lexedData.newNode);
+      node.pushChild(lexedToken.newNode);
     }
 
     return node;
   }
 
   parse() {
-    const word = this.queue.shift();
-    if (word === '[') {
+    const lexedData = this.lexedData.shift();
+    if (lexedData.context === 'ArrayOpen') {
       const root = new Node({ type: 'Array' });
       const parsedTree = this.arrayParse(root);
       return parsedTree;

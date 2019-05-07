@@ -1,9 +1,11 @@
 const Node = require('./node');
 
 class Lexer {
-  constructor({ keyword, messageObj }) {
+  constructor({ keyword, messageObj, tokens }) {
     this.keyword = keyword;
     this.messageObj = messageObj;
+    this.tokenQueue = tokens;
+    this.lexedData = [];
   }
 
   makeNode(type, value) {
@@ -28,7 +30,7 @@ class Lexer {
     return element.includes('"') || element.includes("'") ? false : true;
   }
 
-  lex(word) {
+  getLexedToken(word) {
     if (this.keyword.hasOwnProperty(word)) {
       const { context, type, value } = this.keyword[word];
       return { context, newNode: this.makeNode(type, value) };
@@ -56,6 +58,16 @@ class Lexer {
     }
 
     return { context, newNode: this.makeNode(type, numberElement) };
+  }
+
+  lex() {
+    while (this.tokenQueue.length != 0) {
+      const token = this.tokenQueue.shift();
+      const lexedToken = this.getLexedToken(token);
+      this.lexedData.push(lexedToken);
+    }
+
+    return this.lexedData;
   }
 }
 
