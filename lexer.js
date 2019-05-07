@@ -1,25 +1,32 @@
-const ttc = require('./tokenTypeChecker');
+const tc = require('./typeChecker');
 const Node = require('./node');
+const util = require('./util');
 
-const isValidToken = (value) => {
-  return ttc.isNumber(value) ||
-         ttc.isUndefined(value) ||
-         ttc.isNull(value) ||
-         ttc.isBoolean(value) ||
-         ttc.isString(value) 
-}
 const lex = (token) => {
-    if (ttc.isOpenBraket(token.type)) {
+    if(tc.isNumber(token)) {
+      return new Node("number", token)
+    }
+    if(tc.isNull(token)) {
+      return new Node("null", token)
+    }
+    if(tc.isString(token)) {
+      const tokenWithoutQuote = util.deleteFirstLastChar(token);
+      return new Node("string", tokenWithoutQuote)
+    }
+    if(tc.isUndefined(token)) {
+      return new Node("undefined", token)
+    }
+    if (tc.isOpenBraket(token)) {
       return new Node("Array");
-    } 
-    if(ttc.isCloseBraket(token.type)) {
+    }
+    if(tc.isCloseBraket(token)) {
       return new Node("End")
     }
-    if(isValidToken(token.type)) {
-      if(ttc.isBoolean(token.type)) return new Node("Boolean", token.value)
-      return new Node(token.type, token.value)
+    if(tc.isBoolean(token)) {
+      return new Node("boolean", token)
     }
-    new TypeError(`" ${token.value} " 는 존재하지 않는 데이터 타입입니다.`)
+
+    throw new TypeError(`${token} 는 존재하지 않는 데이터 타입입니다.`)
   }
 
  module.exports = lex;
