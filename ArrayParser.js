@@ -88,6 +88,10 @@ class TokenError {
         if (token.lastIndexOf("'", lastIndex) > 0 || token.lastIndexOf('"', lastIndex) > 0) throw new Error(`${token} is not a string.`)
     }
 
+    isNumber(token) {
+        if (isNaN(token)) throw new Error(`${token} is a unknown type.`);
+    }
+
 }
 
 const arrayParser = new ArrayParser();
