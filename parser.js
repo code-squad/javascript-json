@@ -1,12 +1,22 @@
 class ArrayParser {
     constructor() {
         this.bracketStack = [];
+        this.quoteStack = [];
     }
-    tokenizer(inputString) {
+    tokenizer(inputString) {    
         const tokenArray = [];
-        for (let i in inputString) {
-            if (inputString[i] !== ' ' && inputString[i] !== "\n") {
-                tokenArray.push(inputString[i]);
+        let value = "";
+        for(let i  = 0; i< inputString.length; i++){
+            if(inputString[i] === "[" || inputString[i] === "]" || inputString[i] === ","){
+                if(value !== ""){
+                    tokenArray.push(value);
+                    tokenArray.push(inputString[i]);
+                    value = "";
+                }else{
+                    tokenArray.push(inputString[i]);
+                }
+            } else {
+                value += inputString[i];
             }
         }
         return tokenArray;
@@ -79,7 +89,8 @@ class ArrayParser {
 
 const arrParser = new ArrayParser();
 const testCode = (input) => {
-    return arrParser.parserExcuter(input);
+    return arrParser.tokenizer(input);
+    // return arrParser.parserExcuter(input);
 }
 
 console.log(testCode('[123,12,[3],1]'));
