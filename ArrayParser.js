@@ -1,5 +1,10 @@
 class ArrayParser {
 
+    constructor() {
+        this.stack = [];
+    }
+
+
     tokenizer(string) {
         string = string.split('');
         const array = [];
@@ -47,4 +52,13 @@ class ArrayParser {
         return { type: _type, value: token, child: [] };
     }
 
+    tokenJoiner(_stack) {
+        while (this.stack.length > 0) {
+            const arrayChild = this.stack.pop()
+            if (arrayChild === '[') break;
+            _stack.child.unshift(arrayChild)
+        }
+
+        return _stack;
+    }
 }
