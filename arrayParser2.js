@@ -1,22 +1,17 @@
 const str = "['1a3',[null,false,['11',[11223123],112],55, '99'],33, true]"
 
-const arr = str.split("");
-
-const makeArr = (arr) => {
-    if (arr[0] === "["){
-        answer = [];
-        arr.shift()
-        arr.pop()
-        arr.push(",") //배열 재구성
-    }
-    //return answer
-}
-
 const lexer = (arr) => {
     let i = 0;
     let Que = [];
     let word = "";
     let bracketStack = [];
+
+    // 배열 재배치
+    arr = arr.split("");
+    arr.shift()
+    arr.pop()
+    arr.push(",")
+
     while(i<= arr.length-1){
         // 띄어쓰기
         if (arr[0] ===" "){
@@ -44,9 +39,8 @@ const lexer = (arr) => {
             arr.shift();
 
             // 배열 재귀
-            wordArr = word.split("");
-            makeArr(wordArr);
-            let dpAnswer = lexer(wordArr);
+            //wordArr = word.split("");
+            let dpAnswer = lexer(word);
             Que.push(dpAnswer);
         }
         // string
@@ -67,6 +61,7 @@ const lexer = (arr) => {
             Que.push(word)
             arr.shift()
         }
+
         // not string, array => number, boolean, null
         else{
             word = ""
@@ -94,6 +89,5 @@ const lexer = (arr) => {
     return Que
 }
 
-makeArr(arr)
-console.log(lexer(arr))
+console.log(JSON.stringify(lexer(str), null, 2))
 //console.log(arr)
