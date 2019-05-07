@@ -16,6 +16,7 @@ class Parser {
         const strArray = this.tokenizer.split(this.tokenizer.removeWhiteSpace(strValue));
         const tokenArray = this.lexer.analyze(strArray);
         this.initTokenArrayVisited(tokenArray);
+        return this.makeNode(tokenArray, 1);
     }
 
     // 재귀 호출 하면서 loop를 순회하는데 방문한적이 있는지 확인해주는 메소드
