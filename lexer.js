@@ -1,9 +1,9 @@
-const TokenAssembler = require('./wordUtil/tokenAssembler');
+const WordMakerController = require('./wordUtil/wordMakerController');
 
 class Lexer {
   constructor(tokenizer){
     this.tokenizer = tokenizer;
-    this.tokenAssembler = new TokenAssembler(this.tokenizer);
+    this.wordMakerController = new WordMakerController(this.tokenizer);
   }
 
   isFinish(){
@@ -13,7 +13,7 @@ class Lexer {
   getWord(){
     const token = this.tokenizer.getToken();
     this.tokenizer.readyToNextTask();
-    const word = this.tokenAssembler.getWord(token);
+    const word = this.wordMakerController.getWord(token);
 
     return word;
   }
