@@ -16,6 +16,6 @@ const ArrayParser = require('./array_parser');
     console.log(JSON.stringify(result1, null, 2));
     console.log(JSON.stringify(result2, null, 2));
     console.log(JSON.stringify(result3, null, 2));
-    //console.log(JSON.stringify(result4, null, 2));   // error
-    //console.log(JSON.stringify(result5, null, 2));   // error
+    // console.log(JSON.stringify(result4, null, 2));   // error
+    // console.log(JSON.stringify(result5, null, 2));   // error
 })();
