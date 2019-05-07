@@ -1,18 +1,15 @@
 class Tokenizer{
     removeWhiteSpace(input){
         let WHITESPACE = /\s/g;
-        input = input.replace(WHITESPACE, '');
-        return input;
+        return input.replace(WHITESPACE, '');
     }
 
     splitByCommaAndBracket(input){
-        input = input.split(/([\[\]])|,/).filter(Boolean);
-        return input;
+        return input.split(/([\[\]])|,/).filter(Boolean);
     }
 
     tokenize(input){
-        const tokens = this.splitByCommaAndBracket(this.removeWhiteSpace(input));
-        return tokens;
+        return this.splitByCommaAndBracket(this.removeWhiteSpace(input));
     }
 }
 
