@@ -27,7 +27,17 @@ ArrayParser.prototype.lexer = function() {
 }
 
 ArrayParser.prototype.parser = function() {
-    
+    const [dataType, tokenList] = this.lexer();
+    const parseArr = [];
+
+    tokenList.filter(ele => {
+        if(ele.match(/[0-9]/g)){
+            parseArr.push({'type':'number', 'value':ele, child:[]});
+        }
+    })
+
+    this.parseObj.type = dataType;
+    this.parseObj.child = parseArr;
 }
 
 ArrayParser.prototype.showParsedResult = function() {
