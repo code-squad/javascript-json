@@ -1,34 +1,18 @@
 class Parser {
-    constructor(tokensInArraysize) {
-        this.elementCheck = new Array(tokensInArraysize);
-        this.elementCheck.fill(false);
+    constructor(tokenizer, lexer) {
+        // tokenArray에 있는 객체가 Node를 만들었음을 체크하기 위한 배열을 생성할 예정.
+        // (tokenArray가 만들어지면 생성하기 위해서 undefined로 지정)
+        this.tokenArrayVisited = undefined;
+        this.tokenizer = tokenizer;
+        this.lexer = lexer;
     }
 
-    checkTypeOf(value) {
-        if (value.startsWith("'") && value.endsWith("'")) return 'string';
-        if (value === 'true' || value === 'false') return 'boolean';
-        if (value === 'null') return 'object';
-        return 'number';
-    }
-
-    createSyntaxTree(tokensInArray, depth) {
-        const syntaxTree = { 'type' : 'array', 'child' : [] };
-        for (let index = 0; index < tokensInArray.length; index++) {
-            if (this.elementCheck[index] === true) continue;
-            if (tokensInArray[index]['depth'] < depth) break;  
-            else if (tokensInArray[index]['depth'] > depth) {
-                syntaxTree['child'].push(this.createSyntaxTree(tokensInArray, depth+1));
-            } else {
-                this.elementCheck[index] = true;
-                syntaxTree['child'].push( { 
-                    'type'  : this.checkTypeOf(tokensInArray[index]['value']), 
-                    'value' : tokensInArray[index]['value'], 
-                    'child' : []
-                } );
-            } 
-        }
-        return syntaxTree;
+    initTokenArrayVisited(tokenArray) {
+        this.tokenArrayVisited = new Array(tokenArray.length);
+        this.tokenArrayVisited.fill(false);
+        console.log(this.tokenArrayVisited);
     }
 }
 
 module.exports = Parser;
+
