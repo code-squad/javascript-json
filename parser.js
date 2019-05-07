@@ -123,4 +123,6 @@ const testCode = (input) => {
     return arrParser.parserExcuter(input);
 }
 
+console.log(testCode("['1a3',[22,23,[11,[112233],112],55],33]"));
 console.log(testCode("['1a3',[22,23,[11,[112233],112],55],3d3]"));
+console.log(testCode("['1'a3',[22,23,[11,[112233],112],55],33]"));
