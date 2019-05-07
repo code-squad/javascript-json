@@ -1,120 +1,25 @@
 const Parser = require("./Parser");
-const test = require("./test");
+const test = require("./test/test");
+const {data, result} = require("./test/testingData");
 const assert = require("assert");
 const parser = new Parser();
-
-const arrayParsingData1 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const arrayParsingData2 = "[1,2,3,4]";
-
-const resultArrayParsing1 =
-`{
-  "type": "array",
-  "child": [
-    {
-      "type": "string",
-      "value": "'1a3'",
-      "child": []
-    },
-    {
-      "type": "array",
-      "child": [
-        {
-          "type": "null",
-          "value": "null",
-          "child": []
-        },
-        {
-          "type": "boolean",
-          "value": "false",
-          "child": []
-        },
-        {
-          "type": "array",
-          "child": [
-            {
-              "type": "string",
-              "value": "'11'",
-              "child": []
-            },
-            {
-              "type": "array",
-              "child": [
-                {
-                  "type": "number",
-                  "value": "112233",
-                  "child": []
-                }
-              ]
-            },
-            {
-              "type": "number",
-              "value": "112",
-              "child": []
-            }
-          ]
-        },
-        {
-          "type": "number",
-          "value": "55",
-          "child": []
-        },
-        {
-          "type": "string",
-          "value": "'99'",
-          "child": []
-        }
-      ]
-    },
-    {
-      "type": "number",
-      "value": "33",
-      "child": []
-    },
-    {
-      "type": "boolean",
-      "value": "true",
-      "child": []
-    }
-  ]
-}`;
-
-const resultArrayParsing2 =
-`{
-  "type": "array",
-  "child": [
-    {
-      "type": "number",
-      "value": "1",
-      "child": []
-    },
-    {
-      "type": "number",
-      "value": "2",
-      "child": []
-    },
-    {
-      "type": "number",
-      "value": "3",
-      "child": []
-    },
-    {
-      "type": "number",
-      "value": "4",
-      "child": []
-    }
-  ]
-}`;
 
 test.describe("Parser test", function() {
 
   test.describe("Correct examples test", function() {
     test.it("should return correct parsed data!", () => {
-      assert.deepStrictEqual(parser.getJson(arrayParsingData1), resultArrayParsing1);
+      assert.deepStrictEqual(parser.getJson(data[1]), result[1]);
+    });
+
+    test.it("should return correct parsed data!", () => {
+      assert.deepStrictEqual(parser.getJson(data[2]), result[2]);
+    });
+
+    test.it("should return correct parsed data!", () => {
+      assert.deepStrictEqual(parser.getJson(data[3]), result[3]);
     });
   });
+
   test.describe("Incorrect examples test", function() {
-    test.it("should return incorrect parsed data!", () => {
-      assert.deepStrictEqual(parser.getJson(arrayParsingData2), resultArrayParsing2);
-    });
   });
 });
