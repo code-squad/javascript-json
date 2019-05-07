@@ -22,8 +22,19 @@ const tokenizer = str => {
     return tokens;
 }
 
-const lexer = () => {
-
+const lexer = str => {
+    const temp = tokenizer(str);
+    const tokens = temp.map( token => {
+        if (token === '[') {
+            return ['leftBracket', token];
+        } else if (token === ']') {
+            return ['rightBracket', token];
+        }
+        let type = typeof(Number(token));
+        let value = Number(token);
+        return [type, value];
+    });
+    return tokens;
 }
 
 const str = "[123, 22, 33]";
