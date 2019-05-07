@@ -2,10 +2,11 @@ const str = "[123, 12, [22, [3, 5], [55, 66], 4, 33], 44]";
 
 class ArrayParser {
     tokenizer(arr) {
-        arr = arr.split(' ').join(''); // arr = arr.replace(/ /g, '');
-        arr = arr.replace(/\[/g, '[,');
-        arr = arr.replace(/\]/g, ',]');
-        return arr.split(',');
+        return arr.replace(/(\[)|(\])/g, (match, p1, p2) => {
+            if (p1) return '[,';
+            if (p2) return ',]';
+        }).split(',')
+            .map(x => x.trim());
     }
 
     findLittleArray(arr) {
