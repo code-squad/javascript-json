@@ -18,7 +18,7 @@ class ArrayParser {
             const rootNode = new Node('Array');
             return this.arrayParse(rootNode);
         } else {
-            throw Error(`${firstNode.value} invalid array type error`);
+            throw Error(`${firstNode.value} 은 rootNode가 될 수 있는 형태('[')가 아닙니다.`);
         }
     }
 

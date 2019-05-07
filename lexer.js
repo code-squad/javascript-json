@@ -5,13 +5,13 @@ class Lexer{
         if(token === '[') return new Node('arrStart', '[');
         if(token === ']') return new Node('arrEnd', ']');
 
-        if(isFinite(Number(token))) return new Node('number', token);
+        if(Number(token)) return new Node('number', token);
         if (this.isString(token)) return new Node('string', token);
         
         if(token === 'null') return new Node('null', token);
         if(token === 'true' || token ==='false') return new Node('boolean', token);
         
-        else throw Error(`${token} undefined token type error`);
+        else throw Error(`${token} 은 알 수 없는 타입입니다.`);
     }
 
     isString(token){
