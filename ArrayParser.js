@@ -1,11 +1,12 @@
-const str = "[123, 12, [22, [55, 66], 4, 33], 44]";
+const str = "[123, 12, [22, [3, 5], [55, 66], 4, 33], 44]";
 
 class ArrayParser {
     tokenizer(arr) {
-        arr = arr.split(' ').join(''); // arr = arr.replace(/ /g, '');
-        arr = arr.replace(/\[/g, '[,');
-        arr = arr.replace(/\]/g, ',]');
-        return arr.split(',');
+        return arr.replace(/(\[)|(\])/g, (match, p1, p2) => {
+            if (p1) return '[,';
+            if (p2) return ',]';
+        }).split(',')
+            .map(x => x.trim());
     }
 
     findLittleArray(arr) {
@@ -24,10 +25,13 @@ class ArrayParser {
             type: 'array',
             child: []
         }
-        for (let i = startBracket + 1; i < endBracket; i++) {
-            arrayObject.child.push(this.makeElementObject(arr[i]));
-        }
-        return arrayObject;
+
+        return arr.reduce((acc, cur, index) => {
+            if (index > startBracket && index < endBracket) {
+                acc.child.push(this.makeElementObject(cur));
+            }
+            return acc;
+        }, arrayObject);
     }
 
     joinElements(arr, arrayObject, index) {
@@ -39,9 +43,9 @@ class ArrayParser {
 
     runArrayParser(arr) {
         if (arr.length === 1) return arr[0];
-        const index = this.findLittleArray(arr);
-        const arrayObject = this.makeArrayObject(arr, index);
-        arr = this.joinElements(arr, arrayObject, index);
+        const indexList = this.findLittleArray(arr);
+        const arrayObject = this.makeArrayObject(arr, indexList);
+        arr = this.joinElements(arr, arrayObject, indexList);
         return this.runArrayParser(arr);
     }
 
