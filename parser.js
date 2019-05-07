@@ -38,9 +38,22 @@ class ArrayParser {
         return "number";
     }
 
+    validationCheck(element, type) {
+        if (type === "number") {
+            if (isNaN(Number(element))) throw new Error(`${element}는 알수 없는 타입입니다.`);
+            return type;
+        }
+        if (type === "string") {
+            if (this.removeQuotes(element).includes("'")) throw new Error(`${element}는 올바른 문자열이 아닙니다.`);
+            return type;
+        }
+        return type;
+    }
+
     getDataObject(element) {
         const resultObject = {};
         resultObject.type = this.typeCheck(element);
+        this.validationCheck(element,resultObject.type);
         if (resultObject.type === "boolean") {
             resultObject.value = Boolean(element === "true");
         } else if (resultObject.type === "number") {
@@ -94,6 +107,7 @@ class ArrayParser {
 
     parserExcuter(inputString) {
         this.inputIndex = 0;
+        // let result = this.lexer(this.tokenizer(inputString));
         let result = this.parser(this.lexer(this.tokenizer(inputString)))[0];
         result = this.bracketStack.length !== 0 ? "유효하지 않은 텍스트" : result;
         return result;
@@ -103,9 +117,9 @@ class ArrayParser {
 
 const arrParser = new ArrayParser();
 const testCode = (input) => {
-    // return arrParser.tokenizer(input);
     return arrParser.parserExcuter(input);
 }
 
 // console.log(testCode('[" 123",12,[3],1]'));
-console.log(testCode("['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"));
+// console.log(testCode("['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"));
+console.log(testCode("['1a3',[22,23,[11,[112233],112],55],3d3]"));
