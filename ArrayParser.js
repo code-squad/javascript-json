@@ -1,7 +1,8 @@
 class ArrayParser {
 
-    constructor() {
+    constructor(tokenError) {
         this.stack = [];
+        this.errorChecker = tokenError;
     }
 
 
@@ -40,8 +41,11 @@ class ArrayParser {
         if ("[]".includes(token)) return 'array';
         if (token === 'true' || token === 'false') return 'boolean';
         if (token === 'null') return 'null';
-        if (`'"`.includes(token[0]) && `'"`.includes(token[token.length - 1])) return 'string';
-
+        if (`'"`.includes(token[0]) && `'"`.includes(token[token.length - 1])) {
+            this.errorChecker.isString(token);
+            return 'string';
+        }
+        this.errorChecker.isNumber(token);
         return 'number';
     }
 
@@ -64,14 +68,18 @@ class ArrayParser {
 
     parser(array) {
         if (typeof this.stack[0] === 'object') return this.stack[0];
+        try {
+            const token = array.shift();
+            const _type = this.lexer(token);
+            let _stack = this.makeObject(_type, token);
+            if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
+            this.stack.push(_stack);
 
-        const token = array.shift();
-        const _type = this.lexer(token);
-        let _stack = this.makeObject(_type, token);
-        if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
-        this.stack.push(_stack);
-
-        return this.parser(array);
+            return this.parser(array);
+        }
+        catch (e) {
+            console.log(e.message);
+        }
     }
 
     run(input) {
@@ -94,8 +102,11 @@ class TokenError {
 
 }
 
-const arrayParser = new ArrayParser();
+const tokenError = new TokenError();
+const arrayParser = new ArrayParser(tokenError);
 const str = "['1a3', [null, false, ['11', [112233], [112]], 55, '99'], 33, true]";
+// const str = "['1a'3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]";
+// const str = "['1a3', [null, false, ['11', [112233], 11d2], 55, '99'], 33, true]";
 
 const result = arrayParser.run(str);
 console.log(result);
