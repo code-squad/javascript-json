@@ -1,4 +1,5 @@
 const checker = require('./typeCheckers')
+const checkErrors = require('./error.js')
 
 const tokenizer = (inputString) => {
   const splitLetters = inputString.split('');
@@ -19,32 +20,40 @@ const tokenizer = (inputString) => {
 
 const lexer = (inputString) => {
   const tokenizedItems = tokenizer(inputString);
+  checkErrors.stringValidator(tokenizedItems)
   const lexedItems = [];
-  tokenizedItems.forEach( letter => {
-    if(!checker.sepertorChecker(letter)) {
-      const typeOfLetter = checker.typeChecker(letter);
-      if(isNaN(Number(letter))) {
-        lexedItems.push([typeOfLetter, letter])
-      } else {
+  tokenizedItems.forEach(letter => {
+    if (!checker.sepertorChecker(letter)) {
+      const typeOfLetter = checker.getType(letter);
+      if (typeOfLetter === 'number') {
         lexedItems.push([typeOfLetter, Number(letter)])
+      } else {
+        lexedItems.push([typeOfLetter, letter])
       }
     }
   });
+  checkErrors.typeValidator(lexedItems);
   return lexedItems;
 }
 
 const parser = (inputString) => {
   const lexedItems = lexer(inputString);
-  const topnotch = {'type': 'Array', 'child': []};
+  const topnotch = {
+    'type': 'Array',
+    'child': []
+  };
   const parsedItems = lexedItems.map(lexedArr => {
     const [type, value] = lexedArr;
-    return {type, value, child: []}
+    return {
+      type,
+      value,
+      child: []
+    }
   })
   topnotch.child = parsedItems
-  console.log(topnotch)
 }
 
-parser("[true, 123, null, 123, 123, undefined]")
+parser("[true, '123', null, 123, 123, undefined]")
 
 // Test Case
 //"[123, 123, 123, 123]"
