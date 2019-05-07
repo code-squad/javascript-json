@@ -81,6 +81,15 @@ class ArrayParser {
     }
 }
 
+class TokenError {
+
+    isString(token) {
+        const lastIndex = token.length - 2;
+        if (token.lastIndexOf("'", lastIndex) > 0 || token.lastIndexOf('"', lastIndex) > 0) throw new Error(`${token} is not a string.`)
+    }
+
+}
+
 const arrayParser = new ArrayParser();
 const str = "['1a3', [null, false, ['11', [112233], [112]], 55, '99'], 33, true]";
 
