@@ -9,7 +9,7 @@ class Tokenizer {
 
   tokenize() {
     const strWithoutSpace = this.removeWhiteSpace();
-    return strWithoutSpace.split(/([\[\]])|,/).filter(Boolean);
+    return strWithoutSpace.split(/([{:}])|([\[\]])|,/).filter(Boolean);
   }
 }
 
