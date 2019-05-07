@@ -16,8 +16,7 @@ class ArrayParser {
 
         if (firstNode.type === 'arrStart') {
             const rootNode = new Node('Array');
-            this.arrayParse(rootNode);
-            return rootNode;
+            return this.arrayParse(rootNode);
         } else {
             throw Error(`${firstNode.value} invalid array type error`);
         }
@@ -46,7 +45,5 @@ class ArrayParser {
 const tokenizer = new Tokenizer;
 const lexer = new Lexer;
 const arrayParer = new ArrayParser({tokenizer, lexer});
-const str = "[123, [22, 33], 234, [-45, 0.6], '78', '6', [[null, false], true]]";
-result = arrayParer.parse(str);
-console.log(result);
-console.log(JSON.stringify(result, null, 2));
+
+module.exports = arrayParer;
