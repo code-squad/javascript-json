@@ -1,21 +1,15 @@
 const jsonStr = "[123, 22, 33]";
 
-function ArrayParser() {
-    this.parseObj = {
-        "type": null,
-        "child" : []
-    };
-
-    this.tokenizer(jsonStr);
+function ArrayParser(jsonStr) {
+    this.jsonStr = jsonStr;
 }
 
-ArrayParser.prototype.tokenizer = function(str) {
-    const token = str.split(',').map(el => el.trim()); 
+ArrayParser.prototype.tokenizer = function() {
+    const token = this.jsonStr.split(',').map(el => el.trim()); 
     return token;
 }
 
-ArrayParser.prototype.lexer = function() {
-    const token = this.tokenizer(jsonStr);
+ArrayParser.prototype.lexer = function(token) {
     let dataType = null;
 
     token.forEach(v => {
@@ -31,25 +25,27 @@ ArrayParser.prototype.lexer = function() {
     return [dataType, tokenList];
 }
 
-ArrayParser.prototype.parser = function() {
-    const [dataType, tokenList] = this.lexer();
+ArrayParser.prototype.parse = function(lexing) {
+    const [dataType, tokenList] = lexing;
     const parseArr = [];
 
-    tokenList.filter(ele => {
-        if(ele.match(/[0-9]/g)){
-            parseArr.push({'type':'number', 'value':ele, child:[]});
-        }
-    })
+    tokenList.filter(ele => ele.match(/[0-9]/g)).map(ele => parseArr.push({'type':'number', 'value':ele, child:[]}));
 
-    this.parseObj.type = dataType;
-    this.parseObj.child = parseArr;
+    return parseObj = {
+        'type' : dataType,
+        'child' : parseArr
+    }
 }
 
-ArrayParser.prototype.showParsedResult = function() {
-    return this.parseObj;
+/* 실행 */
+ArrayParser.prototype.run = function() {
+    const token = this.tokenizer();
+    const lexing = this.lexer(token);
+    const parser = this.parse(lexing);
+    
+    return parser;
 }
 
-const arrayParser = new ArrayParser();
-arrayParser.parser();
-const result = arrayParser.showParsedResult();
+const arrayParser = new ArrayParser(jsonStr);
+const result = arrayParser.run();
 console.log(JSON.stringify(result, null, 10));
