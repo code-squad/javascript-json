@@ -17,10 +17,9 @@ const tokenizer = function(str) {
 };
 
 const typeChecker = function(value){
-    const typeOfValue = typeof value;
     const typeOfNumbValue = typeof Number(value);
     if (typeOfNumbValue === 'number') return 'number'
-    else if (typeOfNumbValue === 'NaN') return 
+    else if (typeOfNumbValue === 'NaN') return 'NaN'
 };
 
 const lexer = function(data){
@@ -38,16 +37,15 @@ const ArrayParser = function(str) {
         type: 'array',
         child:[]
     };
-    tokenArr.forEach(()=>{
-        let childData = lexer()
-        child.result.push(childData);
+    tokenArr.forEach((token)=>{
+        let childData = lexer(token);
+        result.child.push(childData);
     });
     return result
 };
 
 const result = ArrayParser(str);
-console.log(result);
-// console.log(JSON.stringify(result, null, 2)); 
+console.log(JSON.stringify(result, null, 2)); 
 
 // { type: 'array',
 //   child: 
