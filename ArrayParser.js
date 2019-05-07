@@ -79,3 +79,21 @@ class Lexer {
         return tokens;
     }
 }
+
+class ArrayParser {
+    parse(tokens){
+        // AST(Abstract Syntax Tree): root. type 이름은 'Array'
+        let ast = {
+            type: 'Array',
+            child: [],
+        };
+
+        tokens.filter(function (e) {
+            return e.type === 'number'
+        }).map(function (e) {
+            return ast.child.push(e)
+        });
+
+        return ast;
+    }
+}
