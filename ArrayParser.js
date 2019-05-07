@@ -39,4 +39,12 @@ class ArrayParser {
 
         return 'number';
     }
+
+    makeObject(_type, token) {
+        if (token === '[') return token;
+        if (token === ']') return { type: _type, child: [] };
+
+        return { type: _type, value: token, child: [] };
+    }
+
 }
