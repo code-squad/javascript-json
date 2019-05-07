@@ -1,5 +1,4 @@
-//const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
-const str = "['1a3',null,33,[dd,[dfsdf,2,3],ww,ff], '99', true]"
+const str = "['1a3',[null,false,['11',[11223123],112],55, '99'],33, true]"
 
 const arr = str.split("");
 
@@ -13,7 +12,7 @@ const makeArr = (arr) => {
     //return answer
 }
 
-const makeQue = (arr) => {
+const lexer = (arr) => {
     let i = 0;
     let Que = [];
     let word = "";
@@ -25,8 +24,9 @@ const makeQue = (arr) => {
         }
         // 배열
         else if (arr[0] === "["){
+            // 배열 스트링 화 시키기
             word = ""
-            while(i<= arr.length-1){ // 마지막 ']' 까지 돌기
+            while(i<= arr.length-1){ 
                 if(arr[i] === "["){
                     bracketStack.push(arr[i]);
                 }
@@ -41,8 +41,13 @@ const makeQue = (arr) => {
                     break;
                 }
             }
-            arr.shift()
-            Que.push(word);
+            arr.shift();
+
+            // 배열 재귀
+            wordArr = word.split("");
+            makeArr(wordArr);
+            let dpAnswer = lexer(wordArr);
+            Que.push(dpAnswer);
         }
         // string
         else if (arr[0] ==="'"){
@@ -90,5 +95,5 @@ const makeQue = (arr) => {
 }
 
 makeArr(arr)
-console.log(makeQue(arr))
+console.log(lexer(arr))
 //console.log(arr)
