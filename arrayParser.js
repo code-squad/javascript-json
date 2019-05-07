@@ -1,25 +1,35 @@
 const jsonStr = "[123, 22, 33]";
 
 function ArrayParser() {
+    this.tokenizer(jsonStr);
 }
 
-//토큰화 기능
 ArrayParser.prototype.tokenizer = function(str) {
     const token = str.split(',').map(el => el.trim()); 
     return token;
 }
 
-// lexer 토큰 의미부여하는 기능(type check)
 ArrayParser.prototype.lexer = function() {
+    const token = this.tokenizer(jsonStr);
+    let dataType = null;
 
+    token.forEach(v => {
+        if(v.indexOf('[') !== -1){
+            dataType = 'array';
+        } else if(v.indexOf('{') !== -1){
+            dataType = 'object'
+        }
+    })
+
+    const tokenList = token.map(v => v.replace(/(\[)|(\])|(\{)|(\})|/g, ''));
+
+    return [dataType, tokenList];
 }
 
-//렉서한 내용을 분석하여 보여줌
 ArrayParser.prototype.parser = function() {
     
 }
 
-//결과값 보여주는 함수
 ArrayParser.prototype.showParsedResult = function() {
    
 }
