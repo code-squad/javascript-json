@@ -1,81 +1,20 @@
-const Node = require('./node');
+const Tokenizer = require('./tokenizer');
+const Lexer = require('./lexer');
+const Parser = require('./parser');
+const keyword = require('./keyword');
+const messageObj = require('./message');
 
-const tokenizer = {
-  removeWhiteSpace: str => str.replace(/\s/g, ''),
+const str = "['1a3', [null,false,['11',[112233],112],55, '99'],33, true]";
 
-  tokenize(str) {
-    strWithoutSpace = this.removeWhiteSpace(str);
-    return strWithoutSpace.split(/([\[\]])|,/).filter(Boolean);
-  }
-};
+const tokenizer = new Tokenizer({ rawString: str });
+const parser = new Parser({
+  lexer: new Lexer({ keyword, messageObj }),
+  tokens: tokenizer.tokenize()
+});
 
-const lexer = {
-  makeNode(element) {
-    element = Number(element);
-    return new Node({
-      type: 'number',
-      value: element
-    });
-  },
-
-  lex(word) {
-    if (word === '[') {
-      return { context: 'ArrayOpen', newNode: new Node({ type: 'Array' }) };
-    }
-
-    if (word === ']') {
-      return { context: 'ArrayClose', newNode: undefined };
-    }
-
-    return { context: 'Element', newNode: this.makeNode(word) };
-  }
-};
-
-class Parser {
-  constructor({ tokenizer, lexer }) {
-    this.lexer = lexer;
-    this.tokenizer = tokenizer;
-    this.queue = [];
-  }
-
-  arrayParse(node) {
-    while (this.queue.length !== 0) {
-      const word = this.queue.shift();
-      const lexedData = this.lexer.lex(word);
-
-      if (lexedData.context === 'ArrayClose') {
-        return node;
-      }
-
-      if (lexedData.context === 'ArrayOpen') {
-        lexedData.newNode = this.arrayParse(lexedData.newNode);
-      }
-
-      node.pushChild(lexedData.newNode);
-    }
-
-    return node;
-  }
-
-  parse(str) {
-    this.queue = tokenizer.tokenize(str);
-    const word = this.queue.shift();
-    if (word === '[') {
-      const root = new Node({ type: 'Array' });
-      const parsedTree = this.arrayParse(root);
-      return parsedTree;
-    }
-  }
+try {
+  const result = parser.parse();
+  console.log(JSON.stringify(result, null, 2));
+} catch (error) {
+  console.log(error.message);
 }
-
-const str = '[123, [22, 33], 444]';
-const str2 = '[123, 22, 33, 444]';
-
-const parser = new Parser({ lexer, tokenizer });
-const result = parser.parse(str);
-console.log(JSON.stringify(result, null, 2));
-
-console.log('======================================');
-
-const result2 = parser.parse(str2);
-console.log(JSON.stringify(result2, null, 2));
