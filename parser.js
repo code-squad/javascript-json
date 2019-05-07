@@ -19,7 +19,14 @@ class ArrayParser {
                 value += inputString[i];
             }
         }
-        return tokenArray;
+        return this.removeBlank(tokenArray);
+    }
+
+    removeBlank(stringArray) {
+        stringArray.forEach((element, index) => {
+            stringArray[index] = element.trimStart().trimEnd();;
+        });
+        return stringArray;
     }
 
     typeCheck(string) {
@@ -82,4 +89,4 @@ const testCode = (input) => {
     return arrParser.parserExcuter(input);
 }
 
-console.log(testCode('[123,12,[3],1]'));
+console.log(testCode('[ 123,12,[3],1]'));
