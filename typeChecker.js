@@ -1,6 +1,6 @@
 const typeChecker = {
     isNumber (value) {
-        /^-?[0-9\.]+$/g.test(value)
+        return /^-?[0-9\.]+$/.test(value)
     },
     isNull (value) {
         return value === 'null';
@@ -12,8 +12,8 @@ const typeChecker = {
         return value === 'true' || value === "false";
     }, 
     isValidString (value) {
-        if(/.+['"].+/.test(value)) return true; 
-        throw new TypeError(`${value}는 올바른 문자열이 아닙니다.`)  
+        if(/.+['"].+/.test(value)) throw new TypeError(`${value}는 올바른 문자열이 아닙니다.`)
+        return true; 
     },
     isOpenBraket (value){
         return value === "["
