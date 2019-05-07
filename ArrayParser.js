@@ -97,3 +97,13 @@ class ArrayParser {
         return ast;
     }
 }
+
+const str = '[123, 22, [0.0033, 123], -45, 0.6, 7.828, 6]';
+
+const tokenizer = new Tokenizer;
+const lexer = new Lexer;
+const arrayParser = new ArrayParser;
+const tokens = tokenizer.tokenize(str);
+const lexedTokens = lexer.lex(tokens);
+console.log(lexedTokens);
+console.log(arrayParser.parse(lexedTokens));
