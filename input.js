@@ -11,12 +11,13 @@ const arrayParser = new ArrayParser();
 (() => {
   rl.question('ArrayParser 사용자 입력 : ', (userInput) => {
     try {
-      // arrayParser.checkChars(userInput)
-      let tokens = arrayParser.textTokenize(userInput)
-      let result = arrayParser.parseWithTokens(tokens)
-
-      console.log(result)
-      //console.log(JSON.stringify(result, null, 2)); 
+      arrayParser.textTokenize(userInput)
+      let result = arrayParser.parseWithTokens()
+      if(!arrayParser.stackIsEmpty()){
+        throw new Error('잘못된배열이네')
+      }
+      result = result.child[0]
+      console.log(JSON.stringify(result, null, 2)); 
       
     } catch (e) {
       console.log(e.message)
