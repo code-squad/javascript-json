@@ -9,5 +9,11 @@ class Tokenizer{
         input = input.split(/([\[\]])|,/).filter(Boolean);
         return input;
     }
-    
+
+    tokenize(input){
+        const tokens = this.splitByCommaAndBracket(this.removeWhiteSpace(input));
+        return tokens;
+    }
 }
+
+module.exports = Tokenizer;
