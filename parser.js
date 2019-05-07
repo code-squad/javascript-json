@@ -12,6 +12,14 @@ class Parser {
         this.tokenArrayVisited.fill(false);
         console.log(this.tokenArrayVisited);
     }
+
+    execute(strValue) {
+        const strArray = this.tokenizer.split(this.tokenizer.removeWhiteSpace(strValue));
+        console.log(strArray);
+        const tokenArray = this.lexer.analyze(strArray);
+        console.log(tokenArray);
+        this.initTokenArrayVisited(tokenArray);
+    }
 }
 
 module.exports = Parser;
