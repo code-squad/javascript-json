@@ -8,14 +8,16 @@ class ArrayParser {
     this.skipToken = [ TokenType.Whitespace, TokenType.Comma ];
   }
 
-  requestTokens(){
-    return this.tokenizer.getTokens();
-  }
-
+  /*
+  * 중첩된 배열을 처리하는 함수
+  * 입력: 없음
+  * 출력: 분석한 결과를 배열로 반환
+  */
   analysisRecursively(){
     const partialResult = [];
     let encounterArrayEnd = false;
 
+    // 종료조건: 1. lexer가 할 일을 마치거나 2. ']' 토큰을 만났을 때
     while(!this.lexer.isFinish()){
       const word = this.lexer.getWord();
 
