@@ -1,5 +1,22 @@
-const arrayParser = () => {
+const arrayParser = tokens => {
+    let parsedArr = [];
 
+    while (tokens.length) {
+        [typeValue, tokenValue] = tokens.shift();
+        if (typeValue === 'number') {
+            parsedArr.push(
+                {type: 'number', value: tokenValue, child: []}
+            )
+        } else if (typeValue === 'leftBracket') {
+            parsedArr.push(
+                {type: 'array', child: arrayParser(tokens)}
+            )
+        } else if (typeValue === 'rightBracket') {
+            return parsedArr;
+        }
+    }
+
+    return parsedArr;
 }
 
 const tokenizer = str => {
@@ -38,5 +55,6 @@ const lexer = str => {
 }
 
 const str = "[123, 22, 33]";
-const result = arrayParser();
+const tokens = lexer(str);
+const result = arrayParser(tokens);
 console.log(JSON.stringify(result, null, 2)); 
