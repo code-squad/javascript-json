@@ -1,5 +1,7 @@
 module.exports = {
   startOfArray: "[",
   endOfArray: "]",
-  rest: ","
+  rest: ",",
+  startOfObject: "{",
+  endOfObject: "}"
 }

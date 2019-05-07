@@ -16,9 +16,11 @@ const parserUtils = {
   },
 
   isEndofLiteral(idx, decomposedDataArr) {
+    const nextLetter = decomposedDataArr[idx + 1];
     return (
-      decomposedDataArr[idx + 1] === separators.rest ||
-      decomposedDataArr[idx + 1] === separators.endOfArray
+      nextLetter === separators.rest ||
+      nextLetter === separators.endOfArray ||
+      nextLetter === separators.endOfObject
     );
   },
 
@@ -119,9 +121,20 @@ class Parser {
     if (word === separators.endOfArray) {
       const parentObj = parentObjStack.pop();
       this.parsing(lexedJson, parentObj);
+    } else if (word === separators.endOfObject) {
+      const parentObj = parentObjStack.pop();
+      this.parsing(lexedJson, parentObj);
     } else if (word === separators.startOfArray) {
       const childObj = {
         type: "array",
+        child: []
+      };
+      parsingDataObj.child.push(childObj);
+      parentObjStack.push(parsingDataObj);
+      this.parsing(lexedJson, childObj);
+    } else if (word === separators.startOfObject) {
+      const childObj = {
+        type: "object",
         child: []
       };
       parsingDataObj.child.push(childObj);
@@ -143,6 +156,7 @@ class Parser {
     };
     this.parsing(lexedJson, resultObj);
     const resultText = JSON.stringify(resultObj.child[0], null, 2);
+    log(resultText);
     return resultText;
   }
 }
