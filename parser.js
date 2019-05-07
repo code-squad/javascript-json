@@ -1,7 +1,6 @@
 class ArrayParser {
     constructor() {
         this.bracketStack = [];
-        this.quoteStack = [];
     }
     tokenizer(inputString) {
         const tokenArray = [];
@@ -24,7 +23,7 @@ class ArrayParser {
 
     removeBlank(stringArray) {
         stringArray.forEach((element, index) => {
-            stringArray[index] = element.trimStart().trimEnd();;
+            stringArray[index] = element.trimStart().trimEnd();
         });
         return stringArray;
     }
@@ -37,14 +36,30 @@ class ArrayParser {
         if (string === "]") return "arrayEndOperator";
         return "number";
     }
+    
+    getDataObject(element){
+        const resultObject = {};
+        resultObject.type = this.typeCheck(element);
+        if(resultObject.type == "boolean"){
+            resultObject.value = Boolean(element === "true");
+        }else if(resultObject.type == "number"){
+            resultObject.value =Number(element);
+        }else if(resultObject.type == "null"){
+            resultObject.value =null;
+        }else if(resultObject.type == "string"){
+            resultObject.value =String(this.removeQuotes(element));
+        }
+        return resultObject;
+    }
+
+    removeQuotes(string) {
+        return string.slice(1, string.length - 1);
+    }
 
     lexer(inputArray) {
         const lexerArray = [];
         inputArray.forEach(element => {
-            lexerArray.push({
-                "value": element,
-                "type": this.typeCheck(element)
-            });
+            lexerArray.push(this.getDataObject(element));
         });
         return lexerArray;
     }
@@ -62,7 +77,7 @@ class ArrayParser {
                 });
             } else if (inputData.type === 'number') {
                 resultArray.push({
-                    type: 'number',
+                    type: inputData.type,
                     value: inputData.value
                 });
             } else if (inputData.type === "arrayEndOperator") {
