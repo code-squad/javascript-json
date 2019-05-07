@@ -1,5 +1,5 @@
 //const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
-const str = "['1a3',null,33,[dd,ww,ff], '99', true]"
+const str = "['1a3',null,33,[dd,[dfsdf,2,3],ww,ff], '99', true]"
 
 const arr = str.split("");
 
@@ -26,12 +26,21 @@ const makeQue = (arr) => {
         // 배열
         else if (arr[0] === "["){
             word = ""
-            bracketStack.push(arr[0]);
-            while(i<= arr.indexOf(']')){
+            while(i<= arr.length-1){ // 마지막 ']' 까지 돌기
+                if(arr[i] === "["){
+                    bracketStack.push(arr[i]);
+                }
                 word = word+ arr[i];
                 arr.shift()
+                if(arr[i] === "]"){
+                    bracketStack.shift();
+                    word = word+ arr[i];
+                    arr.shift()
+                }
+                if(bracketStack[0] === undefined){
+                    break;
+                }
             }
-            bracketStack.shift();
             arr.shift()
             Que.push(word);
         }
