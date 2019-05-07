@@ -49,13 +49,14 @@ class ArrayParser {
         return lexerArray;
     }
                                         
-    parser(inputArray ,resultArray = []) {
+    parser(inputArray) {
+        const resultArray = [];
         let inputData;
         while(inputArray.length > 0){
             inputData = inputArray.shift();
             if(inputData.type === "arrayStartOperator" ){
                 this.bracketStack.push("[");
-                resultArray.push({type : "array", child : this.parser(inputArray, [])});
+                resultArray.push({type : "array", child : this.parser(inputArray)});
             }else if(inputData.type === 'number'){
                 resultArray.push({type : 'number', value : inputData.value});
             }else if(inputData.type === "arrayEndOperator" ) {
