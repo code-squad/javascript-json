@@ -105,10 +105,18 @@ const resultArrayParsing2 =
   ]
 }`;
 
-test.it("should return correct parsed data!", () => {
-  assert.deepStrictEqual(parser.getJson(arrayParsingData1), resultArrayParsing1);
-});
+test.describe("first test", function() {
+  test.it("should return correct parsed data!", () => {
+    assert.deepStrictEqual(parser.getJson(arrayParsingData1), resultArrayParsing1);
+  });
 
-test.it("should return correct parsed data!", () => {
-  assert.deepStrictEqual(parser.getJson(arrayParsingData2), resultArrayParsing2);
+  test.it("should return correct parsed data!", () => {
+    assert.deepStrictEqual(parser.getJson(arrayParsingData1), resultArrayParsing1);
+  });
+
+  test.describe("second test", function() {
+    test.it("should return correct parsed data!", () => {
+      assert.deepStrictEqual(parser.getJson(arrayParsingData2), resultArrayParsing2);
+    });
+  });
 });
