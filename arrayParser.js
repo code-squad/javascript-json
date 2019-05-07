@@ -1,6 +1,11 @@
 const jsonStr = "[123, 22, 33]";
 
 function ArrayParser() {
+    this.parseObj = {
+        "type": null,
+        "child" : []
+    };
+
     this.tokenizer(jsonStr);
 }
 
@@ -41,5 +46,10 @@ ArrayParser.prototype.parser = function() {
 }
 
 ArrayParser.prototype.showParsedResult = function() {
-   
+    return this.parseObj;
 }
+
+const arrayParser = new ArrayParser();
+arrayParser.parser();
+const result = arrayParser.showParsedResult();
+console.log(JSON.stringify(result, null, 10));
