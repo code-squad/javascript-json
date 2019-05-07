@@ -5,7 +5,8 @@ function ArrayParser() {
 
 //토큰화 기능
 ArrayParser.prototype.tokenizer = function(str) {
-
+    const token = str.split(',').map(el => el.trim()); 
+    return token;
 }
 
 // lexer 토큰 의미부여하는 기능(type check)
