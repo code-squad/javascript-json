@@ -14,7 +14,7 @@ class ArrayParser {
 
     typeCheck(string) {
         if (string === "true" || string === "false") return "boolean";
-        if (string[0] === "'" && string[string.length - 1] === "'") return "string";
+        if (string[0] === "'" && string[string.length - 1] === "'" || string[0] === '"' && string[string.length - 1] === '"') return "string";
         if (string === ",") return "separator";
         if (string === "[") return "arrayStartOperator"
         if (string === "]") return "arrayEndOperator";
