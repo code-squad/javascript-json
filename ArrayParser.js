@@ -61,4 +61,29 @@ class ArrayParser {
 
         return _stack;
     }
+
+    parser(array) {
+        if (typeof this.stack[0] === 'object') return this.stack[0];
+
+        const token = array.shift();
+        const _type = this.lexer(token);
+        let _stack = this.makeObject(_type, token);
+        if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
+        this.stack.push(_stack);
+
+        return this.parser(array);
+    }
+
+    run(input) {
+        const array = this.tokenizer(input);
+
+        return this.parser(array);
+    }
 }
+
+const arrayParser = new ArrayParser();
+const str = "['1a3', [null, false, ['11', [112233], [112]], 55, '99'], 33, true]";
+
+const result = arrayParser.run(str);
+console.log(result);
+console.log(JSON.stringify(result, null, 2));
