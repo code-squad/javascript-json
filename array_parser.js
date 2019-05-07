@@ -7,12 +7,13 @@ const ArrayParser = (strValue) => {
     const tokenizer = new Tokenizer();
     const lexer = new Lexer(validation);
     const parser = new Parser(tokenizer, lexer);
-    parser.initTokenArrayVisited([1, 2, 3, 4]);
-    parser.setVisit([1, 2, 3, 4], 3);
-    console.log(parser.isVisited([1, 2, 3, 4], 3));
-    console.log(parser.isVisited([1, 2, 3, 4], 2));
-    console.log(parser.isVisited([1, 2, 3, 4], 4));
-    console.log(parser.isVisited([1, 2, 3, 4], 1));
+    const tokenArray = [{ 'depth' : 1, 'value' : 13, 'type' : 'number', },
+                        { 'depth' : 2, 'value' : 7, 'type' : 'number', },
+                        { 'depth' : 3, 'value' : 53, 'type' : 'number', },
+                        { 'depth' : 2, 'value' : 1233, 'type' : 'number', },
+                        { 'depth' : 1, 'value' : 1356, 'type' : 'number', },];
+    parser.initTokenArrayVisited(tokenArray);
+    console.log(parser.makeNode(tokenArray, 1));
 }
 
 module.exports = ArrayParser;

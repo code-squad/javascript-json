@@ -22,6 +22,21 @@ class Parser {
     isVisited(tokenArray, token) { return this.tokenArrayVisited[tokenArray.indexOf(token)]; }
 
     setVisit(tokenArray, token) { this.tokenArrayVisited[tokenArray.indexOf(token)] = true; }
+
+    makeNode(tokenArray, depth) {
+        const node = { 'type' : 'array', 'child' : [] };
+        for (const token of tokenArray) {
+            if (this.isVisited(tokenArray, token)) continue;
+            if (token.depth < depth) break;
+            else if (token.depth > depth) {
+                node.child.push(this.makeNode(tokenArray, depth+1));
+            } else {
+                node.child.push({'type' : token.type, 'value' : token.value, 'child' : []});
+                this.setVisit(tokenArray, token);
+            }
+        }
+        return node;
+    }
 }
 
 module.exports = Parser;
