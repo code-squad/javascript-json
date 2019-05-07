@@ -1,5 +1,6 @@
 const assert = require('assert');
 const {log} = console;
+const {time, timeEnd} = console;
 
 const statistics = {
   successCnt: 0,
@@ -11,6 +12,10 @@ const statistics = {
 const test = {
   it(testTitle, testCode) {
     //TODO: test title 출력 및 testCode 실행.
+    log(`✓ ${testTitle}`);
+    time("test pass");
+    testCode();
+    timeEnd("test pass");
   },
 
   all() {
@@ -26,3 +31,5 @@ const test = {
     log(`result: ${testResult} (success: ${passCnt}, fail: ${failCnt}, ignore: ${ignoreCnt})`);
   }
 }
+
+module.exports = test;

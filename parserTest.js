@@ -1,33 +1,114 @@
 const Parser = require("./Parser");
+const test = require("./test");
+const assert = require("assert");
 const parser = new Parser();
 
-const correctData = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const correctData2 = "[1,2,3,4]";
+const arrayParsingData1 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+const arrayParsingData2 = "[1,2,3,4]";
 
-const incorrectData1 = "['1a'3',[22,23,[11,[112233],112],55],33]";
-const incorrectData2 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
-const incorrectData3 = "[1,2,3,4]]";
+const resultArrayParsing1 =
+`{
+  "type": "array",
+  "child": [
+    {
+      "type": "string",
+      "value": "'1a3'",
+      "child": []
+    },
+    {
+      "type": "array",
+      "child": [
+        {
+          "type": "null",
+          "value": "null",
+          "child": []
+        },
+        {
+          "type": "boolean",
+          "value": "false",
+          "child": []
+        },
+        {
+          "type": "array",
+          "child": [
+            {
+              "type": "string",
+              "value": "'11'",
+              "child": []
+            },
+            {
+              "type": "array",
+              "child": [
+                {
+                  "type": "number",
+                  "value": "112233",
+                  "child": []
+                }
+              ]
+            },
+            {
+              "type": "number",
+              "value": "112",
+              "child": []
+            }
+          ]
+        },
+        {
+          "type": "number",
+          "value": "55",
+          "child": []
+        },
+        {
+          "type": "string",
+          "value": "'99'",
+          "child": []
+        }
+      ]
+    },
+    {
+      "type": "number",
+      "value": "33",
+      "child": []
+    },
+    {
+      "type": "boolean",
+      "value": "true",
+      "child": []
+    }
+  ]
+}`;
 
-try {
-  parser.getJson(correctData);
-  parser.getJson(incorrectData1); //'1a'3'은 올바른 문자열이 아닙니다.
-} catch (error) {
-  console.log(error);
-}
+const resultArrayParsing2 =
+`{
+  "type": "array",
+  "child": [
+    {
+      "type": "number",
+      "value": "1",
+      "child": []
+    },
+    {
+      "type": "number",
+      "value": "2",
+      "child": []
+    },
+    {
+      "type": "number",
+      "value": "3",
+      "child": []
+    },
+    {
+      "type": "number",
+      "value": "4",
+      "child": []
+    }
+  ]
+}`;
 
-try {
-  parser.getJson(incorrectData2);  // 3d3은 알수 없는 타입입니다
-} catch (error) {
-  console.log(error);
-}
-try {
-  parser.getJson(incorrectData3);  // underflow
-} catch (error) {
-  console.log(error);
-}
+test.it("should return correct parsed data!", () => {
+  assert.deepStrictEqual(parser.getJson(arrayParsingData1), resultArrayParsing1);
+});
 
-try {
-  parser.getJson(correctData2);
-} catch (error) {
-  console.log(error);
-}
+test.it("should return correct parsed data!", () => {
+  assert.deepStrictEqual(parser.getJson(arrayParsingData2), resultArrayParsing2);
+});

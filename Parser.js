@@ -143,7 +143,7 @@ class Parser {
     };
     this.parsing(lexedJson, resultObj);
     const resultText = JSON.stringify(resultObj.child[0], null, 2);
-    log(resultText);
+    return resultText;
   }
 }
 
