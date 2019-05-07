@@ -70,7 +70,7 @@ class ArrayParser {
     parserExcuter(inputString) {
         this.inputIndex = 0;
         let result = this.parser(this.lexer(this.tokenizer(inputString)))[0];
-        this.bracketStack.length !== 0 ? result = "유효하지 않은 텍스트" : 0;
+        result = this.bracketStack.length !== 0 ? "유효하지 않은 텍스트" : result;
         return result;
     }
 }
