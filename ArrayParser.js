@@ -43,3 +43,39 @@ class Tokenizer {
         return tokens;
     }
 }
+
+class Lexer {
+    lex(input){
+        let current = 0;
+        const tokens = [];
+        while (current < input.length) {
+            let char = input[current];
+            // 숫자를 만나면 type 을 number 로 주고 tokens 에 push 한다.
+            if (isFinite(Number(char.value))) {
+                // 숫자값을 담을 value 변수를 선언.
+                let value = '';
+
+                // 숫자를 만나면 value 변수에 할당한다.
+                while (isFinite(Number(char.value))) {
+                    value += char.value;
+                    char = input[++current];
+                }
+
+                // tokens array 에 'number' token 을 push 한다.
+                tokens.push({
+                    type: 'number',
+                    value,
+                    child: [],
+                });
+            }
+            else {
+                tokens.push({
+                    type: char.type,
+                    value: char.value
+                });
+                current++
+            }
+        }
+        return tokens;
+    }
+}
