@@ -35,7 +35,12 @@ class Parser {
     lexeredData.forEach((token, index) => {
       if (token._type === "array") {
         this.tokenStack.push(token);
-      } else if (token._type === "number") {
+      } else if (
+        token._type === "number" ||
+        token._type === "string" ||
+        token._type === "boolean" ||
+        token._type === "null"
+      ) {
         this.updateTokenStack(token);
       } else if (token._type === "array-end") {
         topToken = this.findParentToken();

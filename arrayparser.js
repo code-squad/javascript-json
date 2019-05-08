@@ -34,8 +34,9 @@ const parser = new Parser();
 const arrayParser = new ArrayParser(tokenizer, lexer, parser);
 
 // const targetStr = "[123, 22, 33]";
-const targetStr = "[123, 22, [33]]";
+// const targetStr = "[123, 22, [33]]";
 // const targetStr = "['123',[ '456', '789',['11',['22']],'55', '99'], '33']";
+const targetStr = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const result = arrayParser.startParsing(targetStr);
 
 console.log(result);
