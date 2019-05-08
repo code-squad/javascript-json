@@ -1,6 +1,6 @@
 class Tokenizer {
     insertComma(str) {
-        return str.replace(/\[/g, '[,').replace(/\]/g, ',]');
+        return str.replace(/\[/g, '[,').replace(/\]/g, ',]').replace(/\{/g, '{,').replace(/\}/g, ',}').replace(/\:/g, ':,');
     }
 
     removeSpace(str) {
