@@ -35,10 +35,10 @@ const rl = readline.createInterface({
 });
 ```
 
-2. ` tokenizer()` sudo (추가)
+2. ` tokenizer()` pseudo (추가)
     - token별로 문자를 합치거나 쪼개는 역할
 
-3. `init()` sudo (삭제)
+3. `init()` pseudo (삭제)
 
 ```js
 const init =  함수() {
@@ -49,7 +49,7 @@ parser(input);
 }
 ```
 
-4. `lexer()` sudo
+4. `lexer()` pseudo
 
 ```js
 const lexer = 함수(input) {
@@ -63,7 +63,7 @@ const lexer = 함수(input) {
 }
 ```
 
-5. `parser()` sudo
+5. `parser()` pseudo
 
 ```js
 const parser = 함수(input) {
