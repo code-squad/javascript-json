@@ -1,5 +1,5 @@
-const tokenizer = require("./arrayTokenizer.js");
-const arrayParser = require("./arrayParser.js");
+const tokenizer = require("./ArrayTokenizer.js");
+const arrayParser = require("./ArrayParser.js");
 const errorCheck = require("./errorCheck");
 
 const errorChecker = new errorCheck();
