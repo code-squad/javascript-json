@@ -3,22 +3,28 @@ const Node = require('./node');
 class Lexer {
     setType(token) {
         if (token === '[') {
-            return new Node('array');
+            return new Node({ type: 'array', child: [] });
         }
         if (this.isString(token)) {
-            return new Node('string', token);
+            return new Node({ type: 'string', value: token });
         }
         if (isFinite(token) && token !== null) {
-            return new Node('number', token);
+            return new Node({ type: 'number', value: token });
         }
         if (token === 'true' || token === 'false') {
-            return new Node('boolean', token);
+            return new Node({ type: 'boolean', value: token });
         }
         if (token === 'null') {
-            return new Node('null');
+            return new Node({ type: 'null', value: null });
         }
-        if (token === ']') {
-            return new Node('end');
+        if (token === '{') {
+            return new Node({ type: 'object', child: [] })
+        }
+        if (token.endsWith(':')) {
+            return new Node({ type: 'key', key: token.slice(0, token.length - 1) })
+        }
+        if (token === ']' || token === '}') {
+            return new Node({ type: 'end' });
         } else {
             throw Error(`${token}은 알수 없는 타입입니다.`);
         }
@@ -32,7 +38,7 @@ class Lexer {
         }
         return false;
     }
-    
+
     countQuotes(token, quote) {
         return token.slice(1, token.length - 1).split(quote).length - 1;
     }
