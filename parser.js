@@ -30,7 +30,10 @@ function parse(lexedTokens) {
     lexedTokens.forEach(function (lexedToken) {
         if(lexedToken.type === 'array') {
             parentNode = lexedToken;
+        } else if(lexedToken.type === 'number') {
+            parentNode.child.push(lexedToken);
         }
+        return parentNode;
     });
     return parentNode;
 }
@@ -38,4 +41,5 @@ function parse(lexedTokens) {
 const str = "[1.23, 2.2, 3.3]";
 const tokens = tokenize(str);
 const lexedTokens = lex(tokens);
-console.log(parse(lexedTokens));
+const result = parse(lexedTokens);
+console.log(JSON.stringify(result, null, 2));
