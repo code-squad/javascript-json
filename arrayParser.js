@@ -1,36 +1,10 @@
-const tokenizer = require("./arrayTokenizer.js");
-
 class arrayParser {
     constructor(tokens) {
         this.tokens = tokens;
         this.current = 0;
         this.quene = [];  
     }
-
-    check_Balanced_Bracket() {
-        let openBracket = 0
-        let closedBracket = 0;
-        this.tokens.forEach(element => {
-            if(element.type === 'array' && element.value === '[') {
-                openBracket++;
-            }
-
-            if(element.type === 'array' && element.value == ']') {
-                closedBracket++;
-            }
-        });
-
-        if(openBracket === closedBracket) {
-            return true;
-        } 
-        else {
-            throw new Error("입력된 값의 대괄호 짝이 맞지않습니다!")
-        }
-    }
-
-
     Lexical_Analysis_And_Array_Parsing() {
-        // Lexical Analysis starts here
         let token = this.tokens[this.current];
         if(token.type === 'number') {
             this.current++;
@@ -67,9 +41,7 @@ class arrayParser {
                 child: []
             }
         }    
-        
-        // ArrayParsing starts here
-        
+
         if((token.type === 'array' && token.value === '[')) {
                     this.current++;
                     token = this.tokens[this.current];  
@@ -85,6 +57,7 @@ class arrayParser {
                     }
                     
                     this.quene.push(node);
+                    // node를 갱신시키기위해서, quene에 현재 node를 넣고 return
                     return node;
                 }                
             
@@ -92,16 +65,22 @@ class arrayParser {
             
             this.current++  
             token = this.tokens[this.current];
+            const minLength = 1;
 
-            if(this.quene.length > 1) {
+            if(this.quene.length > minLength) {
                 const first_Quene_Element = 0;
                 let child_Of_ShfitedQuene = this.quene[first_Quene_Element].child;
+
                 this.quene.shift();   
+                
                 let Is_Array_In_CurrentQuene = this.quene[first_Quene_Element].child[this.quene[first_Quene_Element].child.length - 1].type;
-                    
+                
+                // 'array'가 child의 property로 있다는 것은 array child안에 nested array 방식으로 다른 값이 있기 때문에, 이전에 갱신된 값을 갱신되기 전 값을 가지고 있는 child의 부모항목의 quene에 = 을 이용해 할당해준다.
+
+                // 그리고 IS_Array_In_CurrentQuene 값을 child 항목의 제일 마지막 index로 준 이유는 [1,1,[2, 와 같이 array가 있다면 무조건 제일 마지막에 있어야 nested array가 발생할 수 있기 때문이다.
                 if(Is_Array_In_CurrentQuene === 'array') {
-                        this.quene[first_Quene_Element].child[this.quene[first_Quene_Element].child.length - 1].child = [child_Of_ShfitedQuene];                            
-                    }
+                        this.quene[first_Quene_Element].child[this.quene[first_Quene_Element].child.length - 1].child = [child_Of_ShfitedQuene];                       
+                }
 
                 while((token.type !== 'array') || (token.type === 'array' && token.value !== "]")) {
                         this.quene[first_Quene_Element].child.push(this.Lexical_Analysis_And_Array_Parsing());
@@ -113,7 +92,8 @@ class arrayParser {
             
             if(this.current < this.tokens.length) {
             while((token.type !== 'array') || (token.type === 'array' && token.value !== "]")) {
-                this.quene[0].child.push(this.Lexical_Analysis_And_Array_Parsing());
+                const current_Quene_index = 0;
+                this.quene[current_Quene_index].child.push(this.Lexical_Analysis_And_Array_Parsing());
             }
         }
 
@@ -132,6 +112,7 @@ class arrayParser {
         let the_Most_recent_updated_value = return_In_Sequence[return_In_Sequence.length - 1];
 
         const get_Child_Of_the_Most_recent_updated_Value = 0; 
+
         return the_Most_recent_updated_value[get_Child_Of_the_Most_recent_updated_Value];
     }
 

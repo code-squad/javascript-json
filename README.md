@@ -56,3 +56,98 @@ this.quene[3]
    child:
     [ { type: 'string', value: '1a3', child: [] },
       { type: 'array', child: [Array] } ] }
+
+첫 ']'이 나온뒤의 모습입니다.
+1. this.quene[1].child에는  이미 ']' 가 나오기 이전의 this.quene[0]의 모든 값을 가지고 있습니다.
+2. ']'후에 변화된(비록 변화가 없을지라도) this.quene[0]의 값을 변수에 저장해두고 this.quene[0]을 shift해 없애주고
+3. 이 변수를 this.quene[1].child에 할당해 갱신시켜줍니다. 같은 방식으로 Quene의 길이가 1보다 클때까지 진행합니다.
+
+Quene.length: 3
+const str = "['1a3',[null,false,['11',[112233],112],55,'99'],33,true]";
+
+this.quene[0]
+{
+   { type: 'array',
+   child:
+    [ { type: 'string', value: '11', child: [] },
+      { type: 'array', child: [Array] } ] }
+          { type: 'array',
+            child:
+              [ { type: 'number', value: '112233', child: [] },
+          }
+      {type: 'number', value: 112, child: []}
+    ]            
+}
+
+this.quene[1]
+ { type: 'array',
+   child:
+    [ { type: 'null', value: 'null', child: [] },
+      { type: 'boolean', value: 'false', child: [] },
+      { type: 'array', child: [Array] } ] }
+
+this.quene[2]
+ { type: 'array',
+   child:
+    [ { type: 'string', value: '1a3', child: [] },
+      { type: 'array', child: [Array] } ] }
+
+
+Quene.length: 2;
+const str = "['1a3',[null,false,['11',[112233],112],55,'99'],33,true]";
+
+this.quene[0]
+ { type: 'array',
+   child:
+    [ { type: 'null', value: 'null', child: [] },
+      { type: 'boolean', value: 'false', child: [] },
+      { type: 'array', child: [Array] } ] },
+          { type: 'array',
+            child:
+              [ { type: 'string', value: '11', child: [] },
+                { type: 'array', child: [Array] } ] }
+                    { type: 'array',
+                      child:
+                      [ { type: 'number', value: '112233', child: [] },
+                {type: 'number', value: '112', child: []}
+      { type: 'number', value: '55', child: []}
+      { type: 'string', value: '99', child: []}
+    ]           
+  } 
+
+this.quene[1]
+ { type: 'array',
+   child:
+    [ { type: 'string', value: '1a3', child: [] },
+      { type: 'array', child: [Array] } ] }
+
+Quene.length: 1;
+const str = "['1a3',[null,false,['11',[112233],112],55,'99'],33,true]";
+
+this.quene[0]
+ { type: 'array',
+   child:
+    [ { type: 'string', value: '1a3', child: [] },
+      { type: 'array', child: [Array] } ] }
+             { type: 'array',
+              child:
+                [ { type: 'null', value: 'null', child: [] },
+                  { type: 'boolean', value: 'false', child: [] },
+                  { type: 'array', child: [Array] } ] },
+                      { type: 'array',
+                        child:
+                          [ { type: 'string', value: '11', child: [] },
+                            { type: 'array', child: [Array] } ] }
+                                { type: 'array',
+                                  child:
+                                  [ { type: 'number', value: '112233', child: [] },
+                            {type: 'number', value: '112', child: []}
+                  { type: 'number', value: '55', child: []}
+                  { type: 'string', value: '99', child: []}
+      {type: 'number', value: '33', child: []}
+      {type: 'boolean', value: 'true', child: []}
+    ]           
+  } 
+
+그리고 이 값을 return 하면 const str = "['1a3',[null,false,['11',[112233],112],55,'99'],33,true]";
+tokenizer -> lexer -> parser된 결과가 나옵니다.
