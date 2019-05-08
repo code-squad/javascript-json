@@ -12,7 +12,7 @@ class ArrayParser {
         const node = tokens.shift();
         if (node.type === 'end') {
             return parentNode;
-        } 
+        }
         if (node.type === 'array') {
             let childNode;
             while (true) {
@@ -25,10 +25,10 @@ class ArrayParser {
         }
     }
 
-    getParsedStr(str) {
-        let tokens = this.tokenizer.tokenizeByChar(str, this.seperator);
-
-        tokens = tokens.map(token => this.lexer.decideType(token));
+    getParseTree(str) {
+        let tokens = this.tokenizer.getTokens(str, this.seperator);
+        
+        tokens = tokens.map(token => this.lexer.setType(token));
 
         const rootNode = tokens.shift();
 
@@ -43,6 +43,6 @@ const tokenizer = new Tokenizer();
 const lexer = new Lexer();
 const arrayParser = new ArrayParser({ tokenizer, lexer });
 
-const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const result = arrayParser.getParsedStr(str);
+const str = "[ {easy : ['hello', {a:'a'}, 'world'] } , { a:'str', b:[ 912,[5656,33], {key : 'innervalue', newkeys: [1,2,3,4,5]} ] } ]";
+const result = arrayParser.getParseTree(str);
 console.log(JSON.stringify(result, null, 2));

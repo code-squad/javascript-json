@@ -1,7 +1,7 @@
 const Node = require('./node');
 
 class Lexer {
-    decideType(token) {
+    setType(token) {
         if (token === '[') {
             return new Node('array');
         }

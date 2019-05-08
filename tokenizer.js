@@ -1,5 +1,5 @@
 class Tokenizer {
-    insertCommaToBrackets(str) {
+    insertComma(str) {
         return str.replace(/\[/g, '[,').replace(/\]/g, ',]');
     }
 
@@ -7,9 +7,9 @@ class Tokenizer {
         return str.split(' ').join('');
     }
 
-    tokenizeByChar(str, char) {
-        str = this.insertCommaToBrackets(str);
-        return this.removeSpace(str).split(char);
+    getTokens(str, seperator) {
+        str = this.insertComma(str);
+        return this.removeSpace(str).split(seperator);
     }
 }
 
