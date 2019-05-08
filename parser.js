@@ -1,7 +1,7 @@
 class Node {
     constructor(type, value) {
         this.type   = type;
-        this.value  = value;
+        this.value = value;
         this.child  = [];
     }
 }
@@ -14,9 +14,11 @@ function tokenize(string) {
 function lex(tokens) {
     return tokens.reduce((lexedTokens, value) => {
             if(value === '[') {
-                return lexedTokens.concat(new Node('array', value));
+                const arrayNode = new Node('array');
+                delete arrayNode['value'];
+                return lexedTokens.concat(arrayNode);
             } else if(!Number.isNaN(parseInt(value))) {
-                return lexedTokens.concat(new Node('number', value));        
+                return lexedTokens.concat(new Node('number', value));
             }
             return lexedTokens.concat(new Node(undefined, value));
         }, []);
