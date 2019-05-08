@@ -7,6 +7,12 @@ class ArrayParser {
         this.tokenizer = tokenizer;
         this.lexer = lexer;
     }
+    getChildNode(parentNode, tokens) {
+        while(true) {
+            const childNode = this.parseToken(parentNode, tokens);
+            if (childNode) return childNode;
+        }
+    }
 
     parseToken(parentNode, tokens) {
         const node = tokens.shift();
@@ -14,21 +20,13 @@ class ArrayParser {
             return parentNode;
         }
         if (node.type === 'array' || node.type === 'object') {
-            let childNode;
-            while (true) {
-                childNode = this.parseToken(node, tokens);
-                if (childNode) break;
-            }
+            const childNode = this.getChildNode(node, tokens);
             parentNode.child.push(childNode);
         } else if (node.type === 'key') {
             const valueNode = tokens.shift();
             valueNode.key = node.key;
             if (valueNode.type === 'array') {
-                let childNode;
-                while (true) {
-                    childNode = this.parseToken(valueNode, tokens);
-                    if (childNode) break;
-                }
+                const childNode = this.getChildNode(node, tokens);
                 parentNode.child.push(childNode);
             } else {
                 parentNode.child.push(valueNode);
