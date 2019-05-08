@@ -16,12 +16,12 @@ function lex(tokens) {
             if(value === '[') {
                 return lexedTokens.concat(new Node('array', value));
             } else if(!Number.isNaN(parseInt(value))) {
-                return lexedTokens.concat(new Node('integer', value));        
+                return lexedTokens.concat(new Node('number', value));        
             }
             return lexedTokens.concat(new Node(undefined, value));
         }, []);
 }
 
-const str = "[123, 22, 33]";
+const str = "[1.23, 2.2, 3.3]";
 const tokens = tokenize(str);
 const lexedTokens = lex(tokens);
