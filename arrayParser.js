@@ -46,9 +46,11 @@ class ArrayParser {
     getParseTree(str) {
         let tokens = this.tokenizer.getTokens(str, this.seperator);
 
-        this.errorChecker.checkOpenBracket(tokens);
+        this.errorChecker.checkBrackets(tokens);
         
         tokens = tokens.map(token => this.lexer.setType(token));
+        
+        this.errorChecker.checkNodes(tokens);
 
         const rootNode = tokens.shift();
 
@@ -64,6 +66,6 @@ const tokenizer = new Tokenizer();
 const lexer = new Lexer();
 const arrayParser = new ArrayParser({ tokenizer, lexer, errorChecker });
 
-const str = "[ {easy : ['he llo', {a:'a'}, 'world'] } , { 1 123, a:'str', b:[ 912,[5656,33], {key : 'innervalue', newkeys: [1,2,3,4,5]} ] } ]";
+const str = "[ {easy : ['he llo', {a:'a'}, 'world'] } , { a :123, a:'str', b:[ 912,[5656,33], {key : 'innervalue', newkeys: [1,2,3,4,5]} ] } ]";
 const result = arrayParser.getParseTree(str);
 console.log(JSON.stringify(result, null, 2));
