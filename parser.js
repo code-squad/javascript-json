@@ -11,6 +11,17 @@ function tokenize(string) {
     return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => {return value});
 }
 
+function lex(tokens) {
+    return tokens.reduce((lexedTokens, value) => {
+            if(value === '[') {
+                return lexedTokens.concat(new Node('array', value));
+            } else if(!Number.isNaN(parseInt(value))) {
+                return lexedTokens.concat(new Node('integer', value));        
+            }
+            return lexedTokens.concat(new Node(undefined, value));
+        }, []);
+}
 
 const str = "[123, 22, 33]";
-tokenize(str);
+const tokens = tokenize(str);
+const lexedTokens = lex(tokens);
