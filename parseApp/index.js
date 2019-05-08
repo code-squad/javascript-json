@@ -12,7 +12,7 @@ module.exports = {
     const lexer = new Lexer({ keyword, messageObj, tokens });
     const lexedData = lexer.lex();
 
-    const parser = new Parser({ lexedData });
+    const parser = new Parser({ lexedData, messageObj, keyword });
 
     return parser.parse();
   }

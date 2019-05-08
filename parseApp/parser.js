@@ -1,25 +1,27 @@
 class Parser {
-  constructor({ lexedData }) {
+  constructor({ lexedData, keyword, messageObj }) {
     this.lexedData = lexedData;
+    this.keyword = keyword;
+    this.messageObj = messageObj;
     this.parseStack = [];
   }
 
   isOpeningContext(context) {
-    return context === 'ArrayOpen' || context === 'ObjectOpen';
+    return context === this.keyword['['].context || context === this.keyword['{'].context;
   }
 
   isClosingContext(context) {
-    return context === 'ArrayClose' || context === 'ObjectClose';
+    return context === this.keyword[']'].context || context === this.keyword['}'].context;
   }
 
   isValidPair(currentContext) {
     const pairContext = this.parseStack[this.parseStack.length - 1];
 
-    if (currentContext === 'ArrayClose' && pairContext === 'ArrayOpen') {
+    if (currentContext === this.keyword[']'].context && pairContext === this.keyword['['].context) {
       return true;
     }
 
-    if (currentContext === 'ObjectClose' && pairContext === 'ObjectOpen') {
+    if (currentContext === this.keyword['}'].context && pairContext === this.keyword['{'].context) {
       return true;
     }
 
@@ -33,7 +35,7 @@ class Parser {
 
       if (this.isClosingContext(lexedToken.context)) {
         if (!this.isValidPair(lexedToken.context)) {
-          throw new Error('정상적으로 종료되지 않은 배열이 있습니다.');
+          throw new Error(this.messageObj.INVALID_ARRAY);
         }
 
         this.parseStack.pop();
@@ -55,7 +57,7 @@ class Parser {
 
       if (this.isClosingContext(lexedToken.context)) {
         if (!this.isValidPair(lexedToken.context)) {
-          throw new Error('정상적으로 종료되지 않은 객체가 있습니다.');
+          throw new Error(this.messageObj.INVALID_OBJECT);
         }
 
         this.parseStack.pop();
@@ -79,11 +81,11 @@ class Parser {
     if (this.isOpeningContext(lexedToken.context)) {
       this.parseStack.push(lexedToken.context);
 
-      if (lexedToken.context === 'ArrayOpen') {
+      if (lexedToken.context === this.keyword['['].context) {
         return this.arrayParse(lexedToken.newNode);
       }
 
-      if (lexedToken.context === 'ObjectOpen') {
+      if (lexedToken.context === this.keyword['{'].context) {
         return this.objectParse(lexedToken.newNode);
       }
     }
