@@ -1,13 +1,15 @@
 const Tokenizer = require('./tokenizer');
 const Lexer = require('./lexer');
 const ErrorChecker = require('./errorChecker');
+const Stack = require('./stack');
 
 class ArrayParser {
-    constructor({ tokenizer, lexer, errorChecker }) {
+    constructor({ tokenizer, lexer, errorChecker, stack }) {
         this.seperator = ',';
         this.tokenizer = tokenizer;
         this.lexer = lexer;
         this.errorChecker = errorChecker;
+        this.stack = stack;
     }
 
     getChildNode(parentNode, tokens) {
@@ -61,10 +63,11 @@ class ArrayParser {
     }
 }
 
+const stack = new Stack();
 const errorChecker = new ErrorChecker();
 const tokenizer = new Tokenizer();
 const lexer = new Lexer();
-const arrayParser = new ArrayParser({ tokenizer, lexer, errorChecker });
+const arrayParser = new ArrayParser({ tokenizer, lexer, errorChecker, stack });
 
 const str = "[ {easy : ['he llo', {a:'a'}, 'world'] } , { a :123, a:'str', b:[ 912,[5656,33], {key : 'innervalue', newkeys: [1,2,3,4,5]} ] } ]";
 const result = arrayParser.getParseTree(str);
