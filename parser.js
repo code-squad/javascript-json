@@ -5,9 +5,7 @@ class Parser {
   }
 
   completeCondition() {
-    if (this.tokenStack.length === 0) {
-      return true;
-    }
+    if (this.tokenStack.length === 0) return true;
   }
 
   findParentToken() {
