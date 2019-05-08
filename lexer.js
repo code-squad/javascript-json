@@ -15,16 +15,26 @@ class Lexer {
 
     setErrorType(token) {
         if (token.includes(' ')) return new Node({ type: 'withSpace', value: token });
+        if (this.isWrongString(token)) return new Node({ type: 'wrongString', value: token });
         else return new Node({ type: 'unknownType', value: token })
     }
 
+    isWrongString(token) {
+        return (this.isQuotesSurrounded(token, "'") && !this.hasNoMoreQuotes(token, "'")) ||
+            (this.isQuotesSurrounded(token, '"') && !this.hasNoMoreQuotes(token, '"'));
+    }
+
     isString(token) {
-        if (token.startsWith("'") && token.endsWith("'")) {
-            const counts = this.countQuotes(token, "'");
-            if (counts) throw Error(`${token}은 올바른 문자열이 아닙니다.`);
-            return counts || true;
-        }
-        return false;
+        return (this.isQuotesSurrounded(token, "'") && this.hasNoMoreQuotes(token, "'")) ||
+            (this.isQuotesSurrounded(token, '"') && this.hasNoMoreQuotes(token, '"'));
+    }
+
+    isQuotesSurrounded(token, quote) {
+        return token.startsWith(quote) && token.endsWith(quote);
+    }
+
+    hasNoMoreQuotes(token, quote) {
+        return !token.slice(1, token.length - 1).includes(quote);
     }
 
     countQuotes(token, quote) {

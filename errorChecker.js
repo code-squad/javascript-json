@@ -15,6 +15,7 @@ class ErrorChecker {
     checkNodes(nodes) {
         for(let node of nodes) {
             if(node.type === 'withSpace') throw Error(`${node.value} 는 콜론(:)이 누락된 객체표현이거나 공백이 포함된 데이터표현입니다.`)
+            if(node.type === 'wrongString') throw Error(`${node.value} 는 올바른 문자열이 아닙니다.`)
             if(node.type === 'unknownType') throw Error(`${node.value} 는 알 수 없는 타입입니다.`)
         }
     }
