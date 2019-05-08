@@ -18,16 +18,21 @@ class Lexer {
             return new Node({ type: 'null', value: null });
         }
         if (token === '{') {
-            return new Node({ type: 'object', child: [] })
+            return new Node({ type: 'object', child: [] });
         }
         if (token.endsWith(':')) {
-            return new Node({ type: 'key', key: token.slice(0, token.length - 1) })
+            return new Node({ type: 'key', key: token.slice(0, token.length - 1) });
         }
         if (token === ']' || token === '}') {
             return new Node({ type: 'end' });
         } else {
-            throw Error(`${token}은 알수 없는 타입입니다.`);
+            return this.setErrorType(token);
         }
+    }
+
+    setErrorType(token) {
+        if (token.includes(' ')) return new Node({ type: 'withSpace', value: token });
+        else return new Node({ type: 'unknownType', value: token })
     }
 
     isString(token) {
