@@ -6,5 +6,8 @@ module.exports = {
   false: { context: 'Element', type: 'Boolean', value: false },
   undefined: { context: 'Element', type: 'Undefined', value: undefined },
   string: { context: 'Element', type: 'String' },
-  number: { context: 'Element', type: 'Number' }
+  number: { context: 'Element', type: 'Number' },
+  '{': { context: 'ObjectOpen', type: 'Object' },
+  '}': { context: 'ObjectClose' },
+  ':': { context: 'ObjectSeperator' }
 };
