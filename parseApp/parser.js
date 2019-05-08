@@ -1,13 +1,29 @@
-const Node = require('./node');
-
 class Parser {
   constructor({ lexedData }) {
     this.lexedData = lexedData;
-    // this.parseStack = [];
+    this.parseStack = [];
   }
 
   isOpeningContext(context) {
     return context === 'ArrayOpen' || context === 'ObjectOpen';
+  }
+
+  isClosingContext(context) {
+    return context === 'ArrayClose' || context === 'ObjectClose';
+  }
+
+  isValidPair(currentContext) {
+    const pairContext = this.parseStack[this.parseStack.length - 1];
+
+    if (currentContext === 'ArrayClose' && pairContext === 'ArrayOpen') {
+      return true;
+    }
+
+    if (currentContext === 'ObjectClose' && pairContext === 'ObjectOpen') {
+      return true;
+    }
+
+    return false;
   }
 
   arrayParse(node) {
@@ -15,7 +31,13 @@ class Parser {
     while (true) {
       const lexedToken = this.lexedData.shift();
 
-      if (lexedToken.context === 'ArrayClose') {
+      if (this.isClosingContext(lexedToken.context)) {
+        if (!this.isValidPair(lexedToken.context)) {
+          throw new Error('정상적으로 종료되지 않은 배열이 있습니다.');
+        }
+
+        this.parseStack.pop();
+
         return node;
       }
 
@@ -31,7 +53,13 @@ class Parser {
     while (true) {
       const lexedToken = this.lexedData.shift();
 
-      if (lexedToken.context === 'ObjectClose') {
+      if (this.isClosingContext(lexedToken.context)) {
+        if (!this.isValidPair(lexedToken.context)) {
+          throw new Error('정상적으로 종료되지 않은 객체가 있습니다.');
+        }
+
+        this.parseStack.pop();
+
         return node;
       }
 
@@ -49,7 +77,7 @@ class Parser {
     }
 
     if (this.isOpeningContext(lexedToken.context)) {
-      // this.parseStack.push(lexedToken.context);
+      this.parseStack.push(lexedToken.context);
 
       if (lexedToken.context === 'ArrayOpen') {
         return this.arrayParse(lexedToken.newNode);
