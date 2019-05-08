@@ -13,13 +13,26 @@ class ArrayParser {
         if (node.type === 'end') {
             return parentNode;
         }
-        if (node.type === 'array') {
+        if (node.type === 'array' || node.type === 'object') {
             let childNode;
             while (true) {
                 childNode = this.parseToken(node, tokens);
                 if (childNode) break;
             }
             parentNode.child.push(childNode);
+        } else if (node.type === 'key') {
+            const valueNode = tokens.shift();
+            valueNode.key = node.key;
+            if (valueNode.type === 'array') {
+                let childNode;
+                while (true) {
+                    childNode = this.parseToken(valueNode, tokens);
+                    if (childNode) break;
+                }
+                parentNode.child.push(childNode);
+            } else {
+                parentNode.child.push(valueNode);
+            }
         } else {
             parentNode.child.push(node);
         }
@@ -27,7 +40,7 @@ class ArrayParser {
 
     getParseTree(str) {
         let tokens = this.tokenizer.getTokens(str, this.seperator);
-        
+
         tokens = tokens.map(token => this.lexer.setType(token));
 
         const rootNode = tokens.shift();
