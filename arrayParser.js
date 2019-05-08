@@ -1,11 +1,13 @@
 const Tokenizer = require('./tokenizer');
 const Lexer = require('./lexer');
+const ErrorChecker = require('./errorChecker');
 
 class ArrayParser {
-    constructor({ tokenizer, lexer }) {
+    constructor({ tokenizer, lexer, errorChecker }) {
         this.seperator = ',';
         this.tokenizer = tokenizer;
         this.lexer = lexer;
+        this.errorChecker = errorChecker;
     }
 
     getChildNode(parentNode, tokens) {
@@ -44,6 +46,8 @@ class ArrayParser {
     getParseTree(str) {
         let tokens = this.tokenizer.getTokens(str, this.seperator);
 
+        if(this.errorChecker.isInvalidArray(tokens)) throw Error('올바르지 않은 배열이 포함되어 있습니다.')
+        if(this.errorChecker.isInvalidObject(tokens)) throw Error('올바르지 않은 객체가 포함되어 있습니다.')
         tokens = tokens.map(token => this.lexer.setType(token));
 
         const rootNode = tokens.shift();
@@ -55,9 +59,10 @@ class ArrayParser {
     }
 }
 
+const errorChecker = new ErrorChecker();
 const tokenizer = new Tokenizer();
 const lexer = new Lexer();
-const arrayParser = new ArrayParser({ tokenizer, lexer });
+const arrayParser = new ArrayParser({ tokenizer, lexer, errorChecker });
 
 const str = "[ {easy : ['hello', {a:'a'}, 'world'] } , { a:'str', b:[ 912,[5656,33], {key : 'innervalue', newkeys: [1,2,3,4,5]} ] } ]";
 const result = arrayParser.getParseTree(str);
