@@ -1,4 +1,3 @@
-const checker = require('./getType');
 const checkErrors = require('./error.js');
 const stackControl = require('./stack.js');
 const separators = require('./separators.js');
@@ -6,30 +5,43 @@ const separators = require('./separators.js');
 
 class arrayParser {
   tokenizer(inputString) {
+    //Error Check
+    checkErrors.doesDataExist(inputString);
     const tokenizedItems = [];
     const splitLetters = inputString.split('');
     let data = "";
     splitLetters.forEach( letter => {
       if(letter === separators.comma) {
-        tokenizedItems.push(data);
-        data = "";
-      } else if(this.separatorChecker(letter)) {
-        data !== "" ? tokenizedItems.push(data, letter) : tokenizedItems.push(letter)
+        if(data !== "") {
+          data = data.trim();
+          tokenizedItems.push(data);
+          data = "";
+        }
+      } else if(parserUtils.separatorChecker(letter)) {
+        if (data !== "") {
+          data = data.trim();
+          tokenizedItems.push(data, letter)
+          data = "";
+        } else {
+          tokenizedItems.push(letter)
+        }
       } else {
-        if(letter !== ' ') data += letter;
+        data += letter;
       }
     })
-    // console.log(tokenizedItems)
+    // Error Check
+    checkErrors.dataValidator(tokenizedItems);
     return tokenizedItems;
   }
 
   lexer(tokenizedItems) {
+    // Error Check
     checkErrors.stringValidator(tokenizedItems);
     const lexedItems = [];
     tokenizedItems.forEach(token => {
       // check if array starts
-      const typeOfLetter = checker.getType(token);
-      if(this.separatorChecker(token)) {
+      const typeOfLetter = parserUtils.getType(token);
+      if(parserUtils.separatorChecker(token)) {
         lexedItems.push(token);
       } else if(typeOfLetter === 'number') {
         lexedItems.push([typeOfLetter, Number(token)])
@@ -37,6 +49,7 @@ class arrayParser {
         lexedItems.push([typeOfLetter, token])
       }
     });
+    // Error Check
     checkErrors.typeValidator(lexedItems);
     return lexedItems;
   }
@@ -61,7 +74,7 @@ class arrayParser {
       stackControl.appendInStack(topnotch)
       this.parser(lexedItems)
     } else {
-      const parsedSingleObj = getObj(lexedData)
+      const parsedSingleObj = parserUtils.getObj(lexedData)
       stackControl.appendInChild(parsedSingleObj)
       this.parser(lexedItems)
     }
@@ -75,25 +88,34 @@ class arrayParser {
     const resultObj = JSON.stringify(parsedObj, null, 1)
     console.log(resultObj);
   }
+}
 
-  separatorChecker(expectedSeperator) {
+const parserUtils = {
+  separatorChecker: function(expectedSeperator) {
     for(const key in separators) {
       if (separators[key] === expectedSeperator) return true;
     }
     return false;
-  }
+  },
 
-  getObj(lexedData) {
+  getObj: function(lexedData) {
     const [type, value] = lexedData;
     return {
       type,
       value,
       child: []
     }
+  },
+
+  getType: function(thingsToCheck) {
+    if (Array.isArray(thingsToCheck)) return "array"
+    if (thingsToCheck === "true" || thingsToCheck === "false") return "boolean"
+    if (thingsToCheck === "null") return 'object'
+    if (isNaN(thingsToCheck * 1)) return 'string'
+    if (!isNaN(Number(thingsToCheck * 1))) return 'number'
   }
 }
 
-
 const arrParser = new arrayParser()
 
-arrParser.getParsedJson("[true, '123', null, [123, 123], undefined]");
+arrParser.getParsedJson("['asd',[null,false,['11',[112233],112],55, '99'],33, true]");

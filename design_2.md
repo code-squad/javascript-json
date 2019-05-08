@@ -2,7 +2,7 @@
 
 ## parser 구현시 출력 예시
 
-['asd',[null,false,['11',[112233],112],55, '99'],33, true]"
+"['asd',[null,false,['11',[112233],112],55, '99'],33, true]"
 stack:
 { type: 'array',
   child: 
