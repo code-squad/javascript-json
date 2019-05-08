@@ -12,54 +12,54 @@ class ArrayParser {
         this.stack = stack;
     }
 
-    getChildNode(parentNode, tokens) {
-        while (true) {
-            const childNode = this.parseToken(parentNode, tokens);
-            if (childNode) return childNode;
-        }
+    getTopNode() {
+        const topNode = this.stack.pop();
+        if (this.stack.isEmpty()) return topNode;
+        this.stack.peek().child.push(topNode);
     }
 
-    setKeyValueNode(parentNode, keyNode, tokens) {
+    setKeyValueNode(keyNode, tokens) {
         const valueNode = tokens.shift();
         valueNode.key = keyNode.key;
         if (valueNode.type === 'array') {
-            const childNode = this.getChildNode(valueNode, tokens);
-            parentNode.child.push(childNode);
-        } else {
-            parentNode.child.push(valueNode);
+            this.stack.push(valueNode);
+        }
+        else {
+            this.stack.peek().child.push(valueNode);
         }
     }
 
-    parseToken(parentNode, tokens) {
+    parseToken(tokens) {
         const node = tokens.shift();
-        if (node.type === 'end') {
-            return parentNode;
+        const nodeType = node.type;
+        const typeMap = {
+            array: () => { this.stack.push(node) },
+            object: () => { this.stack.push(node) },
+            key: () => { this.setKeyValueNode(node, tokens) },
+            number: () => { this.stack.peek().child.push(node) },
+            string: () => { this.stack.peek().child.push(node) },
+            boolean: () => { this.stack.peek().child.push(node) },
+            null: () => { this.stack.peek().child.push(node) },
+            end: () => { return this.getTopNode() }
         }
-        if (node.type === 'array' || node.type === 'object') {
-            const childNode = this.getChildNode(node, tokens);
-            parentNode.child.push(childNode);
-        } else if (node.type === 'key') {
-            this.setKeyValueNode(parentNode, node, tokens);
-        } else {
-            parentNode.child.push(node);
-        }
+        return typeMap[nodeType]();
     }
 
     getParseTree(str) {
         let tokens = this.tokenizer.getTokens(str, this.seperator);
 
         this.errorChecker.checkBrackets(tokens);
-        
+
         tokens = tokens.map(token => this.lexer.setType(token));
-        
+
         this.errorChecker.checkNodes(tokens);
 
-        const rootNode = tokens.shift();
+        let parseTree;
 
         while (tokens.length) {
-            this.parseToken(rootNode, tokens);
+            parseTree = this.parseToken(tokens);
         }
-        return rootNode;
+        return parseTree;
     }
 }
 
