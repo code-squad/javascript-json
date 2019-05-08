@@ -1,22 +1,17 @@
 class ErrorChecker {
-    isInvalidArray(tokens) {
-        let count = 0;
+    checkOpenBracket(tokens) {
+        let openArrCount = 0;
+        let openObjCount = 0;
         for(let token of tokens) {
-            if(token === '[') count++;
-            if(token === ']') count--;
+            if(token === '[') openArrCount++;
+            if(token === ']') openArrCount--;
+            if(token === '{') openObjCount++;
+            if(token === '}') openObjCount--;
         }
-        return count || false;
+        if(openArrCount) throw Error('올바르지 않은 배열이 포함되어 있습니다.')
+        if(openObjCount) throw Error('올바르지 않은 객체가 포함되어 있습니다.')
     }
-    
-    isInvalidObject(tokens) {
-        let count = 0;
-        for(let token of tokens) {
-            if(token === '{') count++;
-            if(token === '}') count--;
-        }
-        return count || false;
 
-    }
 }
 
 module.exports = ErrorChecker;
