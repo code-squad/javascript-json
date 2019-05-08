@@ -1,38 +1,28 @@
 const typeChecker = {
-    isQuote (value) {
-        return value === "\'" || value === "\""
+    isNumber (value) {
+        return /^-?[0-9\.]+$/.test(value)
     },
-    isBraket  (value) {
-        return value === "[" || value === "]"
+    isNull (value) {
+        return value === 'null';
+    },
+    isUndefined (value) {
+        return value === 'undefined';
+    },   
+    isBoolean (value) {
+        return value === 'true' || value === "false";
+    }, 
+    isValidString (value) {
+        if(/.+['"].+/.test(value)) throw new TypeError(`${value}는 올바른 문자열이 아닙니다.`)
+        return true; 
     },
     isOpenBraket (value){
         return value === "["
     },
     isCloseBraket(value){
         return value === "]"
-    },
-    isComma (value){
-        return value === ","
-    },
-    
-    isWhiteSpace (value){
-        return /\s/.test(value);
-    },
-    
-    // Returns if a value is really a number
-    isNumber (value) {
-        return /[0-9]/.test(value);
-    },
-    // Returns if a value is a string
+    },    
     isString (value) {
-        return /[a-z]/i.test(value)
-    },
-    
-    isSkipChar(value){
-        return this.isComma(value) || this.isWhiteSpace(value)
-    },
-    isNumOrStr(value){
-        return this.isNum(value) || this.isString(value)
+        return (/^'.+'$/g.test(value) || /^".+"$/g.test(value)) && this.isValidString(value)
     }
 }
 module.exports = typeChecker;

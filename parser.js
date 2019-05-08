@@ -1,15 +1,18 @@
- const parse = (parentNode, lexedQueue) => {
+const Node = require("./node")
+
+const defaultParentNode = new Node("Array")
+const parse = (lexedQueue, parentNode = defaultParentNode) => {
     const node = lexedQueue.shift();
-    if(node.type === "End") {
+    if(node === undefined || node.type === "End") {
         return parentNode;
     }
     if(node.type === "Array"){
-        let childeNode = node;
-        parentNode.child.push(parse(childeNode, lexedQueue));
-        return parse(parentNode, lexedQueue)
+        const childeNode = node;
+        parentNode.child.push(parse(lexedQueue, childeNode));
+        return parse(lexedQueue, parentNode)
     }
     parentNode.child.push(node);
-    return parse(parentNode, lexedQueue)
+    return parse(lexedQueue, parentNode)
 }
 
 module.exports = parse;
