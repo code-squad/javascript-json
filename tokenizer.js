@@ -4,7 +4,7 @@ class Tokenizer {
     }
 
     removeSpace(str) {
-        return str.split(' ').join('');
+        return str.split(',').map(el => el.trim()).join();
     }
 
     getTokens(str, seperator) {
