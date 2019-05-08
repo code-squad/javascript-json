@@ -39,7 +39,6 @@ const lexer = (arr) => {
             arr.shift();
 
             // 배열 재귀
-            //wordArr = word.split("");
             let dpAnswer = lexer(word);
             Que.push(dpAnswer);
         }
