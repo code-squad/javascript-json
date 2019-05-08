@@ -11,13 +11,17 @@ function tokenize(string) {
     return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => {return value});
 }
 
+function isNumber(value) {
+    if(Number.isNaN(parseInt(value))) return false;
+    return true;
+}
 function lex(tokens) {
     return tokens.reduce((lexedTokens, value) => {
             if(value === '[') {
                 const arrayNode = new Node('array');
                 delete arrayNode['value'];
                 return lexedTokens.concat(arrayNode);
-            } else if(!Number.isNaN(parseInt(value))) {
+            } else if(isNumber(value)) {
                 return lexedTokens.concat(new Node('number', value));
             }
             return lexedTokens.concat(new Node(undefined, value));
@@ -27,7 +31,7 @@ function lex(tokens) {
 
 function parse(lexedTokens) {
     let parentNode = {};
-    lexedTokens.forEach(function (lexedToken) {
+    lexedTokens.forEach((lexedToken) => {
         if(lexedToken.type === 'array') {
             parentNode = lexedToken;
         } else if(lexedToken.type === 'number') {
@@ -38,7 +42,7 @@ function parse(lexedTokens) {
     return parentNode;
 }
 
-const str = "[1.23, 2.2, 3.3]";
+const str = "[123, 22, 33]";
 const tokens = tokenize(str);
 const lexedTokens = lex(tokens);
 const result = parse(lexedTokens);
