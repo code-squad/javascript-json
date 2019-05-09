@@ -11,18 +11,13 @@ function tokenize(string) {
     return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => {return value});
 }
 
-function isNumber(value) {
-    if(Number.isNaN(parseInt(value))) return false;
-    return true;
-}
-
 function lex(tokens) {
     let token = {};
     return tokens.reduce((lexedTokens, value) => {
             if(value === '[') {
                 token = {'name' : 'ArrayOpener', 'value' : value}
                 return lexedTokens.concat(token);
-            } else if(isNumber(value)) {
+            } else if(!isNaN(value)) {
                 token = {'name' : 'Number', 'value' : value}
                 return lexedTokens.concat(token);
             } else if(value === ']') {
