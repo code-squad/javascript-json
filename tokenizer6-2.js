@@ -1,34 +1,62 @@
 
 class Tokenizer {
+    constructor() {
+        this.array = [];
+        this.token = '';
+    }
 
-    tokenizer(string) {
+    // 실행 함수
+    run(string) {
         string = string.split('');
-        const array = [];
-        let token = '';
 
         while (string.length > 0) {
             const onePiece = string.shift();
-            if (onePiece === '[') {
-                array.push(onePiece);
-                continue;
-            }
-            if (onePiece === ']') {
-                if (token !== '') {
-                    array.push(token);
-                }
-                array.push(onePiece);
-                token = '';
-                continue;
-            }
-            if (onePiece === ',') {
-                if (token !== '') array.push(token)
-                token = '';
-                continue;
-            }
-            token += onePiece;
-        }
 
-        return array.map(x => x.trim());
+            if (this.isReadyToPushSomething(onePiece)) {
+                this.pushOpenBracket(onePiece);
+                this.pushCloseBracketAndIfTokenExistPushIt(onePiece);
+                this.classifyValuesAndIfTokenExistPushIt(onePiece);
+                this.token = '';
+                continue;
+            }
+
+            this.makeToken(onePiece);
+        }
+        this.removeWhitespaceFromBothEndsOfTheArray();
+        return this.array;
+    }
+
+    isReadyToPushSomething(onePiece) {
+        return '[],'.includes(onePiece) ? true : false;
+    }
+
+    pushOpenBracket(onePiece) {
+        if (onePiece === '[') this.array.push(onePiece);
+    }
+
+    pushCloseBracketAndIfTokenExistPushIt(onePiece) {
+        if (onePiece === ']') {
+            if (this.token !== '') this.array.push(this.token);
+            this.array.push(onePiece);
+        }
+    }
+
+    classifyValuesAndIfTokenExistPushIt(onePiece) {
+        if (onePiece === ',') {
+            if (this.token !== '') this.array.push(this.token);
+        }
+    }
+
+    makeToken(onePiece) {
+        this.token += onePiece;
+    }
+
+    removeWhitespaceFromBothEndsOfTheArray() {
+        this.array = this.array.map(x => x.trim());
     }
 
 }
+const tokenizer = new Tokenizer();
+const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
+
+console.log(tokenizer.run(str));
