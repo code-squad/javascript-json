@@ -55,13 +55,31 @@ const getTypeAndToken = token => {
     }
 }
 
-const arrayParser = () => {
+const arrayParser = tokens => {
+    let parsedArr = [];
 
+    while (tokens.length) {
+        let token = tokens.shift();
+        if (token.type === 'leftBracket') {
+            parsedArr.push(
+                {type: 'array', child: arrayParser(tokens)}
+            )
+        } else if (token.type === 'rightBracket') {
+            return parsedArr;
+        } else {
+            token.child = [];
+            parsedArr.push(token);
+        } 
+    }
+
+    return parsedArr;
 }
 
-var s1 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-var s2 = "['1a'3',[22,23,[11,[112233],112],55],33]";
+const s1 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+const s2 = "['1a'3',[22,23,[11,[112233],112],55],33]";
+const s3 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
 
 //console.log(s1.split(','));
 //console.log(tokenizer(s1));
-console.log(lexer(s1));
+//console.log(lexer(s1));
+//console.log(arrayParser(lexer(s1)));
