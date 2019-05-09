@@ -40,14 +40,11 @@ class ArrayParser {
 
     validationCheck(element, type) {
         if (type === "number") {
-            if (isNaN(Number(element))) throw new Error(`${element}는 알수 없는 타입입니다.`);
-            return type;
+            if (isNaN(element)) throw new Error(`${element}는 알수 없는 타입입니다.`);
         }
         if (type === "string") {
-            if (this.removeQuotes(element).includes("'")) throw new Error(`${element}는 올바른 문자열이 아닙니다.`);
-            return type;
+            if (this.removeQuotes(element).includes("'") || this.removeQuotes(element).includes('"')) throw new Error(`${element}는 올바른 문자열이 아닙니다.`);
         }
-        return type;
     }
 
     getDataObject(element) {
