@@ -19,7 +19,6 @@ const tokenizer = str => {
             tokens.push(token.trim());
         }
     }
-
     return tokens;
 }
 
@@ -57,7 +56,6 @@ const getTypeAndToken = token => {
 
 const arrayParser = tokens => {
     let parsedArr = [];
-
     while (tokens.length) {
         let token = tokens.shift();
         if (token.type === 'leftBracket') {
@@ -71,15 +69,21 @@ const arrayParser = tokens => {
             parsedArr.push(token);
         } 
     }
-
     return parsedArr;
+}
+
+const parser = str => {
+    const tokens = lexer(str);
+    const result = arrayParser(tokens);
+    console.log(JSON.stringify(result, null, 2)); 
 }
 
 const s1 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const s2 = "['1a'3',[22,23,[11,[112233],112],55],33]";
 const s3 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
-
+parser(s1);
 //console.log(s1.split(','));
 //console.log(tokenizer(s1));
 //console.log(lexer(s1));
 //console.log(arrayParser(lexer(s1)));
+
