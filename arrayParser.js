@@ -28,7 +28,7 @@ class ArrayParser {
         arr = arr.map((el) => {
             const obj = {};
             obj.type = this.checkDataType(el);
-            obj.value = el;
+            obj.value = this.changeDataType(el);
             return obj
         })
         this.lexedData = arr;
