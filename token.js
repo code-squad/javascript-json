@@ -1,7 +1,7 @@
 class Token {
-  constructor(type, value) {
+  constructor({ type, value: element }) {
     this._type = type;
-    this._value = value;
+    this._value = element;
     this._child = [];
   }
 }

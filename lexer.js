@@ -1,12 +1,9 @@
 const Token = require("./token.js");
 
 class Lexer {
-  constructor() {
-    this.lexeredData = [];
-  }
-
   isCorrectStr(element) {
     element = element.slice(1, element.length - 1);
+
     if (element.includes("'")) {
       return false;
     }
@@ -24,24 +21,25 @@ class Lexer {
   }
 
   makeToken(tokenizeredData) {
+    const lexeredData = [];
     tokenizeredData.forEach(element => {
       if (element === "[") {
-        this.lexeredData.push(new Token("array"));
+        lexeredData.push(new Token({ type: "array" }));
       } else if (element === "]") {
-        this.lexeredData.push(new Token("array-end"));
+        lexeredData.push(new Token({ type: "array-end" }));
       } else if (element === "null") {
-        this.lexeredData.push(new Token("null"));
+        lexeredData.push(new Token({ type: "null" }));
       } else if (element === "true" || element === "false") {
-        this.lexeredData.push(new Token("boolean", element));
+        lexeredData.push(new Token({ type: "boolean", value: element }));
       } else if (this.isStr(element)) {
-        this.lexeredData.push(new Token("string", element));
+        lexeredData.push(new Token({ type: "string", value: element }));
       } else if (isFinite(element)) {
-        this.lexeredData.push(new Token("number", element));
+        lexeredData.push(new Token({ type: "number", value: element }));
       } else {
         throw new Error(`${element}는 알 수 없는 타입의 토큰입니다.`);
       }
     });
-    return this.lexeredData;
+    return lexeredData;
   }
 }
 
