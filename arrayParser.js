@@ -54,11 +54,14 @@ class ArrayParser {
         let isString = null;
         if (val[0] === "'") { isString = !val.slice(1, val.length - 1).split('').some((el) => el === "'"); }
         if (val === 'true' || val === 'false') { return 'boolean' }
-        if (val === 'null') { return 'object' }
+        if (val === 'null') { return 'null' }
         if (isString) { return 'string' }
         if (!isNaN(val)) { return 'number' }
-        if (val === '[' || val === ']') { return true; }
-        console.log(`${val}은 잘못된 문자열 입니다.`);
+        if (val[val.length - 1] === ':') { return 'key' }
+        if (val === '[') { return 'openSquareBracket' }
+        if (val === ']') { return 'closeSquareBracket' }
+        if (val === '{') { return 'openCurlyBracket'}
+        if (val === '}') { return 'closeCurlyBracket'}
     }
 
     makeArrData(val) {
