@@ -6,6 +6,10 @@ class Parser {
     this.parseStack = [];
   }
 
+  getNextToken() {
+    return this.lexedData.shift();
+  }
+
   isOpeningContext(context) {
     return context === this.keyword['['].context || context === this.keyword['{'].context;
   }
@@ -14,8 +18,12 @@ class Parser {
     return context === this.keyword[']'].context || context === this.keyword['}'].context;
   }
 
-  isSaperatorContext(context) {
+  isSeperatorContext(context) {
     return context === this.keyword[','].context;
+  }
+
+  isObjectSeperatorContext(context) {
+    return context === this.keyword[':'].context;
   }
 
   isValidPair(currentContext) {
@@ -43,8 +51,8 @@ class Parser {
       return true;
     }
 
-    if (this.isSaperatorContext(frontPeek)) {
-      this.lexedData.shift();
+    if (this.isSeperatorContext(frontPeek)) {
+      this.getNextToken();
       return true;
     }
 
@@ -53,7 +61,7 @@ class Parser {
 
   arrayParse(node) {
     while (this.lexedData.length !== 0) {
-      const lexedToken = this.lexedData.shift();
+      const lexedToken = this.getNextToken();
 
       if (this.isClosingContext(lexedToken.context)) {
         if (!this.isValidPair(lexedToken.context) || !this.isValidNextToken()) {
@@ -82,11 +90,11 @@ class Parser {
   }
 
   objectParse(node) {
-    while (true) {
-      const lexedToken = this.lexedData.shift();
+    while (this.lexedData.length !== 0) {
+      const lexedToken = this.getNextToken();
 
       if (this.isClosingContext(lexedToken.context)) {
-        if (!this.isValidPair(lexedToken.context)) {
+        if (!this.isValidPair(lexedToken.context) || !this.isValidNextToken()) {
           throw new Error(this.messageObj.INVALID_OBJECT);
         }
 
@@ -97,15 +105,33 @@ class Parser {
 
       if (this.isOpeningContext(lexedToken.context)) {
         lexedToken.newNode = this.parse(lexedToken);
-      }
+      } else {
+        lexedToken.newNode.context = 'key';
 
+        if (!this.isObjectSeperatorContext(this.getNextToken().context)) {
+          throw new Error(this.messageObj.INVALID_OBJECT);
+        }
+
+        const valueToken = this.getNextToken();
+        valueToken.newNode.context = 'value';
+
+        if (this.isOpeningContext(valueToken.context)) {
+          valueToken.newNode = this.parse(valueToken);
+        }
+
+        if (!this.isValidNextToken()) {
+          throw new Error(this.messageObj.INVALID_OBJECT);
+        }
+
+        lexedToken.newNode.child.push(valueToken.newNode);
+      }
       node.pushChild(lexedToken.newNode);
     }
   }
 
   parse(lexedToken = undefined) {
     if (lexedToken === undefined) {
-      lexedToken = this.lexedData.shift();
+      lexedToken = this.getNextToken();
     }
 
     if (this.isOpeningContext(lexedToken.context)) {
