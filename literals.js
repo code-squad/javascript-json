@@ -3,5 +3,5 @@ module.exports = {
   string: "string",
   boolean: "boolean",
   null: "null",
-  keyValue: "keyValue"
+  key: "key"
 };

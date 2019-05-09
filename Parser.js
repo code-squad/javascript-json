@@ -7,7 +7,7 @@ const parentObjStack = new Stack();
 const { log } = console;
 
 const parserUtils = {
-  tokenizedWord : "",
+  tokenizedWord: "",
   isSeparator(letter) {
     for (let separator of Object.values(separators)) {
       if (letter === separator) return true;
@@ -56,8 +56,8 @@ const parserUtils = {
 
   isCorrectStringForm(literalStr) {
     let cnt = 0;
-    for(letter of literalStr) {
-      cnt = (letter === "'") ? cnt + 1 : cnt;
+    for (letter of literalStr) {
+      cnt = letter === "'" ? cnt + 1 : cnt;
     }
 
     if (cnt === 2) return true;
@@ -65,10 +65,14 @@ const parserUtils = {
   },
 
   isCorrectString(word) {
-    return this.isString(word) && this.isCorrectStringForm(word)
+    return this.isString(word) && this.isCorrectStringForm(word);
   },
 
-  getLiteralsType(word) {
+  isKey(next) {
+    return next === separators.colon;
+  },
+
+  getLiteralsType(word, next) {
     if (Number.isFinite(Number(word))) {
       return literals.number;
     } else if (word === "false" || word === "true") {
@@ -77,6 +81,8 @@ const parserUtils = {
       return literals.null;
     } else if (this.isCorrectString(word)) {
       return literals.string;
+    } else if (this.isKey(next)) {
+      return literals.key;
     } else {
       throw `${word}${errorMessages.UNKNOWN_TYPE}`;
     }
@@ -84,6 +90,9 @@ const parserUtils = {
 };
 
 class Parser {
+  constructor() {
+    this.currKey = null;
+  }
   tokenizing(unparsedJson) {
     //unparsedData를 모두 분해한 뒤, 토큰화(의미 있는 묶음으로 만듦)한다.
     if (unparsedJson === undefined) {
@@ -101,16 +110,20 @@ class Parser {
       return;
     }
     const lexedObj = {};
-    return tokenizedJson.map(word => {
+    let next = null;
+    const lexedJson = tokenizedJson.map((word, idx, arr) => {
       if (!parserUtils.isSeparator(word)) {
-        lexedObj.type = parserUtils.getLiteralsType(word);
+        next = arr[idx + 1];
+        lexedObj.type = parserUtils.getLiteralsType(word, next);
         lexedObj.value = word;
-        lexedObj.child = []; //array인 경우 추가
+        // lexedObj.child = []; //array인 경우 추가
         return { ...lexedObj };
       } else {
         return word;
       }
     });
+
+    return lexedJson;
   }
 
   parsing(lexedJson, parsingDataObj) {
@@ -130,7 +143,15 @@ class Parser {
         type: "array",
         child: []
       };
-      parsingDataObj.child.push(childObj);
+      if (this.currKey !== null) {
+        const withKeyObj = { key: this.currKey };
+        Object.assign(withKeyObj, childObj);
+        this.currKey = null;
+        parsingDataObj.child.push(withKeyObj);
+      } else {
+        parsingDataObj.child.push(childObj);
+      }
+      // parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
       this.parsing(lexedJson, childObj);
     } else if (word === separators.startOfObject) {
@@ -142,8 +163,23 @@ class Parser {
       parentObjStack.push(parsingDataObj);
       this.parsing(lexedJson, childObj);
     } else if (typeof word === "object") {
-      parsingDataObj.child.push(word);
+
+      if (word.type === literals.key) {
+        this.currKey = word.value;
+        // parsingDataObj.child.push(word);
+      } else {
+        if (this.currKey !== null) {
+          const withKeyObj = { key: this.currKey };
+          Object.assign(withKeyObj, word);
+          this.currKey = null;
+          parsingDataObj.child.push(withKeyObj);
+        } else {
+          parsingDataObj.child.push(word);
+        }
+      }
+
       this.parsing(lexedJson, parsingDataObj);
+
     } else {
       this.parsing(lexedJson, parsingDataObj);
     }
@@ -151,14 +187,14 @@ class Parser {
 
   getJson(unparsedJson) {
     const tokenizedJson = this.tokenizing(unparsedJson);
-    log(tokenizedJson);
     const lexedJson = this.lexing(tokenizedJson);
+    // log(lexedJson);
     const resultObj = {
       child: []
     };
     this.parsing(lexedJson, resultObj);
     const resultText = JSON.stringify(resultObj.child[0], null, 2);
-    // log(resultText);
+    log(resultText);
     return resultText;
   }
 }
