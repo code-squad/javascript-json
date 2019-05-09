@@ -45,6 +45,10 @@ const ArrayParser = class {
                     lexerToken = Number(token)
                 }else if(token[0] === "'"){
                     lexerToken = token.match(/\w+/g)[0]
+                }else if(token === "null"){
+                    lexerToken = null
+                }else if(token === "true" || token === "false"){
+                    lexerToken = Boolean(token)
                 }
                 lexerObj.type = typeof(lexerToken)
                 lexerObj.value = lexerToken
