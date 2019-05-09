@@ -8,7 +8,7 @@ class Lexer {
         if (this.isBoolean(token)) return new Node({ type: 'boolean', value: token });
         if (this.isNull(token)) return new Node({ type: 'null', value: null });
         if (this.isOpenObject(token)) return new Node({ type: 'object', child: [] });
-        if (this.isObjectKey(token)) return new Node({ type: 'key', key: token.slice(0, token.length - 1) });
+        if (this.isObjectKey(token)) return new Node({ type: 'key', key: token.slice(0,- 1).trim() });
         if (this.isCloseBracket(token)) return new Node({ type: 'end' });
         else return this.setErrorType(token);
     }
@@ -35,10 +35,6 @@ class Lexer {
 
     hasNoMoreQuotes(token, quote) {
         return !token.slice(1, token.length - 1).includes(quote);
-    }
-
-    countQuotes(token, quote) {
-        return token.slice(1, token.length - 1).split(quote).length - 1;
     }
 
     isOpenArray(token) {
