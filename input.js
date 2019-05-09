@@ -27,6 +27,9 @@ let tokens = [];
       if (!parser.stackIsEmpty()) {
         throw new Error('대괄호의 갯수가 맞지 않습니다.')
       }
+      if (parser.isInvalidCommas()){
+        throw new Error('부적절한 콤마가 포함되어있습니다.')
+      }
       result = result.child[0]
       console.log(JSON.stringify(result, null, 2)); 
       

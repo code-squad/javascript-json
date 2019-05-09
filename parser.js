@@ -2,6 +2,8 @@ class Parser {
   constructor() {
     this.tokenIndex = 0
     this.stack = []
+    this.valueCount = 0
+    this.commaCount = 0
   }
   parseWithTokens(tokens) {
     let result = { type: 'array', child: [] }
@@ -21,15 +23,20 @@ class Parser {
       }
       if (tokens[this.tokenIndex] === ',') {
         this.tokenIndex += 1
+        this.commaCount += 1
         continue;
       }
       result.child.push(tokens[this.tokenIndex])
       this.tokenIndex += 1
+      this.valueCount += 1
     }
     return result
   }
   stackIsEmpty() {
     return this.stack.length === 0
+  }
+  isInvalidCommas() {
+    return this.commaCount + 1 !== this.valueCount
   }
 }
 module.exports = Parser;
