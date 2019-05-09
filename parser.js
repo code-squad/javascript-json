@@ -32,16 +32,19 @@ function lex(tokens) {
         }, []);
 }
 
-//사용 불가, Todo : lexedTokens 가 변경되었으므로 각 lexedToken의 node를 만들도록 수정할것.
 function parse(lexedTokens) {
     let parentNode = {};
     lexedTokens.forEach((lexedToken) => {
-        if(lexedToken.type === 'array') {
-            parentNode = lexedToken;
-        } else if(lexedToken.type === 'number') {
-            parentNode.child.push(lexedToken);
+        if(lexedToken.name === 'ArrayOpener') {
+            const arrayNode = new Node('array');
+            delete arrayNode.value;
+            parentNode = arrayNode;
+        } else if(lexedToken.name === 'Number') {
+            const numberNode = new Node('number', lexedToken.value);
+            parentNode.child.push(numberNode);
+        } else if(lexedToken.name === 'ArrayCloser') {
+            return;
         }
-        return parentNode;
     });
     return parentNode;
 }
@@ -49,3 +52,6 @@ function parse(lexedTokens) {
 const str = "[123, 22, 33]";
 const tokens = tokenize(str);
 const lexedTokens = lex(tokens);
+const result = parse(lexedTokens);
+
+console.log(JSON.stringify(result, null, 2)); 
