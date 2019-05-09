@@ -2,13 +2,31 @@
 class Lexer {
 
     run(token) {
-        // 더 쉽고 간단한 방법이 있을지 고민해보자.
-        if ("[]".includes(token)) return 'array';
-        if (token === 'true' || token === 'false') return 'boolean';
-        if (token === 'null') return 'null';
-        if (`'"`.includes(token[0]) && `'"`.includes(token[token.length - 1])) return 'string';
-
-        return 'number';
+        if (isArray(token)) return 'array';
+        if (isBoolean(token)) return 'boolean';
+        if (isNull(token)) return 'null';
+        if (isString(token)) return 'string';
+        if (isNumber(token)) return 'number';
+        return 'undefined';
     }
 
+    isArray(token) {
+        return '[]'.includes(token) ? true : false;
+    }
+
+    isBoolean(token) {
+        return token === 'true' || token === 'false' ? true : false;
+    }
+
+    isNull(token) {
+        return token === 'null' ? true : false;
+    }
+
+    isString(token) {
+        return `'"`.includes(token[0]) && `'"`.includes(token[token.length - 1]) ? true : false;
+    }
+
+    isNumber(token) {
+        return !isNaN(token) ? true : false;
+    }
 }
