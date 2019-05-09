@@ -23,7 +23,7 @@ class ArrayParser {
 
     removeBlank(stringArray) {
         stringArray.forEach((element, index) => {
-            stringArray[index] = element.trimStart().trimEnd();
+            stringArray[index] = element.trim();
         });
         return stringArray;
     }
