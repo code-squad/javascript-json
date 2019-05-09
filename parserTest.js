@@ -1,25 +1,27 @@
 const Parser = require("./Parser");
 const test = require("./test/test");
-const {data, result} = require("./test/testingData");
+const {testingData, result} = require("./test/testingData");
 const assert = require("assert");
 const parser = new Parser();
 
-test.describe("Parser test", function() {
+const TEST_CODE_ENABLE = true;
 
-  test.describe("Correct examples test", function() {
-    test.it("should return correct parsed data!", () => {
-      assert.deepStrictEqual(parser.getJson(data[1]), result[1]);
+if(!TEST_CODE_ENABLE) {
+  const data = parser.getJson("[ '123', {easy : ['he llo', {a:'a'}, 'world'] } , { a :123, a:'str', b:[ 912,[5656,33], {key : 'innervalue', newkeys: [1,2,3,4,5]} ] } ]");
+  console.log(data);
+} else {
+  test.describe("Parser test", function() {
+
+    test.describe("Correct examples test", () => {
+
+      for(let props in testingData) {
+        test.it("should return correct parsed data!", () => {
+          assert.deepStrictEqual(parser.getJson(testingData[props]), result[props]);
+        });
+      }
     });
 
-    test.it("should return correct parsed data!", () => {
-      assert.deepStrictEqual(parser.getJson(data[2]), result[2]);
-    });
-
-    test.it("should return correct parsed data!", () => {
-      assert.deepStrictEqual(parser.getJson(data[3]), result[3]);
+    test.describe("Incorrect examples test", () => {
     });
   });
-
-  test.describe("Incorrect examples test", function() {
-  });
-});
+}
