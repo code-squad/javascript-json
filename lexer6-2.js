@@ -23,7 +23,7 @@ class Lexer {
     }
 
     isString(token) {
-        return `'"`.includes(token[0]) && `'"`.includes(token[token.length - 1]) ? true : false;
+        return (token.startsWith('"') && token.endsWith('"')) || (token.startsWith("'") && token.endsWith('"')) ? true : false;
     }
 
     isNumber(token) {
