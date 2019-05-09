@@ -25,10 +25,13 @@ class ArrayParser {
     }
 
     lexer(arr) {
-        this.stack = [];
-        this.stackPointer = -1;
-        arr.forEach((val) => { if (this.checkDataType(val)) { this.makeArrData(val); } });
-        this.lexedData = this.stack[0];
+        arr = arr.map((el) => {
+            const obj = {};
+            obj.type = this.checkDataType(el);
+            obj.value = el;
+            return obj
+        })
+        this.lexedData = arr;
     }
 
     parser(arr) {
