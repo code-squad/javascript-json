@@ -42,7 +42,9 @@ const ArrayParser = class {
                 lexerObj.type = "array"
             }else if(token !== ']'){
                 if (!isNaN(token)){
-                lexerToken = Number(token)
+                    lexerToken = Number(token)
+                }else if(token[0] === "'"){
+                    lexerToken = token.match(/\w+/g)[0]
                 }
                 lexerObj.type = typeof(lexerToken)
                 lexerObj.value = lexerToken
@@ -55,7 +57,10 @@ const ArrayParser = class {
 }
 
 const arrayParser = new ArrayParser()
-console.log(arrayParser.tokenizer(str).length)
+const token = arrayParser.tokenizer(str)
+console.log(token.length)
+console.log(arrayParser.lexer(token))
+
 
 const lexer = (arr) => {
     let i = 0;
