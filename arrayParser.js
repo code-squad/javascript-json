@@ -10,12 +10,18 @@ class ArrayParser {
                 changedStr += '[' + ',';
             } else if (str[index] === ']') {
                 changedStr += ',' + ']';
-            } else {
+            } else if (str[index] === '{') {
+                changedStr += '{' +  ',';
+            }else if (str[index] === '}') {
+                changedStr += ',' + '}';
+            }else if (str[index] === ':') {
+                changedStr += ':' + ',';
+            }else {
                 changedStr += str[index];
             }
             index++;
         }
-        this.tokenizedData = changedStr.split(',').map((val) => val.trim());
+        this.tokenizedData = changedStr.split(',').map((val) => val.replace(/\s/g,''));
     }
 
     lexer(arr) {
