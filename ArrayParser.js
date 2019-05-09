@@ -15,8 +15,12 @@ const ArrayParser = {
     },
 
     tokenize(input) {
-        const tokens = input.replace(/\[/g, '[,').replace(/\]/g, ',]').replace(/ /g, '').split(',');
-        return tokens.map(token => {
+        return input.replace(/\[/g, '[,').replace(/\]/g, ',]').replace(/ /g, '').split(',');
+    },
+
+    lex(queue) {
+
+        queue = queue.map(token => {
             if (token === 'null') return null;
             if (['true', 'false'].includes(token)) return (token === 'true');
             if (!isNaN(token)) return Number(token);
@@ -24,9 +28,6 @@ const ArrayParser = {
             if (['[', ']'].includes(token)) return token
             else throw new Error(`${token}은 알수없는 타입입니다.`)
         })
-    },
-
-    lex(queue) {
         return queue.map(token => {
             if (['[', ']'].includes(token)) return { type: 'array', value: token, child: [] }
             else {
