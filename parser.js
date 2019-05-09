@@ -1,7 +1,11 @@
 class Parser {
   constructor() {
     this.tokenStack = [];
-    this.result;
+  }
+
+  checkTypeExceptArray(InputType) {
+    const typeArr = ["string", "number", "boolean", "null"];
+    return typeArr.includes(InputType);
   }
 
   completeCondition() {
@@ -32,27 +36,24 @@ class Parser {
 
   parsing(lexeredData) {
     let topToken;
+    let result;
+
     lexeredData.forEach((token, index) => {
       if (token._type === "array") {
         this.tokenStack.push(token);
-      } else if (
-        token._type === "number" ||
-        token._type === "string" ||
-        token._type === "boolean" ||
-        token._type === "null"
-      ) {
+      } else if (this.checkTypeExceptArray(token._type)) {
         this.updateTokenStack(token);
       } else if (token._type === "array-end") {
         topToken = this.findParentToken();
 
         if (this.completeCondition()) {
-          this.result = topToken;
+          result = topToken;
         } else {
           this.updateTokenStack(topToken);
         }
       }
     });
-    return this.result;
+    return result;
   }
 }
 
