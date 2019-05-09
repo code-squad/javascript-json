@@ -32,7 +32,8 @@ const parserUtils = {
     } else {
       this.tokenizedWord += letter;
       if (this.isEndofLiteral(idx, decomposedDataArr)) {
-        return this.tokenizedWord.trim();
+        let tokenizedWord = this.tokenizedWord.trim();
+        if(tokenizedWord !== '') return tokenizedWord;
       }
     }
   },
@@ -116,7 +117,6 @@ class Parser {
         next = arr[idx + 1];
         lexedObj.type = parserUtils.getLiteralsType(word, next);
         lexedObj.value = word;
-        // lexedObj.child = []; //array인 경우 추가
         return { ...lexedObj };
       } else {
         return word;
@@ -151,7 +151,6 @@ class Parser {
       } else {
         parsingDataObj.child.push(childObj);
       }
-      // parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
       this.parsing(lexedJson, childObj);
     } else if (word === separators.startOfObject) {
@@ -166,7 +165,6 @@ class Parser {
 
       if (word.type === literals.key) {
         this.currKey = word.value;
-        // parsingDataObj.child.push(word);
       } else {
         if (this.currKey !== null) {
           const withKeyObj = { key: this.currKey };
@@ -188,13 +186,12 @@ class Parser {
   getJson(unparsedJson) {
     const tokenizedJson = this.tokenizing(unparsedJson);
     const lexedJson = this.lexing(tokenizedJson);
-    // log(lexedJson);
     const resultObj = {
       child: []
     };
     this.parsing(lexedJson, resultObj);
     const resultText = JSON.stringify(resultObj.child[0], null, 2);
-    log(resultText);
+    // log(resultText);
     return resultText;
   }
 }
