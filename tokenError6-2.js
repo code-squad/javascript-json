@@ -16,3 +16,5 @@ class tokenError {
         throw new Error(`${token}은 알수 없는 타입입니다.`)
     }
 }
+
+module.exports = tokenError;

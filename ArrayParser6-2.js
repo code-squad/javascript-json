@@ -1,9 +1,11 @@
 const Tokenizer = require('./tokenizer6-2');
 const Lexer = require('./lexer6-2');
+const TokenError = require('./tokenError6-2');
 
 class ArrayParser {
 
     constructor(obj) {
+        this.tokenError = obj.tokenError;
         this.tokenizer = obj.tokenizer;
         this.lexer = obj.lexer;
         this.stack = [];
@@ -45,11 +47,13 @@ class ArrayParser {
     }
 }
 
-
+const tokenError = new TokenError();
 const tokenizer = new Tokenizer();
-const lexer = new Lexer();
-const arrayParser = new ArrayParser({ tokenizer, lexer });
-const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
+const lexer = new Lexer(tokenError);
+const arrayParser = new ArrayParser({ tokenizer, lexer, tokenError });
+const str = `['1a3',[null,false,['11',[112233],112],55, '99'],33, true]`
+// const str = `['1a'3',[null,false,['11',[112233],112],55, '99'],33, true]`
+// const str = `['1a3',[null,false,['11',[112233],112],5d5, '99'],33, true]`
 const result = arrayParser.run(str);
 
 console.log(result);

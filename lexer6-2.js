@@ -1,13 +1,20 @@
 
 class Lexer {
 
+    constructor(tokenError) {
+        this.tokenError = tokenError;
+    }
+
     run(token) {
         if (this.isArray(token)) return 'array';
         if (this.isBoolean(token)) return 'boolean';
         if (this.isNull(token)) return 'null';
-        if (this.isString(token)) return 'string';
         if (this.isNumber(token)) return 'number';
-        return 'undefined';
+        if (this.isString(token)) {
+            this.tokenError.isThisRealString(token);
+            return 'string';
+        }
+        return this.tokenError.itIsUndefinedType(token);
     }
 
     isArray(token) {
@@ -23,7 +30,7 @@ class Lexer {
     }
 
     isString(token) {
-        return (token.startsWith('"') && token.endsWith('"')) || (token.startsWith("'") && token.endsWith('"')) ? true : false;
+        return (token.startsWith('"') && token.endsWith('"')) || (token.startsWith("'") && token.endsWith("'")) ? true : false;
     }
 
     isNumber(token) {
