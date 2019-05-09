@@ -15,20 +15,24 @@ function isNumber(value) {
     if(Number.isNaN(parseInt(value))) return false;
     return true;
 }
+
 function lex(tokens) {
+    let token = {};
     return tokens.reduce((lexedTokens, value) => {
             if(value === '[') {
-                const arrayNode = new Node('array');
-                delete arrayNode['value'];
-                return lexedTokens.concat(arrayNode);
+                token = {'name' : 'ArrayOpener', 'value' : value}
+                return lexedTokens.concat(token);
             } else if(isNumber(value)) {
-                return lexedTokens.concat(new Node('number', value));
+                token = {'name' : 'Number', 'value' : value}
+                return lexedTokens.concat(token);
+            } else if(value === ']') {
+                token = {'name' : 'ArrayCloser', 'value' : value}
+                return lexedTokens.concat(token);
             }
-            return lexedTokens.concat(new Node(undefined, value));
         }, []);
 }
 
-
+//사용 불가, Todo : lexedTokens 가 변경되었으므로 각 lexedToken의 node를 만들도록 수정할것.
 function parse(lexedTokens) {
     let parentNode = {};
     lexedTokens.forEach((lexedToken) => {
@@ -45,5 +49,3 @@ function parse(lexedTokens) {
 const str = "[123, 22, 33]";
 const tokens = tokenize(str);
 const lexedTokens = lex(tokens);
-const result = parse(lexedTokens);
-console.log(JSON.stringify(result, null, 2));
