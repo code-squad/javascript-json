@@ -30,3 +30,5 @@ class Lexer {
         return !isNaN(token) ? true : false;
     }
 }
+
+module.exports = Lexer;
