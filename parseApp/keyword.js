@@ -9,5 +9,6 @@ module.exports = {
   number: { context: 'Element', type: 'Number' },
   '{': { context: 'ObjectOpen', type: 'Object' },
   '}': { context: 'ObjectClose' },
-  ':': { context: 'ObjectSeperator' }
+  ':': { context: 'ObjectSeperator' },
+  ',': { context: 'Seperator' }
 };

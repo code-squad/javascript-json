@@ -1,6 +1,7 @@
 const parseApp = require('./parseApp');
 
-const str = "['1a3', [null,false,['11',[112233],112],55, '99'],33, {'x': 1, 'y': 2}, true]";
+// const str = "['1a3', 1, [11, 123, 1], [1]]";
+const str = "['1a3', 1, [11, 12, 33], [1]]";
 
 try {
   const result = parseApp.parse(str);

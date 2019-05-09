@@ -14,6 +14,10 @@ class Parser {
     return context === this.keyword[']'].context || context === this.keyword['}'].context;
   }
 
+  isSaperatorContext(context) {
+    return context === this.keyword[','].context;
+  }
+
   isValidPair(currentContext) {
     const pairContext = this.parseStack[this.parseStack.length - 1];
 
@@ -28,13 +32,31 @@ class Parser {
     return false;
   }
 
+  isValidNextToken() {
+    if (this.lexedData.length === 0) {
+      return true;
+    }
+
+    const frontPeek = this.lexedData[0].context;
+
+    if (this.isClosingContext(frontPeek)) {
+      return true;
+    }
+
+    if (this.isSaperatorContext(frontPeek)) {
+      this.lexedData.shift();
+      return true;
+    }
+
+    return false;
+  }
+
   arrayParse(node) {
-    // 닫는 것 없으면 무한루프지 않을까? todo
-    while (true) {
+    while (this.lexedData.length !== 0) {
       const lexedToken = this.lexedData.shift();
 
       if (this.isClosingContext(lexedToken.context)) {
-        if (!this.isValidPair(lexedToken.context)) {
+        if (!this.isValidPair(lexedToken.context) || !this.isValidNextToken()) {
           throw new Error(this.messageObj.INVALID_ARRAY);
         }
 
@@ -45,6 +67,14 @@ class Parser {
 
       if (this.isOpeningContext(lexedToken.context)) {
         lexedToken.newNode = this.parse(lexedToken);
+      } else {
+        if (lexedToken.context === this.keyword[','].context) {
+          throw new Error(this.messageObj.START_SEPERATOR);
+        }
+
+        if (!this.isValidNextToken()) {
+          throw new Error(this.messageObj.INVALID_ARRAY);
+        }
       }
 
       node.pushChild(lexedToken.newNode);
