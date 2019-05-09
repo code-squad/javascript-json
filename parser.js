@@ -6,7 +6,7 @@ class ArrayParser {
         const tokenArray = [];
         let value = "";
         for (let i = 0; i < inputString.length; i++) {
-            if (inputString[i] === "[" || inputString[i] === "]" || inputString[i] === ",") {
+            if (inputString[i] === "[" || inputString[i] === "]" || inputString[i] === "," || inputString[i] === "{" || inputString[i] === "}" || inputString[i] === ":") {
                 if (value !== "") {
                     tokenArray.push(value);
                     tokenArray.push(inputString[i]);
@@ -35,6 +35,9 @@ class ArrayParser {
         if (string === ",") return "separator";
         if (string === "[") return "arrayStartOperator"
         if (string === "]") return "arrayEndOperator";
+        if (string === "{") return "objectStartOperator";
+        if (string === "}") return "objectEndOperator";
+        if (string === ":") return "colone";
         return "number";
     }
 
