@@ -64,18 +64,6 @@ class ArrayParser {
         if (val === '}') { return 'closeCurlyBracket'}
     }
 
-    makeArrData(val) {
-        if (val === '[') {
-            this.stackPointer++;
-            this.stack.push([]);
-        } else if (val === ']') {
-            this.stackPointer--;
-            if (this.stackPointer > - 1) { this.stack[this.stackPointer].push(this.stack.pop()); }
-        } else {
-            this.stack[this.stackPointer].push(val);
-        }
-    }
-
     changeDataType(val) {
         if (val === 'true') { return true }
         if (val === 'false') { return false }
