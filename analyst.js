@@ -37,7 +37,8 @@ class Analyst {
     run(parseTree) {
         this.initList();
         const typeList = this.getAllNodeTypes(parseTree);
-
+        const counts = this.countTypes(typeList);
+        this.printCounts(counts);
     }
 }
 module.exports = Analyst;
