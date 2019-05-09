@@ -8,21 +8,21 @@ class Node {
 
 function tokenize(string) {
     const noWhiteSpaceString = string.replace(/ /g, '');
-    return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => {return value});
+    return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => value);
 }
 
 function lex(tokens) {
     let token = {};
-    return tokens.reduce((lexedTokens, value) => {
+    return tokens.reduce((acc, value) => {
             if(value === '[') {
                 token = {'name' : 'ArrayOpener', 'value' : value}
-                return lexedTokens.concat(token);
+                return acc.concat(token);
             } else if(!isNaN(value)) {
                 token = {'name' : 'Number', 'value' : value}
-                return lexedTokens.concat(token);
+                return acc.concat(token);
             } else if(value === ']') {
                 token = {'name' : 'ArrayCloser', 'value' : value}
-                return lexedTokens.concat(token);
+                return acc.concat(token);
             }
         }, []);
 }
