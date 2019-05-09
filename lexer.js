@@ -21,20 +21,24 @@ class Lexer {
   }
 
   makeToken(tokenizeredData) {
-    const lexeredData = [];
-    tokenizeredData.forEach(element => {
+    const lexeredData = tokenizeredData.map(element => {
       if (element === "[") {
-        lexeredData.push(new Token({ type: "array" }));
-      } else if (element === "]") {
-        lexeredData.push(new Token({ type: "array-end" }));
-      } else if (element === "null") {
-        lexeredData.push(new Token({ type: "null" }));
-      } else if (element === "true" || element === "false") {
-        lexeredData.push(new Token({ type: "boolean", value: element }));
-      } else if (this.isStr(element)) {
-        lexeredData.push(new Token({ type: "string", value: element }));
-      } else if (isFinite(element)) {
-        lexeredData.push(new Token({ type: "number", value: element }));
+        return new Token({ type: "array" });
+      }
+      if (element === "]") {
+        return new Token({ type: "array-end" });
+      }
+      if (element === "null") {
+        return new Token({ type: "null" });
+      }
+      if (element === "true" || element === "false") {
+        return new Token({ type: "boolean", value: element });
+      }
+      if (this.isStr(element)) {
+        return new Token({ type: "string", value: element });
+      }
+      if (isFinite(element)) {
+        return new Token({ type: "number", value: element });
       } else {
         throw new Error(`${element}는 알 수 없는 타입의 토큰입니다.`);
       }
