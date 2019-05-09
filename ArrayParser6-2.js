@@ -5,7 +5,6 @@ const TokenError = require('./tokenError6-2');
 class ArrayParser {
 
     constructor(obj) {
-        this.tokenError = obj.tokenError;
         this.tokenizer = obj.tokenizer;
         this.lexer = obj.lexer;
         this.stack = [];
@@ -30,14 +29,18 @@ class ArrayParser {
 
     parser(array) {
         if (typeof this.stack[0] === 'object') return this.stack[0];
+        try {
+            const token = array.shift();
+            const _type = this.lexer.run(token);
+            let _stack = this.makeObject(_type, token);
+            if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
+            this.stack.push(_stack);
 
-        const token = array.shift();
-        const _type = this.lexer.run(token);
-        let _stack = this.makeObject(_type, token);
-        if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
-        this.stack.push(_stack);
-
-        return this.parser(array);
+            return this.parser(array);
+        }
+        catch (e) {
+            console.log(e.message);
+        }
     }
 
     run(input) {
@@ -50,7 +53,7 @@ class ArrayParser {
 const tokenError = new TokenError();
 const tokenizer = new Tokenizer();
 const lexer = new Lexer(tokenError);
-const arrayParser = new ArrayParser({ tokenizer, lexer, tokenError });
+const arrayParser = new ArrayParser({ tokenizer, lexer });
 const str = `['1a3',[null,false,['11',[112233],112],55, '99'],33, true]`
 // const str = `['1a'3',[null,false,['11',[112233],112],55, '99'],33, true]`
 // const str = `['1a3',[null,false,['11',[112233],112],5d5, '99'],33, true]`
