@@ -3,28 +3,24 @@ const Lexer = require("./lexer");
 const Parser = require("./parser");
 
 class ArrayParser {
-  constructor(tokenizer, lexer, parser) {}
-
-  startParsing(inputStr) {
+  constructor(tokenizer, lexer, parser) {
     this.tokenizer = tokenizer;
     this.lexer = lexer;
     this.parser = parser;
+  }
 
-    this.tokenizeredData;
-    this.lexeredData;
-    this.parseredData;
-
+  startParsing(inputStr) {
     // 1. tokenizer
     inputStr = this.tokenizer.addCommaToBraket(inputStr);
     inputStr = this.tokenizer.removeWhiteSpace(inputStr);
-    this.tokenizeredData = this.tokenizer.splitInputStr(inputStr);
+    const tokenizeredData = this.tokenizer.splitInputStr(inputStr);
 
     // 2. lexer
-    this.lexeredData = this.lexer.makeToken(this.tokenizeredData);
+    const lexeredData = this.lexer.makeToken(tokenizeredData);
 
     // 3. parse
-    this.parseredData = this.parser.parsing(this.lexeredData);
-    return this.parseredData;
+    const parseredData = this.parser.parsing(lexeredData);
+    return parseredData;
   }
 }
 
