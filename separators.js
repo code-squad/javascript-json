@@ -3,5 +3,6 @@ module.exports = {
   endOfArray: "]",
   rest: ",",
   startOfObject: "{",
-  endOfObject: "}"
+  endOfObject: "}",
+  colon: ":"
 }

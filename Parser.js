@@ -20,7 +20,8 @@ const parserUtils = {
     return (
       nextLetter === separators.rest ||
       nextLetter === separators.endOfArray ||
-      nextLetter === separators.endOfObject
+      nextLetter === separators.endOfObject ||
+      nextLetter === separators.colon
     );
   },
 
@@ -150,13 +151,14 @@ class Parser {
 
   getJson(unparsedJson) {
     const tokenizedJson = this.tokenizing(unparsedJson);
+    log(tokenizedJson);
     const lexedJson = this.lexing(tokenizedJson);
     const resultObj = {
       child: []
     };
     this.parsing(lexedJson, resultObj);
     const resultText = JSON.stringify(resultObj.child[0], null, 2);
-    log(resultText);
+    // log(resultText);
     return resultText;
   }
 }
