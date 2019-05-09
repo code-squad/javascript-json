@@ -25,8 +25,31 @@ class ArrayParser {
 
         return _stack;
     }
+
+    parser(array) {
+        if (typeof this.stack[0] === 'object') return this.stack[0];
+
+        const token = array.shift();
+        const _type = this.lexer.run(token);
+        let _stack = this.makeObject(_type, token);
+        if (_stack.type === 'array') _stack = this.tokenJoiner(_stack);
+        this.stack.push(_stack);
+
+        return this.parser(array);
+    }
+
+    run(input) {
+        const array = this.tokenizer.run(input);
+
+        return this.parser(array);
+    }
 }
+
 
 const tokenizer = new Tokenizer();
 const lexer = new Lexer();
 const arrayParser = new ArrayParser({ tokenizer, lexer });
+const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
+const result = arrayParser.run(str);
+
+console.log(result);

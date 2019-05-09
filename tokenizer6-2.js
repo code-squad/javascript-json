@@ -59,5 +59,5 @@ class Tokenizer {
 const tokenizer = new Tokenizer();
 const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
 
-console.log(tokenizer.run(str));
+// console.log(tokenizer.run(str));
 module.exports = Tokenizer;

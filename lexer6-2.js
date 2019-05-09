@@ -2,11 +2,11 @@
 class Lexer {
 
     run(token) {
-        if (isArray(token)) return 'array';
-        if (isBoolean(token)) return 'boolean';
-        if (isNull(token)) return 'null';
-        if (isString(token)) return 'string';
-        if (isNumber(token)) return 'number';
+        if (this.isArray(token)) return 'array';
+        if (this.isBoolean(token)) return 'boolean';
+        if (this.isNull(token)) return 'null';
+        if (this.isString(token)) return 'string';
+        if (this.isNumber(token)) return 'number';
         return 'undefined';
     }
 
