@@ -18,10 +18,10 @@ class Lexer {
     if (/\'|\"/.test(rawValue)) {
       return { type: 'string', value: rawValue.replace(/\'|\"/g, '') }
     }
-    if (/,|[|]/){
+    if (/,|\[|\]/.test(rawValue)){
       return rawValue
     }
-    throw new Error('잘못된 값이 포함되어있습니다.')
+    throw new Error(`${rawValue}는 잘못된 값입니다.`)
   }
   toBoolean(rawValue) {
     return rawValue === 'true' ? true : false

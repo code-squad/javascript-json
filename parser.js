@@ -2,7 +2,6 @@ class Parser {
   constructor() {
     this.tokenIndex = 0
     this.stack = []
-    this.tokenIndex = 0
   }
   parseWithTokens(tokens) {
     let result = { type: 'array', child: [] }

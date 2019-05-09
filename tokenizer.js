@@ -16,24 +16,21 @@ class Tokenizer {
       if (char === "'" || char === '"') {
         startIndex = index + 1
         stringIndex = chars.slice(index + 1).findIndex(e => e === char)
-        if (stringIndex < 0) throw new Error('잘못된 문자열이 포함되어있습니다.')
+        if (stringIndex < 0) {
+          throw new Error('잘못된 문자열이 포함되어있습니다.')
+        }
         tokens.push(char + input.slice(startIndex, startIndex + stringIndex) + char)
-        startIndex +=stringIndex + 1
+        startIndex += stringIndex + 1
+        return
       }
       if (char === '[') {
         startIndex = index + 1
         tokens.push(char)
       }
-      if (char === ']') {
+      if (char === ']' || char === ',') {
         tokens.push(input.slice(startIndex, index))
         startIndex = index + 1
         tokens.push(char)
-      }
-      if (char === ',') {
-        tokens.push(input.slice(startIndex, index))
-        tokens.push(char)
-        // 쉼표 체커 만들기
-        startIndex = index + 1
       }
     });
     tokens = tokens.filter(e => e !== '')
@@ -42,6 +39,3 @@ class Tokenizer {
 }
 
 module.exports = Tokenizer
-
-// 쉼표 체커
-// 
