@@ -1,5 +1,7 @@
 const Tokenizer = require('./tokenizer.js')
 const Parser = require('./parser.js')
+const Lexer = require('./lexer.js')
+
 const readline = require('readline')
 
 const rl = readline.createInterface({
@@ -8,6 +10,9 @@ const rl = readline.createInterface({
 });
 
 const tokenizer = new Tokenizer();
+const lexer = new Lexer();
+const parser = new Parser();
+
 let tokens = [];
 
 (() => {
@@ -15,8 +20,10 @@ let tokens = [];
     try {
       tokens = tokenizer.tokenize(userInput);
       console.table(tokens)
-      const parser = new Parser(tokens);
-      let result = parser.parseWithTokens();
+      tokens = tokens.map(token => lexer.lexValue(token))
+      console.table(tokens)
+      
+      let result = parser.parseWithTokens(tokens);
       if (!parser.stackIsEmpty()) {
         throw new Error('대괄호의 갯수가 맞지 않습니다.')
       }
