@@ -1,6 +1,7 @@
 # javascript-json
 ## 설계
 
+
 - tokenizer
 1. 입력된값을 한 글자 단위로 current 변수로 확인.
 2. 확인된 값을 크게 number, string, boolean, null, array로 분리.

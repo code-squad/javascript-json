@@ -1,3 +1,4 @@
+
 class ErrorCheck {
       
       check_improper_String(input, currentIndex) {
