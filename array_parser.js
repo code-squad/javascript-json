@@ -1,11 +1,13 @@
+const validation = require('./validation');
+const Tokenizer = require('./tokenizer');
 const Parser = require('./parser');
 const Lexer = require('./lexer');
 
-const ArrayParser = (str) => {
-    const lexer = new Lexer();
-    const tokensInArray = lexer.getTokensInArray(str);
-    const parser = new Parser(tokensInArray.length);
-    return parser.createSyntaxTree(tokensInArray, 0);
+const ArrayParser = (strValue) => {
+    const tokenizer = new Tokenizer();
+    const lexer = new Lexer(validation);
+    const parser = new Parser(tokenizer, lexer);
+    return parser.execute(strValue);
 }
 
 module.exports = ArrayParser;
