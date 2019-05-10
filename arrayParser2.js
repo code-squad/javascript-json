@@ -12,6 +12,7 @@ const ArrayParser = class {
     constructor(){
         this.tokenArr = []
         this.lexerArray = [];
+        this.arrayTokenIdxStack = [];
     }
 
     removeToken(arr,token){
@@ -34,13 +35,12 @@ const ArrayParser = class {
     }
 
     lexer(arr){
-        this.removeToken(arr,"]")
         arr.forEach((token)=>{
             const lexerObj = {}
             let lexerToken
-            if (token === '['){
+            if (token === '[' || token === ']'){
                 lexerObj.type = "array"
-            }else if(token !== ']'){
+            }else{
                 if (!isNaN(token)){
                     lexerToken = Number(token)
                 }else if(token[0] === "'"){
@@ -57,6 +57,15 @@ const ArrayParser = class {
             this.lexerArray.push(lexerObj);
         });
         return this.lexerArray;
+    }
+
+    parser(lexerArray){ 
+        lexerArray.forEach((lexerObj)=>{
+            if(lexerObj.value ==="["){
+                arrayTokenIdxStack.push(lexerArray.indexOf(el))
+            }
+        })
+        return lexerArray
     }
 }
 
