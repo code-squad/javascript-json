@@ -49,7 +49,7 @@ const test = {
       statisticsStack.top().successCnt += 1;
     } catch (error) {
       statisticsStack.top().failCnt += 1;
-      errorLogQueue.push(error.message);
+      errorLogQueue.push(error);
     }
     timeEnd("test completed");
     groupEnd();
