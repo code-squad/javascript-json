@@ -100,7 +100,12 @@ const parser = str => {
 const s1 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const s2 = "['1a'3',[22,23,[11,[112233],112],55],33]";
 const s3 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
+
+parser(s1);
+console.log();
+parser(s2);
+console.log();
 parser(s3);
 
-//console.log(lexer(s3));
+
 
