@@ -72,10 +72,10 @@ class ArrayParser {
     }
 
     changeDataType(val) {
-        if (val === 'true') { return true }
-        if (val === 'false') { return false }
-        if (val === 'null') { return null }
-        if (!isNaN(val)) { return Number(val) }
+        if (val === 'true') return true
+        if (val === 'false') return false
+        if (val === 'null') return null
+        if (!isNaN(val)) return Number(val)
         return val
     }
 
