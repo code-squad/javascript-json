@@ -23,7 +23,7 @@ class ArrayParser {
                 } else if(token === 'true' || token === 'false') {
                     token = {'name' : 'boolean', 'value' : token};
                     return token;
-                } else if(!(token.search(/'(.+)'/) === -1)) {
+                } else if(!(token.search(/[',"].+[',"]/) === -1)) {
                     token = {'name' : 'string', 'value' : token};
                     return token;
                 } else if(token === 'null') {
