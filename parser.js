@@ -17,11 +17,22 @@
             };
 
         }
+
+        checkOperator(charactor){
+            let result = false;
+            for(let i in this.operators){
+                if(i === charactor){
+                    result = true;
+                }
+            }
+            return result;
+        }
+
         tokenizer(inputString) {
             const tokenArray = [];
             let value = "";
             for (let i = 0; i < inputString.length; i++) {
-                if (inputString[i] === "[" || inputString[i] === "]" || inputString[i] === "," || inputString[i] === "{" || inputString[i] === "}" || inputString[i] === ":") {
+                if (this.checkOperator(inputString[i])) {
                     if (value !== "") {
                         tokenArray.push(value);
                         tokenArray.push(inputString[i]);
