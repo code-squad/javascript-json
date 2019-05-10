@@ -33,8 +33,8 @@ class ArrayParser {
     parser(inputToken) {
         while (this.lexedData.length) {
             let currentToken = this.lexedData.shift();
-            if (currentToken.value === ']') return inputToken;
-            if (currentToken.type=== 'array') {
+            if (currentToken.value === ']' || currentToken.value === '}') return inputToken;
+            if (currentToken.type === 'array' || currentToken.type === 'object') {
                 currentToken = this.parser(currentToken);
             }
             inputToken.child.push(currentToken);
