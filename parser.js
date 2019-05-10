@@ -1,13 +1,15 @@
 class Parser {
   constructor() {
     this.tokenStack = [];
-    this.result;
+  }
+
+  checkTypeExceptArray(InputType) {
+    const typeArr = ["string", "number", "boolean", "null"];
+    return typeArr.includes(InputType);
   }
 
   completeCondition() {
-    if (this.tokenStack.length === 0) {
-      return true;
-    }
+    return this.tokenStack.length === 0;
   }
 
   findParentToken() {
@@ -34,23 +36,24 @@ class Parser {
 
   parsing(lexeredData) {
     let topToken;
+    let result;
 
     lexeredData.forEach((token, index) => {
       if (token._type === "array") {
         this.tokenStack.push(token);
-      } else if (token._type === "number") {
+      } else if (this.checkTypeExceptArray(token._type)) {
         this.updateTokenStack(token);
       } else if (token._type === "array-end") {
-        topToken = this.tokenStack.pop();
+        topToken = this.findParentToken();
 
-        if (this.completeCondition) {
-          this.result = topToken;
+        if (this.completeCondition()) {
+          result = topToken;
         } else {
           this.updateTokenStack(topToken);
         }
       }
     });
-    return this.result;
+    return result;
   }
 }
 
