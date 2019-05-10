@@ -1,5 +1,8 @@
-const separators = require("./separators");
-const literals = require("./literals");
+//utils
+const separators = require("./utils/separators");
+const literals = require("./utils/literals");
+const tokenizerUtils = require("./utils/tokenizerUtils");
+
 const errorMessages = require("./errorMessages");
 const Stack = require("./data_structure/Stack");
 const parentObjStack = new Stack();
@@ -7,46 +10,11 @@ const parentObjStack = new Stack();
 const { log } = console;
 
 const parserUtils = {
-  tokenizedWord: "",
   isSeparator(letter) {
     for (let separator of Object.values(separators)) {
       if (letter === separator) return true;
     }
     return false;
-  },
-
-  isEndofLiteral(idx, decomposedDataArr) {
-    const nextLetter = decomposedDataArr[idx + 1];
-    return (
-      nextLetter === separators.rest ||
-      nextLetter === separators.endOfArray ||
-      nextLetter === separators.endOfObject ||
-      nextLetter === separators.colon
-    );
-  },
-
-  getTokenizedWord(letter, idx, decomposedDataArr) {
-    if (this.isSeparator(letter)) {
-      this.tokenizedWord = "";
-      return letter;
-    } else {
-      this.tokenizedWord += letter;
-      if (this.isEndofLiteral(idx, decomposedDataArr)) {
-        let tokenizedWord = this.tokenizedWord.trim();
-        if(tokenizedWord !== '') return tokenizedWord;
-      }
-    }
-  },
-
-  joinLiterals(decomposedDataArr) {
-    return decomposedDataArr.map((letter, idx, arr) =>
-      this.getTokenizedWord(letter, idx, arr)
-    );
-  },
-
-  makeTokenizedData(decomposedDataArr) {
-    const literalsJoinedArr = this.joinLiterals(decomposedDataArr);
-    return literalsJoinedArr.filter(letter => letter !== undefined);
   },
 
   isString(literalStr) {
@@ -101,7 +69,7 @@ class Parser {
       return;
     }
     const decomposedDataArr = unparsedJson.split("");
-    return parserUtils.makeTokenizedData(decomposedDataArr);
+    return tokenizerUtils.makeTokenizedData(decomposedDataArr);
   }
 
   lexing(tokenizedJson) {
