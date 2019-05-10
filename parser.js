@@ -1,3 +1,5 @@
+const errorMessage = require('./error_message')
+
 class Node {
     constructor(type, value) {
         this.type   = type;
@@ -39,9 +41,22 @@ class ArrayParser {
             }
         }, []);
     }
+    static checkMatchArraySquares(tokens) {
+        const countArrayOpeners = tokens.filter((token) => token.name === 'arrayOpener').length;
+        const countArrayClosers = tokens.filter((token) => token.name === 'arrayCloser').length;
+        if(!(countArrayOpeners === countArrayClosers)) {
+            console.log(errorMessage.arrayNotMatched);
+        }
+        return false;
+    }
+
+    static checkValidation(lexedTokens) {
+        if(!this.checkMatchArraySquares(lexedTokens)) return;   
+    }
 
     static lex(tokens) {
         const lexedTokens = this.attatchNameToTokens(tokens)
+        if(!this.checkValidation(lexedTokens)) return;
         return lexedTokens;
     }
 
@@ -78,6 +93,7 @@ class ArrayParser {
     }
 }
 
-const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+//const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+const str = "[]]";
 const result = ArrayParser.run(str);
 console.log(JSON.stringify(result, null, 2));
