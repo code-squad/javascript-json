@@ -26,7 +26,7 @@ class ArrayParser {
 
     lexer(arr) {
         arr = arr.map((val, i, arr) => this.makeObjData(val, i, arr));
-        arr = arr.filter(val => val.type !== undefined);
+        arr = arr.filter(val => val.type !== 'key');
         this.lexedData = arr;
     }
 
@@ -60,7 +60,7 @@ class ArrayParser {
         if (val[val.length - 1] === ':') { return 'key' }
         if (val === '[') { return 'array' }
         if (val === ']') { return 'closeSquareBracket' }
-        if (val === '{') { return 'obejct'}
+        if (val === '{') { return 'object'}
         if (val === '}') { return 'closeCurlyBracket'}
     }
 
