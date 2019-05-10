@@ -73,16 +73,15 @@ class Parser {
       parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
       parsingDataObj = childObj;
+    } else if (word.type === literals.key) {
+      this.currKey = word.value;
     } else if (typeof word === "object") {
-      if (word.type === literals.key) this.currKey = word.value;
-      else {
-        parserUtils.addChildObj({
-          currKey: this.currKey,
-          childObj: word,
-          parsingDataObj
-        });
-        this.currKey = null;
-      }
+      parserUtils.addChildObj({
+        currKey: this.currKey,
+        childObj: word,
+        parsingDataObj
+      });
+      this.currKey = null;
     }
     this.parsing(lexedJson, parsingDataObj);
   }
