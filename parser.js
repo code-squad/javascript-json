@@ -1,10 +1,11 @@
     class ArrayParser {
         constructor() {
-            //오브젝트로 묶자
-            this.arrayBracketStack = [];
-            this.keyStack = [];
-            this.objectBracketStack = [];
-            this.parentTypeStack = [];
+            this.stacks = {
+                arrayBracketStack : [],
+                keyStack : [],
+                objectBracketStack : [],
+                parentTypeStack : []
+            }
         }
         tokenizer(inputString) {
             const tokenArray = [];
@@ -85,7 +86,7 @@
         }
 
         getParentType(){
-            return this.parentTypeStack[this.parentTypeStack.length-1];
+            return this.stacks.parentTypeStack[this.stacks.parentTypeStack.length-1];
         }
 
         parser(inputArray) {
@@ -95,44 +96,44 @@
             while (inputArray.length > 0) {
                 inputData = inputArray.shift();
                 if (inputData.type === "arrayStartOperator") {
-                    this.arrayBracketStack.push("[");
+                    this.stacks.arrayBracketStack.push("[");
                     if (this.getParentType() === "object") {
-                        this.parentTypeStack.push("array");
-                        resultObject[this.keyStack.pop()] = {
+                        this.stacks.parentTypeStack.push("array");
+                        resultObject[this.stacks.keyStack.pop()] = {
                             type: "array",
                             child: this.parser(inputArray)
                         }
                     } else {
-                        this.parentTypeStack.push("array");
+                        this.stacks.parentTypeStack.push("array");
                         resultArray.push({
                             type: "array",
                             child: this.parser(inputArray)
                         });
                     }
                 } else if (inputData.type === "arrayEndOperator") {
-                    this.arrayBracketStack.pop();
-                    this.parentTypeStack.pop();
+                    this.stacks.arrayBracketStack.pop();
+                    this.stacks.parentTypeStack.pop();
                     return resultArray;
                 } else if (inputData.type === "objectEndOperator") {
-                    this.objectBracketStack.pop();
-                    this.parentTypeStack.pop();
+                    this.stacks.objectBracketStack.pop();
+                    this.stacks.parentTypeStack.pop();
                     return resultObject;
                 } else if (inputData.type === "objectStartOperator") {
                     if (this.getParentType() === "array") {
-                        this.parentTypeStack.push("object");
-                        this.objectBracketStack.push("{");
+                        this.stacks.parentTypeStack.push("object");
+                        this.stacks.objectBracketStack.push("{");
                         resultArray.push({
                             type: "object",
                             child: this.parser(inputArray)
                         });
                     } else {
-                        this.parentTypeStack.push("object");
-                        this.objectBracketStack.push("{");
-                        if (this.keyStack.length === 0) {
+                        this.stacks.parentTypeStack.push("object");
+                        this.stacks.objectBracketStack.push("{");
+                        if (this.stacks.keyStack.length === 0) {
                             resultObject.type = "object";
                             resultObject.child = this.parser(inputArray);
                         } else {
-                            resultObject[this.keyStack.pop()] = {
+                            resultObject[this.stacks.keyStack.pop()] = {
                                 type: "object",
                                 child: this.parser(inputArray)
                             }
@@ -142,10 +143,10 @@
                     continue;
                 } else {
                     if (this.getParentType() === "object") {
-                        if (this.keyStack.length === 0) {
-                            this.keyStack.push(inputData.value);
+                        if (this.stacks.keyStack.length === 0) {
+                            this.stacks.keyStack.push(inputData.value);
                         } else {
-                            resultObject[this.keyStack.pop()] = {
+                            resultObject[this.stacks.keyStack.pop()] = {
                                 type: inputData.type,
                                 value: inputData.valuea
                             }
