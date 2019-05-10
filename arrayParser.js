@@ -121,8 +121,11 @@ class ArrayParser {
 
     executeParser(data) {
         this.tokenizer(data);
+        const errorMessage = this.checkError(this.tokenizedData);
+        if (errorMessage) return errorMessage;
         this.lexer(this.tokenizedData);
-        return this.parser(this.lexedData);
+        this.countTokenType(this.lexedData);
+        return this.parser(this.lexedData.shift());
     }
 }
 
