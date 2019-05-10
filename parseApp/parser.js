@@ -105,28 +105,36 @@ class Parser {
 
       if (this.isOpeningContext(lexedToken.context)) {
         lexedToken.newNode = this.parse(lexedToken);
-      } else {
-        lexedToken.newNode.context = 'key';
-
-        if (!this.isObjectSeperatorContext(this.getNextToken().context)) {
-          throw new Error(this.messageObj.INVALID_OBJECT);
-        }
-
-        const valueToken = this.getNextToken();
-        valueToken.newNode.context = 'value';
-
-        if (this.isOpeningContext(valueToken.context)) {
-          valueToken.newNode = this.parse(valueToken);
-        }
-
-        if (!this.isValidNextToken()) {
-          throw new Error(this.messageObj.INVALID_OBJECT);
-        }
-
-        lexedToken.newNode.child.push(valueToken.newNode);
+        node.pushChild(lexedToken.newNode);
+        continue;
       }
+
+      lexedToken.newNode.context = 'key';
+      this.passObjectSeperator();
+      lexedToken.newNode.child.push(this.getValueNode());
+
       node.pushChild(lexedToken.newNode);
     }
+  }
+
+  passObjectSeperator() {
+    if (!this.isObjectSeperatorContext(this.getNextToken().context)) {
+      throw new Error(this.messageObj.INVALID_OBJECT);
+    }
+  }
+
+  getValueNode() {
+    const valueToken = this.getNextToken();
+    valueToken.newNode.context = 'value';
+
+    if (this.isOpeningContext(valueToken.context)) {
+      valueToken.newNode = this.parse(valueToken);
+    }
+
+    if (!this.isValidNextToken()) {
+      throw new Error(this.messageObj.INVALID_OBJECT);
+    }
+    return valueToken.newNode;
   }
 
   parse(lexedToken = undefined) {
