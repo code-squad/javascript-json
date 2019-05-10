@@ -13,31 +13,36 @@ class ArrayParser {
         return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => value);
     }
 
-    static lex(tokens) {
+    static attatchNameToTokens(tokens) {
         return tokens.map((token) => {
-                if(token === '[') {
-                    token = {'name' : 'arrayOpener', 'value' : token};
-                    return token;
-                } else if(!isNaN(token)) {
-                    token = {'name' : 'number', 'value' : token};
-                    return token;
-                } else if(token === 'true' || token === 'false') {
-                    token = {'name' : 'boolean', 'value' : token};
-                    return token;
-                } else if(!(token.search(/[',"].+[',"]/) === -1)) {
-                    token = {'name' : 'string', 'value' : token};
-                    return token;
-                } else if(token === 'null') {
-                    token = {'name' : 'null', 'value' : token};
-                    return token;
-                } else if(token === ']') {
-                    token = {'name' : 'arrayCloser', 'value' : token};
-                    return token;
-                } else {
-                    token = {'name' : undefined, 'value' : token};
-                    return token;
-                }
-            }, []);
+            if(token === '[') {
+                token = {'name' : 'arrayOpener', 'value' : token};
+                return token;
+            } else if(!isNaN(token)) {
+                token = {'name' : 'number', 'value' : token};
+                return token;
+            } else if(token === 'true' || token === 'false') {
+                token = {'name' : 'boolean', 'value' : token};
+                return token;
+            } else if(!(token.search(/[',"].+[',"]/) === -1)) {
+                token = {'name' : 'string', 'value' : token};
+                return token;
+            } else if(token === 'null') {
+                token = {'name' : 'null', 'value' : token};
+                return token;
+            } else if(token === ']') {
+                token = {'name' : 'arrayCloser', 'value' : token};
+                return token;
+            } else {
+                token = {'name' : undefined, 'value' : token};
+                return token;
+            }
+        }, []);
+    }
+
+    static lex(tokens) {
+        const lexedTokens = this.attatchNameToTokens(tokens)
+        return lexedTokens;
     }
 
     static parse(lexedTokens) {
