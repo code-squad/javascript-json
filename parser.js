@@ -16,22 +16,29 @@ class ArrayParser {
         let token = {};
         return tokens.reduce((acc, value) => {
                 if(value === '[') {
-                    token = {'name' : 'ArrayOpener', 'value' : value}
+                    token = {'name' : 'ArrayOpener', 'value' : value};
                     return acc.concat(token);
                 } else if(!isNaN(value)) {
-                    token = {'name' : 'Number', 'value' : value}
+                    token = {'name' : 'Number', 'value' : value};
                     return acc.concat(token);
                 } else if(value === ']') {
-                    token = {'name' : 'ArrayCloser', 'value' : value}
+                    token = {'name' : 'ArrayCloser', 'value' : value};
+                    return acc.concat(token);
+                } else if(value === 'true') {
+                    token = {'name' : 'True', 'value' : value};
+                    return acc.concat(token);
+                } else if(value === 'false') {
+                    token = {'name' : 'False', 'value' : value};
                     return acc.concat(token);
                 }
             }, []);
     }
 
+    // Todo : Boolean token 지원 가능하게 변경할것.
     parse(lexedTokens) {
         const parentNodes = [];
         let [parentNode, arrayElement, countParentNodes] = [{}, {}, 0];
-        
+
         lexedTokens.forEach((lexedToken) => {
             if(lexedToken.name === 'ArrayOpener') {
                 const arrayNode = new Node('array');
@@ -61,7 +68,7 @@ class ArrayParser {
     }
 }
 
-const str = "[123, [1, [2, [3, 4]]], 33]";
+const str = "[123, true, false, 33]";
 const arrayParser = new ArrayParser();
 const result = arrayParser.run(str);
 console.log(JSON.stringify(result, null, 2));
