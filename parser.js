@@ -133,6 +133,21 @@
             }
         }
 
+        addObjectData(inputData,inputArray,resultArray,resultObject){
+            this.stacks.objectBracketStack.push("{");
+            if (this.getParentType() === "array") {
+                this.stacks.parentTypeStack.push("object");
+                resultArray.push(this.makeDataObject(inputData,inputArray));
+            } else {
+                this.stacks.parentTypeStack.push("object");
+                if (this.stacks.keyStack.length === 0) {
+                    Object.assign(resultObject,this.makeDataObject(inputData,inputArray));
+                } else {
+                    resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
+                }
+            }
+        }
+
         parser(inputArray) {
             let resultArray = [];
             let resultObject = {};
@@ -150,18 +165,7 @@
                     this.stacks.parentTypeStack.pop();
                     return resultObject;
                 } else if (inputData.type === "objectStartOperator") {
-                    this.stacks.objectBracketStack.push("{");
-                    if (this.getParentType() === "array") {
-                        this.stacks.parentTypeStack.push("object");
-                        resultArray.push(this.makeDataObject(inputData,inputArray));
-                    } else {
-                        this.stacks.parentTypeStack.push("object");
-                        if (this.stacks.keyStack.length === 0) {
-                            Object.assign(resultObject,this.makeDataObject(inputData,inputArray));
-                        } else {
-                            resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
-                        }
-                    }
+                    this.addObjectData(inputData,inputArray,resultArray,resultObject);       
                 } else if (inputData.type === 'separator' || inputData.type === "colone") {
                     continue;
                 } else {
