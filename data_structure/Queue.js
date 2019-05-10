@@ -17,6 +17,14 @@ class Queue {
       console.log(element);
     });
   }
+
+  empty() {
+    return (this.queue.length === 0);
+  }
+
+  clear() {
+    this.queue.length = 0;
+  }
 }
 
 module.exports = Queue;
