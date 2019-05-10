@@ -5,7 +5,7 @@ class ArrayParser {
             null : 0,
             string : 0,
             number : 0,
-            array : 1,
+            array : 0,
             object : 0
         };
     }
