@@ -30,7 +30,8 @@ class ArrayParser {
 
     parse(lexedTokens) {
         const parentNodes = [];
-        let parentNode = {};
+        let [parentNode, arrayElement, countParentNodes] = [{}, {}, 0];
+        
         lexedTokens.forEach((lexedToken) => {
             if(lexedToken.name === 'ArrayOpener') {
                 const arrayNode = new Node('array');
@@ -41,8 +42,8 @@ class ArrayParser {
                 const numberNode = new Node('number', lexedToken.value);
                 parentNode.child.push(numberNode);
             } else if(lexedToken.name === 'ArrayCloser') {
-                let arrayElement = parentNodes.pop();
-                let countParentNodes = parentNodes.length;
+                arrayElement = parentNodes.pop();
+                countParentNodes = parentNodes.length;
                 if(!(countParentNodes === 0)) {
                     parentNode = parentNodes[countParentNodes-1];
                     parentNode.child.push(arrayElement);
