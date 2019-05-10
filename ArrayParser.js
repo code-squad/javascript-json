@@ -24,9 +24,9 @@ class Lexer {
 }
 
 class ArrayParser {
-    constructor(tokenizer, lexer) {
-        this.tokenizer = tokenizer;
-        this.lexer = lexer;
+    constructor() {
+        this.tokenizer = new Tokenizer();
+        this.lexer = new Lexer();
         this.queue = []
     }
 
@@ -38,21 +38,20 @@ class ArrayParser {
             if (lexedCurrentNode.type === 'array') {
                 lexedCurrentNode = this.arrayParse(lexedCurrentNode);
             }
-            parentNode.child.push(lexedCurrentNode)
+            parentNode.child.push(lexedCurrentNode);
         }
     }
 
     startParsing(str) {
-        this.queue = tokenizer.tokenize(str);
+        this.queue = this.tokenizer.tokenize(str);
         const rootNode = this.queue.shift();
         const lexedRootNode = this.lexer.lex(rootNode);
         return this.arrayParse(lexedRootNode);
     }
 }
 
-const tokenizer = new Tokenizer();
-const lexer = new Lexer();
-const arrayParser = new ArrayParser(tokenizer, lexer);
+
+const arrayParser = new ArrayParser();
 
 const str = "[123, 22, 33]";
 const str1 = "[1, 2, 3, [4, 5], 6, [7, 8], 6]";
