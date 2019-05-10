@@ -36,11 +36,19 @@ const test = {
       statisticsStack.top().successCnt += 1;
     } catch (error) {
       statisticsStack.top().failCnt += 1;
-      // log(error);
+      log(error);
     }
     timeEnd("test completed");
     groupEnd();
   },
+
+  expect(result) {
+    return {
+      toBe(expected) {
+        if (result !== expected) throw new Error(result + ' is not equal to ' + expected);
+      }
+    }
+  }
 }
 
 module.exports = test;
