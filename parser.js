@@ -148,6 +148,18 @@
             }
         }
 
+        addLiteralData(inputData,inputArray,resultArray,resultObject){
+            if (this.getParentType() === "object") {
+                if (this.stacks.keyStack.length === 0) {
+                    this.stacks.keyStack.push(inputData.value);
+                } else {
+                    resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
+                }
+            } else {
+                resultArray.push(this.makeDataObject(inputData,inputArray));
+            }
+        }
+
         parser(inputArray) {
             let resultArray = [];
             let resultObject = {};
@@ -169,15 +181,7 @@
                 } else if (inputData.type === 'separator' || inputData.type === "colone") {
                     continue;
                 } else {
-                    if (this.getParentType() === "object") {
-                        if (this.stacks.keyStack.length === 0) {
-                            this.stacks.keyStack.push(inputData.value);
-                        } else {
-                            resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
-                        }
-                    } else {
-                        resultArray.push(this.makeDataObject(inputData,inputArray));
-                    }
+                    this.addLiteralData(inputData,inputArray,resultArray,resultObject);
                 }
             }
             return resultArray[0] === undefined ? resultObject : resultArray[0]
