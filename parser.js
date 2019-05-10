@@ -5,7 +5,17 @@
                 keyStack : [],
                 objectBracketStack : [],
                 parentTypeStack : []
-            }
+            };
+
+            this.operators = {
+                "," : "separator",
+                "[" : "arrayStartOperator",
+                "]" : "arrayEndOperator",
+                "{" : "objectStartOperator",
+                "}" : "objectEndOperator",
+                ":" : "colone"
+            };
+
         }
         tokenizer(inputString) {
             const tokenArray = [];
@@ -103,7 +113,7 @@
             }
             return resultObject;
         }
-
+        
         parser(inputArray) {
             const resultArray = [];
             const resultObject = {};
@@ -128,13 +138,12 @@
                     this.stacks.parentTypeStack.pop();
                     return resultObject;
                 } else if (inputData.type === "objectStartOperator") {
+                    this.stacks.objectBracketStack.push("{");
                     if (this.getParentType() === "array") {
                         this.stacks.parentTypeStack.push("object");
-                        this.stacks.objectBracketStack.push("{");
                         resultArray.push(this.makeDataObject(inputData,inputArray));
                     } else {
                         this.stacks.parentTypeStack.push("object");
-                        this.stacks.objectBracketStack.push("{");
                         if (this.stacks.keyStack.length === 0) {
                             Object.assign(resultObject,this.makeDataObject(inputData,inputArray));
                         } else {
@@ -172,15 +181,25 @@
 
 
     const arrParser = new ArrayParser();
-    const testCode = (input) => {
-        // return arrParser.lexer(arrParser.tokenizer(input));
-        return arrParser.parserExcuter(input);
-    }
+    const testCode = (input) => arrParser.parserExcuter(input);
 
-    console.dir(testCode("[22,{'abc':12},33]"));
-    console.dir(testCode("[22,{'ab' :  {'abab' : 1}},33]"));
-    console.dir(testCode("[{'ab' : {'abab' : 1}},33]"));
-    console.dir(testCode("[{'ab' : [1,2,3]},33]"));
-    console.dir(testCode("{'ab' : [1,2,3]}"));
+    const string = [];
+    string[0] = '{"type":"array","child":[{"type":"number","value":22},{"type":"object","child":{"abc":{"type":"number","value":12}}},{"type":"number","value":33}]}';
+    string[1] ='{"type":"array","child":[{"type":"number","value":22},{"type":"object","child":{"ab":{"type":"object","child":{"abab":{"type":"number","value":1}}}}},{"type":"number","value":33}]}';
+    string[2] ='{"type":"array","child":[{"type":"object","child":{"ab":{"type":"object","child":{"abab":{"type":"number","value":1}}}}},{"type":"number","value":33}]}';
+    string[3] = '{"type":"array","child":[{"type":"object","child":{"ab":{"type":"array","child":[{"type":"number","value":1},{"type":"number","value":2},{"type":"number","value":3}]}}},{"type":"number","value":33}]}';
+    string[4] = '{"type":"object","child":{"ab":{"type":"array","child":[{"type":"number","value":1},{"type":"number","value":2},{"type":"number","value":3}]}}}';
+
+    console.log(string[0] === JSON.stringify(testCode("[22,{'abc':12},33]")));
+    console.log(string[1] ===JSON.stringify(testCode("[22,{'ab' :  {'abab' : 1}},33]")));
+    console.log(string[2] ===JSON.stringify(testCode("[{'ab' : {'abab' : 1}},33]")));
+    console.log(string[3] ===JSON.stringify(testCode("[{'ab' : [1,2,3]},33]")));
+    console.log(string[4] ===JSON.stringify(testCode("{'ab' : [1,2,3]}")));
+
+    // console.dir(testCode("[22,{'abc':12},33]"));
+    // console.dir(testCode("[22,{'ab' :  {'abab' : 1}},33]"));
+    // console.dir(testCode("[{'ab' : {'abab' : 1}},33]"));
+    // console.dir(testCode("[{'ab' : [1,2,3]},33]"));
+    // console.dir(testCode("{'ab' : [1,2,3]}"));
     // console.log(testCode("['1a3',[22,23,[11,[112233],112],55],33]"));
     // console.log(testCode("['1'a3',[22,23,[11,[112233],112],55],33]"));
