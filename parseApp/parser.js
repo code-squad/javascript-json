@@ -59,64 +59,8 @@ class Parser {
     return false;
   }
 
-  arrayParse(node) {
-    while (this.lexedData.length !== 0) {
-      const lexedToken = this.getNextToken();
-
-      if (this.isClosingContext(lexedToken.context)) {
-        if (!this.isValidPair(lexedToken.context) || !this.isValidNextToken()) {
-          throw new Error(this.messageObj.INVALID_ARRAY);
-        }
-
-        this.parseStack.pop();
-
-        return node;
-      }
-
-      if (this.isOpeningContext(lexedToken.context)) {
-        lexedToken.newNode = this.parse(lexedToken);
-        node.pushChild(lexedToken.newNode);
-        continue;
-      }
-
-      if (lexedToken.context === this.keyword[','].context) {
-        throw new Error(this.messageObj.START_SEPERATOR);
-      }
-
-      if (!this.isValidNextToken()) {
-        throw new Error(this.messageObj.INVALID_ARRAY);
-      }
-
-      node.pushChild(lexedToken.newNode);
-    }
-  }
-
-  objectParse(node) {
-    while (this.lexedData.length !== 0) {
-      const lexedToken = this.getNextToken();
-
-      if (this.isClosingContext(lexedToken.context)) {
-        if (!this.isValidPair(lexedToken.context) || !this.isValidNextToken()) {
-          throw new Error(this.messageObj.INVALID_OBJECT);
-        }
-
-        this.parseStack.pop();
-
-        return node;
-      }
-
-      if (this.isOpeningContext(lexedToken.context)) {
-        lexedToken.newNode = this.parse(lexedToken);
-        node.pushChild(lexedToken.newNode);
-        continue;
-      }
-
-      lexedToken.newNode.context = 'key';
-      this.passObjectSeperator();
-      lexedToken.newNode.child.push(this.getValueNode());
-
-      node.pushChild(lexedToken.newNode);
-    }
+  isValidClosing(context) {
+    return !this.isValidPair(context) || !this.isValidNextToken();
   }
 
   passObjectSeperator() {
@@ -130,7 +74,7 @@ class Parser {
     valueToken.newNode.context = 'value';
 
     if (this.isOpeningContext(valueToken.context)) {
-      valueToken.newNode = this.parse(valueToken);
+      valueToken.newNode = this.run(valueToken, valueToken.newNode.type);
     }
 
     if (!this.isValidNextToken()) {
@@ -139,7 +83,44 @@ class Parser {
     return valueToken.newNode;
   }
 
-  parse(lexedToken = undefined) {
+  parse(node, parseType) {
+    while (this.lexedData.length !== 0) {
+      const lexedToken = this.getNextToken();
+
+      if (this.isClosingContext(lexedToken.context)) {
+        if (!this.isValidClosing()) {
+          throw new Error(this.messageObj.INVALID_GROUP);
+        }
+
+        this.parseStack.pop();
+        return node;
+      }
+
+      if (this.isOpeningContext(lexedToken.context)) {
+        lexedToken.newNode = this.run(lexedToken, lexedToken.newNode.type);
+      }
+
+      if (parseType === 'Array') {
+        if (this.isSeperatorContext(lexedToken.context)) {
+          throw new Error(this.messageObj.START_SEPERATOR);
+        }
+
+        if (!this.isValidNextToken()) {
+          throw new Error(this.messageObj.INVALID_ARRAY);
+        }
+      }
+
+      if (parseType === 'Object') {
+        lexedToken.newNode.context = 'key';
+        this.passObjectSeperator();
+        lexedToken.newNode.child.push(this.getValueNode());
+      }
+
+      node.pushChild(lexedToken.newNode);
+    }
+  }
+
+  run(lexedToken = undefined) {
     if (lexedToken === undefined) {
       lexedToken = this.getNextToken();
     }
@@ -147,13 +128,7 @@ class Parser {
     if (this.isOpeningContext(lexedToken.context)) {
       this.parseStack.push(lexedToken.context);
 
-      if (lexedToken.context === this.keyword['['].context) {
-        return this.arrayParse(lexedToken.newNode);
-      }
-
-      if (lexedToken.context === this.keyword['{'].context) {
-        return this.objectParse(lexedToken.newNode);
-      }
+      return this.parse(lexedToken.newNode, lexedToken.newNode.type);
     }
   }
 }

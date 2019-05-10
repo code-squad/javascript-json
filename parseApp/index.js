@@ -14,6 +14,6 @@ module.exports = {
 
     const parser = new Parser({ lexedData, messageObj, keyword });
 
-    return parser.parse();
+    return parser.run();
   }
 };
