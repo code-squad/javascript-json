@@ -53,48 +53,42 @@ class Parser {
     let word = lexedJson[0];
     if (word === undefined) return;
     lexedJson.shift();
+
     if (word === separators.endOfArray) {
       const parentObj = parentObjStack.pop();
-      this.parsing(lexedJson, parentObj);
+      parsingDataObj = parentObj;
     } else if (word === separators.endOfObject) {
       const parentObj = parentObjStack.pop();
-      this.parsing(lexedJson, parentObj);
+      parsingDataObj = parentObj;
     } else if (word === separators.startOfArray) {
       const childObj = parserUtils.ChildObj("array");
 
-      if (this.currKey !== null) {
-        const withKeyObj = { key: this.currKey };
-        Object.assign(withKeyObj, childObj);
-        this.currKey = null;
-        parsingDataObj.child.push(withKeyObj);
-      } else {
-        parsingDataObj.child.push(childObj);
-      }
+      parserUtils.addChildObj({
+        currKey: this.currKey,
+        childObj,
+        parsingDataObj
+      });
+      this.currKey = null;
       parentObjStack.push(parsingDataObj);
-      this.parsing(lexedJson, childObj);
+      parsingDataObj = childObj;
     } else if (word === separators.startOfObject) {
       const childObj = parserUtils.ChildObj("object");
 
       parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
-      this.parsing(lexedJson, childObj);
+      parsingDataObj = childObj;
     } else if (typeof word === "object") {
-      if (word.type === literals.key) {
-        this.currKey = word.value;
-      } else {
-        if (this.currKey !== null) {
-          const withKeyObj = { key: this.currKey };
-          Object.assign(withKeyObj, word);
-          this.currKey = null;
-          parsingDataObj.child.push(withKeyObj);
-        } else {
-          parsingDataObj.child.push(word);
-        }
+      if (word.type === literals.key) this.currKey = word.value;
+      else {
+        parserUtils.addChildObj({
+          currKey: this.currKey,
+          childObj: word,
+          parsingDataObj
+        });
+        this.currKey = null;
       }
-      this.parsing(lexedJson, parsingDataObj);
-    } else {
-      this.parsing(lexedJson, parsingDataObj);
     }
+    this.parsing(lexedJson, parsingDataObj);
   }
 
   getJson(unparsedJson) {
