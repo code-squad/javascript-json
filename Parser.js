@@ -3,9 +3,10 @@ const separators = require("./utils/separators");
 const literals = require("./utils/literals");
 const tokenizerUtils = require("./utils/tokenizerUtils");
 const lexerUtils = require("./utils/lexerUtils");
+const parserUtils = require("./utils/parserUtils");
 const isSeparator = require("./utils/isSeparator");
 
-const errorMessages = require("./errorMessages");
+const errorMessages = require("./utils/errorMessages");
 const Stack = require("./data_structure/Stack");
 const parentObjStack = new Stack();
 
@@ -51,7 +52,6 @@ class Parser {
     //구분자를 확인해서 JSON 객체 데이터 생성
     let word = lexedJson[0];
     if (word === undefined) return;
-
     lexedJson.shift();
     if (word === separators.endOfArray) {
       const parentObj = parentObjStack.pop();
@@ -60,10 +60,8 @@ class Parser {
       const parentObj = parentObjStack.pop();
       this.parsing(lexedJson, parentObj);
     } else if (word === separators.startOfArray) {
-      const childObj = {
-        type: "array",
-        child: []
-      };
+      const childObj = parserUtils.ChildObj("array");
+
       if (this.currKey !== null) {
         const withKeyObj = { key: this.currKey };
         Object.assign(withKeyObj, childObj);
@@ -75,15 +73,12 @@ class Parser {
       parentObjStack.push(parsingDataObj);
       this.parsing(lexedJson, childObj);
     } else if (word === separators.startOfObject) {
-      const childObj = {
-        type: "object",
-        child: []
-      };
+      const childObj = parserUtils.ChildObj("object");
+
       parsingDataObj.child.push(childObj);
       parentObjStack.push(parsingDataObj);
       this.parsing(lexedJson, childObj);
     } else if (typeof word === "object") {
-
       if (word.type === literals.key) {
         this.currKey = word.value;
       } else {
@@ -96,7 +91,6 @@ class Parser {
           parsingDataObj.child.push(word);
         }
       }
-
       this.parsing(lexedJson, parsingDataObj);
 
     } else {
