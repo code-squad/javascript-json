@@ -13,29 +13,28 @@ class ArrayParser {
     }
 
     lex(tokens) {
-        let token = {};
-        return tokens.reduce((acc, value) => {
-                if(value === '[') {
-                    token = {'name' : 'ArrayOpener', 'value' : value};
-                    return acc.concat(token);
-                } else if(!isNaN(value)) {
-                    token = {'name' : 'Number', 'value' : value};
-                    return acc.concat(token);
-                } else if(value === 'true') {
-                    token = {'name' : 'True', 'value' : value};
-                    return acc.concat(token);
-                } else if(value === 'false') {
-                    token = {'name' : 'False', 'value' : value};
-                    return acc.concat(token);
-                } else if(!(value.search(/'(.+)'/) === -1)) {
-                    token = {'name' : 'String', 'value' : value};
-                    return acc.concat(token);
-                } else if(value === 'null') {
-                    token = {'name' : 'Null', 'value' : value};
-                    return acc.concat(token);
-                } else if(value === ']') {
-                    token = {'name' : 'ArrayCloser', 'value' : value};
-                    return acc.concat(token);
+        return tokens.map((token) => {
+                if(token === '[') {
+                    token = {'name' : 'ArrayOpener', 'value' : token};
+                    return token;
+                } else if(!isNaN(token)) {
+                    token = {'name' : 'Number', 'value' : token};
+                    return token;
+                } else if(token === 'true') {
+                    token = {'name' : 'True', 'value' : token};
+                    return token;
+                } else if(token === 'false') {
+                    token = {'name' : 'False', 'value' : token};
+                    return token;
+                } else if(!(token.search(/'(.+)'/) === -1)) {
+                    token = {'name' : 'String', 'value' : token};
+                    return token;
+                } else if(token === 'null') {
+                    token = {'name' : 'Null', 'value' : token};
+                    return token;
+                } else if(token === ']') {
+                    token = {'name' : 'ArrayCloser', 'value' : token};
+                    return token;
                 }
             }, []);
     }
