@@ -30,11 +30,17 @@ class ArrayParser {
                 } else if(value === 'false') {
                     token = {'name' : 'False', 'value' : value};
                     return acc.concat(token);
+                } else if(!(value.search(/'.+'/) === -1)) {
+                    token = {'name' : 'String', 'value' : value};
+                    return acc.concat(token);
+                } else if(value === 'null') {
+                    token = {'name' : 'null', 'value' : value};
+                    return acc.concat(token);
                 }
             }, []);
     }
 
-    // Todo : Boolean token 지원 가능하게 변경할것.
+    // Todo : Boolean, String, Nulll token 지원 가능하게 변경할것.
     parse(lexedTokens) {
         const parentNodes = [];
         let [parentNode, arrayElement, countParentNodes] = [{}, {}, 0];
@@ -68,7 +74,7 @@ class ArrayParser {
     }
 }
 
-const str = "[123, true, false, 33]";
+const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const arrayParser = new ArrayParser();
 const result = arrayParser.run(str);
 console.log(JSON.stringify(result, null, 2));
