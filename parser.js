@@ -7,12 +7,13 @@ class Node {
 }
 
 class ArrayParser {
-    tokenize(string) {
+    //Todo : String 에 ',' ' ' '[]' 포함하면 ...?, 마지막에 시간 남으면 해보기.
+    static tokenize(string) {
         const noWhiteSpaceString = string.replace(/ /g, '');
         return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => value);
     }
 
-    lex(tokens) {
+    static lex(tokens) {
         return tokens.map((token) => {
                 if(token === '[') {
                     token = {'name' : 'arrayOpener', 'value' : token};
@@ -32,11 +33,14 @@ class ArrayParser {
                 } else if(token === ']') {
                     token = {'name' : 'arrayCloser', 'value' : token};
                     return token;
+                } else {
+                    token = {'name' : undefined, 'value' : token};
+                    return token;
                 }
             }, []);
     }
 
-    parse(lexedTokens) {
+    static parse(lexedTokens) {
         const parentNodes = [];
         let [parentNode, arrayElement, countParentNodes] = [{}, {}, 0];
 
@@ -62,7 +66,7 @@ class ArrayParser {
         return parentNode;
     }
 
-    run(string) {
+    static run(string) {
         const tokens = this.tokenize(string);
         const lexedTokens = this.lex(tokens);
         return this.parse(lexedTokens);
@@ -70,6 +74,5 @@ class ArrayParser {
 }
 
 const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const arrayParser = new ArrayParser();
-const result = arrayParser.run(str);
+const result = ArrayParser.run(str);
 console.log(JSON.stringify(result, null, 2));
