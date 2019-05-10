@@ -53,15 +53,18 @@ class ArrayParser {
     checkTokenType(val) {
         let isString = null;
         if (val[0] === "'") { isString = !val.slice(1, val.length - 1).split('').some((el) => el === "'"); }
-        if (val === 'true' || val === 'false') { return 'boolean' }
-        if (val === 'null') { return 'null' }
         if (isString) { return 'string' }
         if (!isNaN(val)) { return 'number' }
         if (val[val.length - 1] === ':') { return 'key' }
-        if (val === '[') { return 'array' }
-        if (val === ']') { return 'closeSquareBracket' }
-        if (val === '{') { return 'object'}
-        if (val === '}') { return 'closeCurlyBracket'}
+        switch (val) {
+            case 'true': return 'boolean'
+            case 'false': return 'boolean'
+            case 'null': return 'null'
+            case '[': return 'array'
+            case ']': return 'closeSquareBracket'
+            case '{': return 'object'
+            case '}': return 'closeCurlyBracket'
+        }
     }
 
     changeDataType(val) {
