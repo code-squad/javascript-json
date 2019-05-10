@@ -45,12 +45,12 @@ class ArrayParser {
         const obj = {};
         if (i > 0 && arr[i - 1].slice(-1) === ':') obj.key = arr[i - 1].slice(0, -1);
         if (val !== '[' && val !== '{') { obj.value = this.changeDataType(val); }
-        obj.type = this.checkDataType(val);
+        obj.type = this.checkTokenType(val);
         obj.child = [];
         return obj
     }
 
-    checkDataType(val) {
+    checkTokenType(val) {
         let isString = null;
         if (val[0] === "'") { isString = !val.slice(1, val.length - 1).split('').some((el) => el === "'"); }
         if (val === 'true' || val === 'false') { return 'boolean' }
