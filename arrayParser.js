@@ -79,6 +79,24 @@ class ArrayParser {
         return val
     }
 
+    checkError(tokenArr) {
+        this.arrBracketCount = 0;
+        this.objBracketCount = 0;
+        for (let val of tokenArr) {
+            if (!this.checkTokenType(val)) return `${val}은 잘못된 문자열 입니다.`
+            this.countBracket(val);
+        }
+        if (this.arrBracketCount) return '정상적으로 종료되지 않은 배열이 있습니다.'
+        if (this.objBracketCount) return '정상적으로 종료되지 않은 객체가 있습니다.'
+    }
+
+    countBracket(val) {
+        if (val === '[') this.arrBracketCount++;
+        if (val === ']') this.arrBracketCount--;
+        if (val === '{') this.objBracketCount++;
+        if (val === '}') this.objBracketCount--;
+    }
+
     executeParser(data) {
         this.tokenizer(data);
         this.lexer(this.tokenizedData);
