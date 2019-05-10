@@ -34,9 +34,7 @@ class ArrayParser {
         while (this.lexedData.length) {
             let currentToken = this.lexedData.shift();
             if (currentToken.value === ']' || currentToken.value === '}') return inputToken;
-            if (currentToken.type === 'array' || currentToken.type === 'object') {
-                currentToken = this.parser(currentToken);
-            }
+            if (currentToken.type === 'array' || currentToken.type === 'object') currentToken = this.parser(currentToken);
             inputToken.child.push(currentToken);
         }
     }
@@ -44,7 +42,7 @@ class ArrayParser {
     makeObjData(val, i, arr) {
         const obj = {};
         if (i > 0 && arr[i - 1].slice(-1) === ':') obj.key = arr[i - 1].slice(0, -1);
-        if (val !== '[' && val !== '{') { obj.value = this.changeDataType(val); }
+        if (val !== '[' && val !== '{') obj.value = this.changeDataType(val);
         obj.type = this.checkTokenType(val);
         obj.child = [];
         return obj
