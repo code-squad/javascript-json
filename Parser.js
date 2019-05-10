@@ -2,6 +2,7 @@
 const separators = require("./utils/separators");
 const literals = require("./utils/literals");
 const tokenizerUtils = require("./utils/tokenizerUtils");
+const isSeparator = require("./utils/isSeparator");
 
 const errorMessages = require("./errorMessages");
 const Stack = require("./data_structure/Stack");
@@ -10,13 +11,6 @@ const parentObjStack = new Stack();
 const { log } = console;
 
 const parserUtils = {
-  isSeparator(letter) {
-    for (let separator of Object.values(separators)) {
-      if (letter === separator) return true;
-    }
-    return false;
-  },
-
   isString(literalStr) {
     const literalStrLen = literalStr.length;
     if (literalStr[0] === "'" && literalStr[literalStrLen - 1] === "'")
@@ -81,7 +75,7 @@ class Parser {
     const lexedObj = {};
     let next = null;
     const lexedJson = tokenizedJson.map((word, idx, arr) => {
-      if (!parserUtils.isSeparator(word)) {
+      if (!isSeparator(word)) {
         next = arr[idx + 1];
         lexedObj.type = parserUtils.getLiteralsType(word, next);
         lexedObj.value = word;
