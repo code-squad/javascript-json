@@ -1,91 +1,49 @@
-function ArrayParser(str) {
-    const token = tokenizer(str);
-    return parser(token);
-}
+const Tokenizer = require('./tokenizer');
+const Lexer = require('./lexer');
+const Node = require('./Node');
 
-function tokenizer(input) {
-    // current: tracking the position in the code like a cursor
-    let current = 0;
+class ArrayParser {
+    constructor({tokenizer, lexer}) {
+        this.tokenizer = tokenizer;
+        this.lexer = lexer;
+        this.queue = [];
+    }
 
-    // tokens: array for pushing tokens to
-    let tokens = [];
+    parse(input) {
+        const tokens = this.tokenizer.tokenize(input);
+        tokens.forEach(token => this.queue.push(this.lexer.lex(token)));
+        const firstNode = this.queue.shift();
 
-    while (current < input.length){
-
-        let char = input[current];
-
-        // 배열 시작'[' 확인
-        if(char === '['){
-            tokens.push({
-                type: 'arr',
-                value: '['
-            });
-            current ++;
-        }
-
-        // 배열 끝 확인
-        if (char ===']'){
-            tokens.push({
-                type: 'arr',
-                value: ']'
-            });
-            current++;
-        }
-
-        // 공백을 만나면 skip 한다.
-        let WHITESPACE = /\s/;
-        if(WHITESPACE.test(char)){
-            current++;
-            continue;
-        }
-
-        // 쉼표를 만나면 skip 한다.
-        let COMMA = ',';
-        if(char === COMMA){
-            current++;
-        }
-
-        // 숫자를 만나면 type 을 number 로 주고 tokens 에 push 한다.
-        let NUMBERS = /[0-9]/;
-        if(NUMBERS.test(char)){
-
-            // 숫자값을 담을 value 변수를 선언.
-            let value = '';
-
-            // 숫자를 만나면 value 변수에 할당한다.
-            while (NUMBERS.test(char)) {
-                value += char;
-                char = input[++current];
-            }
-
-            // tokens array 에 'number' token 을 push 한다.
-            tokens.push({
-                type: 'number',
-                value,
-                child: [],
-            });
+        if (firstNode.type === 'arrStart') {
+            const rootNode = new Node('Array');
+            return this.arrayParse(rootNode);
+        } else {
+            throw Error(`${firstNode.value} 은 rootNode가 될 수 있는 형태('[')가 아닙니다.`);
         }
     }
-    return tokens;
+
+    arrayParse(parentNode) {
+        while (this.queue.length !== 0) {
+            const node = this.queue.shift();
+            if (node.type === 'arrEnd') {
+                return parentNode;
+            }
+            if (node.type === 'arrStart') {
+                node.type = 'childArray';
+                let childNode;
+                while (!childNode) {
+                    childNode = this.arrayParse(node);
+                }
+                parentNode.child.push(childNode);
+            } else {
+                parentNode.child.push(node)
+            }
+        }
+    }
 }
 
+const tokenizer = new Tokenizer;
+const lexer = new Lexer;
+const arrayParer = new ArrayParser({tokenizer, lexer});
 
-// parser 함수는 인자로 token array 를 받는다.
-function parser(tokens) {
-
-// AST: root. type 이름은 'Array'
-    let ast = {
-        type: 'Array',
-        child: [],
-    };
-
-    tokens.filter(function (e) {
-        return e.type === 'number'
-    }).map(function (e) {
-        return ast.child.push(e)
-    });
-
-    return ast;
-}
-
-module.exports = ArrayParser;
+module.exports = arrayParer;
