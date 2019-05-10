@@ -122,21 +122,25 @@
             return resultObject;
         }
         
+        addArrayData(inputData,inputArray,resultArray,resultObject){
+            this.stacks.arrayBracketStack.push("[");
+            if (this.getParentType() === "object") {
+                this.stacks.parentTypeStack.push("array");
+                resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
+            } else {
+                this.stacks.parentTypeStack.push("array");
+                resultArray.push(this.makeDataObject(inputData,inputArray));
+            }
+        }
+
         parser(inputArray) {
-            const resultArray = [];
-            const resultObject = {};
+            let resultArray = [];
+            let resultObject = {};
             let inputData;
             while (inputArray.length > 0) {
                 inputData = inputArray.shift();
                 if (inputData.type === "arrayStartOperator") {
-                    this.stacks.arrayBracketStack.push("[");
-                    if (this.getParentType() === "object") {
-                        this.stacks.parentTypeStack.push("array");
-                        resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
-                    } else {
-                        this.stacks.parentTypeStack.push("array");
-                        resultArray.push(this.makeDataObject(inputData,inputArray));
-                    }
+                    this.addArrayData(inputData,inputArray,resultArray,resultObject);
                 } else if (inputData.type === "arrayEndOperator") {
                     this.stacks.arrayBracketStack.pop();
                     this.stacks.parentTypeStack.pop();
