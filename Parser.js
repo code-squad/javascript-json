@@ -50,12 +50,8 @@ class Parser {
     if (word === undefined) return;
     lexedJson.shift();
 
-    if (word === separators.endOfArray) {
-      const parentObj = parentObjStack.pop();
-      parsingDataObj = parentObj;
-    } else if (word === separators.endOfObject) {
-      const parentObj = parentObjStack.pop();
-      parsingDataObj = parentObj;
+    if ((word === separators.endOfArray) || (word === separators.endOfObject)){
+      parsingDataObj = parentObjStack.pop();
     } else if (word === separators.startOfArray) {
       const childObj = parserUtils.ChildObj("array");
 
