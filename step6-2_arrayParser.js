@@ -25,9 +25,34 @@ const tokenizer = str => {
 const lexer = str => {  
     const temp = tokenizer(str);
     const tokens = temp.map( token => {
+        if (checkErrorToken(token)) {
+            return {type: 'errorToken', value: token}
+        };
+
         return getTypeAndToken(token);
     });
     return tokens;
+}
+
+const checkErrorToken = token => {
+    const charArr = token.split('');
+    let quotationMarkCnt = 0;
+    [isString, isNumber] = [false, false];
+
+    for (let char of charArr) {
+        if (char === '\'')  quotationMarkCnt++;
+        else if (isNaN(Number(char))) isString = true;
+        else if (typeof(Number(char))) isNumber = true;
+    }
+
+    if (quotationMarkCnt > 2) {
+        console.error(`${token}은 올바른 문자열이 아닙니다.`);
+        return true;
+    } else if (isString && isNumber && quotationMarkCnt === 0) {
+        console.error(`${token}은 알 수 없는 타입입니다.`);
+        return true;
+    }
+    return false;
 }
 
 const getTypeAndToken = token => {
@@ -43,15 +68,9 @@ const getTypeAndToken = token => {
         return {type: 'leftBracket', value: token};
     } else if (token === ']') {
         return {type: 'rightBracket', value: token};
-    } else if (token.substr(1, token.length-2).indexOf('\'') !== -1) {
-        console.error(`${token}은 올바른 문자열이 아닙니다.`);
-    } else if (token.substr(1, token.length-2).indexOf('\"') !== -1) {
-        console.error(`${token}은 올바른 문자열이 아닙니다.`);
     } else if (typeof(token) === "string") {
         return {type: 'string', value: token.substring(1, token.length-1)};
-    } else {
-        console.error(`${token}은 알 수 없는 타입입니다.`);
-    }
+    } 
 }
 
 const arrayParser = tokens => {
@@ -81,9 +100,7 @@ const parser = str => {
 const s1 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
 const s2 = "['1a'3',[22,23,[11,[112233],112],55],33]";
 const s3 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
-parser(s1);
-//console.log(s1.split(','));
-//console.log(tokenizer(s1));
-//console.log(lexer(s1));
-//console.log(arrayParser(lexer(s1)));
+parser(s3);
+
+//console.log(lexer(s3));
 
