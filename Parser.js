@@ -32,14 +32,14 @@ class Parser {
       log(errorMessages.NO_TOKENIZED_DATA);
       return;
     }
-    const lexedObj = {};
-    let next = null;
     const lexedJson = tokenizedJson.map((word, idx, arr) => {
       if (!isSeparator(word)) {
-        next = arr[idx + 1];
-        lexedObj.type = lexerUtils.getLiteralsType(word, next);
-        lexedObj.value = word;
-        return { ...lexedObj };
+        return lexerUtils.getLexedObj({
+          word,
+          idx,
+          arr,
+          next: null
+        });
       } else {
         return word;
       }
@@ -92,7 +92,6 @@ class Parser {
         }
       }
       this.parsing(lexedJson, parsingDataObj);
-
     } else {
       this.parsing(lexedJson, parsingDataObj);
     }
@@ -106,7 +105,6 @@ class Parser {
     };
     this.parsing(lexedJson, resultObj);
     const resultText = JSON.stringify(resultObj.child[0], null, 2);
-    // log(resultText);
     return resultText;
   }
 }

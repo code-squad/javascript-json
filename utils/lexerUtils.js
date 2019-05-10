@@ -40,5 +40,13 @@ module.exports = {
     } else {
       throw `${word}${errorMessages.UNKNOWN_TYPE}`;
     }
+  },
+
+  getLexedObj({ word, idx, arr, next }) {
+    const lexedObj = {};
+    next = arr[idx + 1];
+    lexedObj.type = this.getLiteralsType(word, next);
+    lexedObj.value = word;
+    return { ...lexedObj };
   }
-}
+};
