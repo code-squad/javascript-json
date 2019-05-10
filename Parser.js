@@ -1,7 +1,7 @@
 const separators = require("./separators");
 const literals = require("./literals");
 const errorMessages = require("./errorMessages");
-const Stack = require("./Stack");
+const Stack = require("./data_structure/Stack");
 const parentObjStack = new Stack();
 
 const { log } = console;

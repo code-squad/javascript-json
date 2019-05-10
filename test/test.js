@@ -1,5 +1,5 @@
 const {log, time, timeEnd, group, groupEnd} = console;
-const Stack = require('../Stack');
+const Stack = require('../data_structure/Stack');
 const statisticsStack = new Stack();
 
 function Statistics() {
