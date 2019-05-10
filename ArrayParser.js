@@ -2,14 +2,14 @@ class Node {
     constructor(type, value) {
         this.type = type;
         this.value = value;
-        this.child = []
+        this.child = [];
     }
 }
 
 class Tokenizer {
     tokenize(str) {
         const token = str.replace(/\s/g, '').replace(/\[/g, '[,').replace(/\]/g, ',]').split(',');
-        return token
+        return token;
     }
 }
 
@@ -21,16 +21,16 @@ class Lexer {
         if (token === 'null') return new Node('null', token);
         if (this.isString(token) && this.isValidString(token)) return new Node('string', token);
         if (!isNaN(token)) return new Node('number', Number(token));
-        throw Error(`${token}은 알수 없는 타입입니다.`)
+        throw Error(`${token}은 알수 없는 타입입니다.`);
     }
     isString(token) {
-        return token.startsWith("'") && token.endsWith("'")
+        return token.startsWith("'") && token.endsWith("'");
     }
     isValidString(token) {
         if (token.substring(1, token.length - 1).split("'").length != 1) {
-            throw Error(`${token}은 올바른 문자열이 아닙니다.`)
+            throw Error(`${token}은 올바른 문자열이 아닙니다.`);
         }
-        return true
+        return true;
     }
 }
 
@@ -38,7 +38,7 @@ class ArrayParser {
     constructor() {
         this.tokenizer = new Tokenizer();
         this.lexer = new Lexer();
-        this.queue = []
+        this.queue = [];
     }
 
     arrayParse(parentNode) {
