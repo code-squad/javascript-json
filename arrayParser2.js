@@ -12,7 +12,7 @@ const ArrayParser = class {
     constructor(){
         this.tokenArr = []
         this.lexerArray = [];
-        this.arrayTokenIdxStack = [];
+        this.openBracketIdxStack = [];
     }
 
     removeToken(arr,token){
@@ -62,10 +62,21 @@ const ArrayParser = class {
     parser(lexerArray){ 
         lexerArray.forEach((lexerObj)=>{
             if(lexerObj.value ==="["){
-                arrayTokenIdxStack.push(lexerArray.indexOf(el))
+                this.openBracketIdxStack.push(lexerArray.indexOf(lexerObj))
             }
         })
-        return lexerArray
+        console.log(this.openBracketIdxStack)
+        
+        
+        const openBracketLastIdx = this.openBracketIdxStack[this.openBracketIdxStack.length-1]
+
+        for (let i = openBracketLastIdx; i<this.findFirstTokenIdx(lexerArray,"]"); i++){
+            lexerArray[i].child.push(lexerArray[i+1])
+            lexerArray.splice(i+1,1)
+        }
+        lexerArray.splice(this.findFirstTokenIdx(lexerArray,"]"),1)
+        
+        console.log(lexerArray)
     }
 }
 
