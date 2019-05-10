@@ -25,13 +25,14 @@ class ArrayParser {
     }
 
     lexer(arr) {
-        arr = arr.map((el) => {
+        arr = arr.map((val,i) => {
             const obj = {};
-            obj.type = this.checkDataType(el);
-            if(el !== '[') {obj.value = this.changeDataType(el);}
+            if (i > 0 && arr[i-1].slice(-1) === ':') obj.key = arr[i-1].slice(0,-1);
+            if (val !== '[' && val !== '{') { obj.value = this.changeDataType(val); }
+            obj.type = this.checkDataType(val);
             obj.child = [];
             return obj
-        })
+        }).filter(val => val.type !== undefined)
         this.lexedData = arr;
     }
 
