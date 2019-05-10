@@ -2,11 +2,11 @@ class ArrayParser {
     constructor() {
         this.typeOverview = {
             boolean : 0,
-            null : 0,
-            string : 0,
-            number : 0,
-            array : 0,
-            object : 0
+            null    : 0,
+            string  : 0,
+            number  : 0,
+            array   : 0,
+            object  : 0
         };
     }
 
@@ -39,7 +39,7 @@ class ArrayParser {
     }
 
     lexer(arr) {
-        arr = arr.map((val, i, arr) => this.makeObjData(val, i, arr));
+        arr = arr.map((val, i, arr) => this.makeObjToken(val, i, arr));
         arr = arr.filter(val => val.type !== 'key');
         this.lexedData = arr;
     }
@@ -53,10 +53,10 @@ class ArrayParser {
         }
     }
 
-    makeObjData(val, i, arr) {
+    makeObjToken(val, i, arr) {
         const obj = {};
         if (i > 0 && arr[i - 1].slice(-1) === ':') obj.key = arr[i - 1].slice(0, -1);
-        if (val !== '[' && val !== '{') obj.value = this.changeDataType(val);
+        if (val !== '[' && val !== '{') obj.value = this.changeTokenType(val);
         obj.type = this.checkTokenType(val);
         obj.child = [];
         return obj
@@ -79,7 +79,7 @@ class ArrayParser {
         }
     }
 
-    changeDataType(val) {
+    changeTokenType(val) {
         if (val === 'true') return true
         if (val === 'false') return false
         if (val === 'null') return null
