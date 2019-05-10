@@ -6,22 +6,28 @@ class ArrayParser {
         let changedStr = '';
         let index = 0
         while (index < str.length) {
-            if (str[index] === '[') {
-                changedStr += '[' + ',';
-            } else if (str[index] === ']') {
-                changedStr += ',' + ']';
-            } else if (str[index] === '{') {
-                changedStr += '{' +  ',';
-            }else if (str[index] === '}') {
-                changedStr += ',' + '}';
-            }else if (str[index] === ':') {
-                changedStr += ':' + ',';
-            }else {
-                changedStr += str[index];
+            switch (str[index]) {
+                case '[':
+                    changedStr += '[' + ',';
+                    break;
+                case ']':
+                    changedStr += ',' + ']';
+                    break;
+                case '{':
+                    changedStr += '{' + ',';
+                    break;
+                case '}':
+                    changedStr += ',' + '}';
+                    break;
+                case ':':
+                    changedStr += ':' + ',';
+                    break;
+                default:
+                    changedStr += str[index];
             }
             index++;
         }
-        this.tokenizedData = changedStr.split(',').map((val) => val.replace(/\s/g,''));
+        this.tokenizedData = changedStr.split(',').map((val) => val.replace(/\s/g, ''));
     }
 
     lexer(arr) {
