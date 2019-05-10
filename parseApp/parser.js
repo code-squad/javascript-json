@@ -75,14 +75,16 @@ class Parser {
 
       if (this.isOpeningContext(lexedToken.context)) {
         lexedToken.newNode = this.parse(lexedToken);
-      } else {
-        if (lexedToken.context === this.keyword[','].context) {
-          throw new Error(this.messageObj.START_SEPERATOR);
-        }
+        node.pushChild(lexedToken.newNode);
+        continue;
+      }
 
-        if (!this.isValidNextToken()) {
-          throw new Error(this.messageObj.INVALID_ARRAY);
-        }
+      if (lexedToken.context === this.keyword[','].context) {
+        throw new Error(this.messageObj.START_SEPERATOR);
+      }
+
+      if (!this.isValidNextToken()) {
+        throw new Error(this.messageObj.INVALID_ARRAY);
       }
 
       node.pushChild(lexedToken.newNode);
