@@ -1,5 +1,13 @@
 class ArrayParser {
     constructor() {
+        this.typeOverview = {
+            boolean : 0,
+            null : 0,
+            string : 0,
+            number : 0,
+            array : 1,
+            object : 0
+        };
     }
 
     tokenizer(str) {
@@ -95,6 +103,20 @@ class ArrayParser {
         if (val === ']') this.arrBracketCount--;
         if (val === '{') this.objBracketCount++;
         if (val === '}') this.objBracketCount--;
+    }
+
+    countTokenType(token) {
+        token.forEach(val => {
+            switch (val.type) {
+                case 'boolean': return this.typeOverview.boolean++;
+                case 'null'   : return this.typeOverview.null++;
+                case 'string' : return this.typeOverview.string++;
+                case 'number' : return this.typeOverview.number++;
+                case 'array'  : return this.typeOverview.array++;
+                case 'object' : return this.typeOverview.object++;
+            }
+        });
+        console.log(this.typeOverview);
     }
 
     executeParser(data) {
