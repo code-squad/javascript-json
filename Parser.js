@@ -2,6 +2,7 @@
 const separators = require("./utils/separators");
 const literals = require("./utils/literals");
 const tokenizerUtils = require("./utils/tokenizerUtils");
+const lexerUtils = require("./utils/lexerUtils");
 const isSeparator = require("./utils/isSeparator");
 
 const errorMessages = require("./errorMessages");
@@ -9,48 +10,6 @@ const Stack = require("./data_structure/Stack");
 const parentObjStack = new Stack();
 
 const { log } = console;
-
-const parserUtils = {
-  isString(literalStr) {
-    const literalStrLen = literalStr.length;
-    if (literalStr[0] === "'" && literalStr[literalStrLen - 1] === "'")
-      return true;
-  },
-
-  isCorrectStringForm(literalStr) {
-    let cnt = 0;
-    for (letter of literalStr) {
-      cnt = letter === "'" ? cnt + 1 : cnt;
-    }
-
-    if (cnt === 2) return true;
-    else throw `${literalStr}${errorMessages.INCORRECT_STRING}`;
-  },
-
-  isCorrectString(word) {
-    return this.isString(word) && this.isCorrectStringForm(word);
-  },
-
-  isKey(next) {
-    return next === separators.colon;
-  },
-
-  getLiteralsType(word, next) {
-    if (Number.isFinite(Number(word))) {
-      return literals.number;
-    } else if (word === "false" || word === "true") {
-      return literals.boolean;
-    } else if (word === "null") {
-      return literals.null;
-    } else if (this.isCorrectString(word)) {
-      return literals.string;
-    } else if (this.isKey(next)) {
-      return literals.key;
-    } else {
-      throw `${word}${errorMessages.UNKNOWN_TYPE}`;
-    }
-  }
-};
 
 class Parser {
   constructor() {
@@ -77,7 +36,7 @@ class Parser {
     const lexedJson = tokenizedJson.map((word, idx, arr) => {
       if (!isSeparator(word)) {
         next = arr[idx + 1];
-        lexedObj.type = parserUtils.getLiteralsType(word, next);
+        lexedObj.type = lexerUtils.getLiteralsType(word, next);
         lexedObj.value = word;
         return { ...lexedObj };
       } else {
