@@ -1,6 +1,8 @@
 const {log, time, timeEnd, group, groupEnd} = console;
 const Stack = require('../data_structure/Stack');
+const Queue = require('../data_structure/Queue');
 const statisticsStack = new Stack();
+const errorLogQueue = new Queue();
 
 function Statistics() {
   this.successCnt = 0;
@@ -16,10 +18,21 @@ const printStatistics = () => {
   }
 }
 
+const printErrorLogs = () => {
+  if(errorLogQueue.empty()) return;
+  log("\n########## Error report! ##########");
+  group();
+  errorLogQueue.print();
+  errorLogQueue.clear();
+  groupEnd();
+  log("###################################\n");
+}
+
 const test = {
   describe(title, func) {
     const statistics = new Statistics();
     statisticsStack.push(statistics);
+    printErrorLogs();
     group();
     log(`\n# ${title}`);
     func();
@@ -36,7 +49,7 @@ const test = {
       statisticsStack.top().successCnt += 1;
     } catch (error) {
       statisticsStack.top().failCnt += 1;
-      log(error);
+      errorLogQueue.push(error.message);
     }
     timeEnd("test completed");
     groupEnd();
