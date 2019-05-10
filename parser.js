@@ -29,16 +29,24 @@ class ArrayParser {
     }
 
     parse(lexedTokens) {
+        const parentNodes = [];
         let parentNode = {};
         lexedTokens.forEach((lexedToken) => {
             if(lexedToken.name === 'ArrayOpener') {
                 const arrayNode = new Node('array');
                 delete arrayNode.value;
                 parentNode = arrayNode;
+                parentNodes.push(parentNode);
             } else if(lexedToken.name === 'Number') {
                 const numberNode = new Node('number', lexedToken.value);
                 parentNode.child.push(numberNode);
             } else if(lexedToken.name === 'ArrayCloser') {
+                let arrayElement = parentNodes.pop();
+                let countParentNodes = parentNodes.length;
+                if(!(countParentNodes === 0)) {
+                    parentNode = parentNodes[countParentNodes-1];
+                    parentNode.child.push(arrayElement);
+                }
                 return;
             }
         });
@@ -52,7 +60,7 @@ class ArrayParser {
     }
 }
 
-const str = "[123, 22, 33]";
+const str = "[123, [1, [2, [3, 4]]], 33]";
 const arrayParser = new ArrayParser();
 const result = arrayParser.run(str);
 console.log(JSON.stringify(result, null, 2));
