@@ -53,14 +53,14 @@ class ArrayParser {
                 const numberNode = new Node('number', lexedToken.value);
                 parentNode.child.push(numberNode);
             } else if(lexedToken.name === 'String') {
-                const numberNode = new Node('string', lexedToken.value);
-                parentNode.child.push(numberNode);
+                const stringNode = new Node('string', lexedToken.value);
+                parentNode.child.push(stringNode);
             } else if(lexedToken.name === 'Null') {
-                const numberNode = new Node('null', lexedToken.value);
-                parentNode.child.push(numberNode);
+                const nullNode = new Node('null', lexedToken.value);
+                parentNode.child.push(nullNode);
             } else if(lexedToken.name === 'True' | lexedToken.name === 'False') {
-                const numberNode = new Node('boolean', lexedToken.value);
-                parentNode.child.push(numberNode);
+                const booleanNode = new Node('boolean', lexedToken.value);
+                parentNode.child.push(booleanNode);
             } else if(lexedToken.name === 'ArrayCloser') {
                 arrayElement = parentNodes.pop();
                 countParentNodes = parentNodes.length;
