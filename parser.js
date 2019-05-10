@@ -15,25 +15,22 @@ class ArrayParser {
     lex(tokens) {
         return tokens.map((token) => {
                 if(token === '[') {
-                    token = {'name' : 'ArrayOpener', 'value' : token};
+                    token = {'name' : 'arrayOpener', 'value' : token};
                     return token;
                 } else if(!isNaN(token)) {
-                    token = {'name' : 'Number', 'value' : token};
+                    token = {'name' : 'number', 'value' : token};
                     return token;
-                } else if(token === 'true') {
-                    token = {'name' : 'True', 'value' : token};
-                    return token;
-                } else if(token === 'false') {
-                    token = {'name' : 'False', 'value' : token};
+                } else if(token === 'true' || token === 'false') {
+                    token = {'name' : 'boolean', 'value' : token};
                     return token;
                 } else if(!(token.search(/'(.+)'/) === -1)) {
-                    token = {'name' : 'String', 'value' : token};
+                    token = {'name' : 'string', 'value' : token};
                     return token;
                 } else if(token === 'null') {
-                    token = {'name' : 'Null', 'value' : token};
+                    token = {'name' : 'null', 'value' : token};
                     return token;
                 } else if(token === ']') {
-                    token = {'name' : 'ArrayCloser', 'value' : token};
+                    token = {'name' : 'arrayCloser', 'value' : token};
                     return token;
                 }
             }, []);
@@ -44,24 +41,12 @@ class ArrayParser {
         let [parentNode, arrayElement, countParentNodes] = [{}, {}, 0];
 
         lexedTokens.forEach((lexedToken) => {
-            if(lexedToken.name === 'ArrayOpener') {
+            if(lexedToken.name === 'arrayOpener') {
                 const arrayNode = new Node('array');
                 delete arrayNode.value;
                 parentNode = arrayNode;
                 parentNodes.push(parentNode);
-            } else if(lexedToken.name === 'Number') {
-                const numberNode = new Node('number', lexedToken.value);
-                parentNode.child.push(numberNode);
-            } else if(lexedToken.name === 'String') {
-                const stringNode = new Node('string', lexedToken.value);
-                parentNode.child.push(stringNode);
-            } else if(lexedToken.name === 'Null') {
-                const nullNode = new Node('null', lexedToken.value);
-                parentNode.child.push(nullNode);
-            } else if(lexedToken.name === 'True' | lexedToken.name === 'False') {
-                const booleanNode = new Node('boolean', lexedToken.value);
-                parentNode.child.push(booleanNode);
-            } else if(lexedToken.name === 'ArrayCloser') {
+            } else if(lexedToken.name === 'arrayCloser') {
                 arrayElement = parentNodes.pop();
                 countParentNodes = parentNodes.length;
                 if(!(countParentNodes === 0)) {
@@ -69,6 +54,9 @@ class ArrayParser {
                     parentNode.child.push(arrayElement);
                 }
                 return;
+            } else {
+                const elementNode = new Node(lexedToken.name, lexedToken.value);
+                parentNode.child.push(elementNode);
             }
         });
         return parentNode;
