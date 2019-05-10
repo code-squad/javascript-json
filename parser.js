@@ -89,6 +89,21 @@
             return this.stacks.parentTypeStack[this.stacks.parentTypeStack.length-1];
         }
 
+        makeDataObject(inputData,inputArray){
+            const resultObject = {}
+            if(inputData.type === "arrayStartOperator"){
+                resultObject.type = "array";
+                resultObject.child = this.parser(inputArray);
+            }else if(inputData.type === "objectStartOperator"){
+                resultObject.type = "object";
+                resultObject.child = this.parser(inputArray);
+            }else{
+                resultObject.type = inputData.type;
+                resultObject.value = inputData.value;
+            }
+            return resultObject;
+        }
+
         parser(inputArray) {
             const resultArray = [];
             const resultObject = {};
@@ -99,16 +114,10 @@
                     this.stacks.arrayBracketStack.push("[");
                     if (this.getParentType() === "object") {
                         this.stacks.parentTypeStack.push("array");
-                        resultObject[this.stacks.keyStack.pop()] = {
-                            type: "array",
-                            child: this.parser(inputArray)
-                        }
+                        resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
                     } else {
                         this.stacks.parentTypeStack.push("array");
-                        resultArray.push({
-                            type: "array",
-                            child: this.parser(inputArray)
-                        });
+                        resultArray.push(this.makeDataObject(inputData,inputArray));
                     }
                 } else if (inputData.type === "arrayEndOperator") {
                     this.stacks.arrayBracketStack.pop();
@@ -122,21 +131,14 @@
                     if (this.getParentType() === "array") {
                         this.stacks.parentTypeStack.push("object");
                         this.stacks.objectBracketStack.push("{");
-                        resultArray.push({
-                            type: "object",
-                            child: this.parser(inputArray)
-                        });
+                        resultArray.push(this.makeDataObject(inputData,inputArray));
                     } else {
                         this.stacks.parentTypeStack.push("object");
                         this.stacks.objectBracketStack.push("{");
                         if (this.stacks.keyStack.length === 0) {
-                            resultObject.type = "object";
-                            resultObject.child = this.parser(inputArray);
+                            Object.assign(resultObject,this.makeDataObject(inputData,inputArray));
                         } else {
-                            resultObject[this.stacks.keyStack.pop()] = {
-                                type: "object",
-                                child: this.parser(inputArray)
-                            }
+                            resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
                         }
                     }
                 } else if (inputData.type === 'separator' || inputData.type === "colone") {
@@ -146,16 +148,10 @@
                         if (this.stacks.keyStack.length === 0) {
                             this.stacks.keyStack.push(inputData.value);
                         } else {
-                            resultObject[this.stacks.keyStack.pop()] = {
-                                type: inputData.type,
-                                value: inputData.valuea
-                            }
+                            resultObject[this.stacks.keyStack.pop()] = this.makeDataObject(inputData,inputArray);
                         }
                     } else {
-                        resultArray.push({
-                            type: inputData.type,
-                            value: inputData.value
-                        });
+                        resultArray.push(this.makeDataObject(inputData,inputArray));
                     }
                 }
             }
@@ -166,7 +162,7 @@
             try {
                 this.inputIndex = 0;
                 let result = this.parser(this.lexer(this.tokenizer(inputString)));
-                // result = this.bracketStack.length !== 0 ? "유효하지 않은 텍스트" : result;
+                result = this.stacks.arrayBracketStack.length !== 0 ? "유효하지 않은 텍스트" : result;
                 return result;
             } catch (error) {
                 console.log(error.message);
