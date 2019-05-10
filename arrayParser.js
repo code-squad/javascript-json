@@ -52,10 +52,10 @@ class ArrayParser {
 
     checkTokenType(val) {
         let isString = null;
-        if (val[0] === "'") { isString = !val.slice(1, val.length - 1).split('').some((el) => el === "'"); }
-        if (isString) { return 'string' }
-        if (!isNaN(val)) { return 'number' }
-        if (val[val.length - 1] === ':') { return 'key' }
+        if (val[0] === "'") isString = !val.slice(1, val.length - 1).split('').some((el) => el === "'");
+        if (isString) return 'string'
+        if (!isNaN(val)) return 'number'
+        if (val[val.length - 1] === ':') return 'key'
         switch (val) {
             case 'true': return 'boolean'
             case 'false': return 'boolean'
