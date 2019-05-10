@@ -33,16 +33,12 @@ class Parser {
       return;
     }
     const lexedJson = tokenizedJson.map((word, idx, arr) => {
-      if (!isSeparator(word)) {
-        return lexerUtils.getLexedObj({
-          word,
-          idx,
-          arr,
-          next: null
-        });
-      } else {
-        return word;
-      }
+      return lexerUtils.getLexedObj({
+        word,
+        idx,
+        arr,
+        next: null
+      });
     });
 
     return lexedJson;

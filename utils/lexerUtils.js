@@ -1,5 +1,6 @@
 const literals = require("./literals");
 const separators = require("./separators");
+const isSeparator = require("./isSeparator");
 
 module.exports = {
   isString(literalStr) {
@@ -43,6 +44,8 @@ module.exports = {
   },
 
   getLexedObj({ word, idx, arr, next }) {
+    if(isSeparator(word)) return word;
+
     const lexedObj = {};
     next = arr[idx + 1];
     lexedObj.type = this.getLiteralsType(word, next);
