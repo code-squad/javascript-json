@@ -21,26 +21,25 @@ class ArrayParser {
                 } else if(!isNaN(value)) {
                     token = {'name' : 'Number', 'value' : value};
                     return acc.concat(token);
-                } else if(value === ']') {
-                    token = {'name' : 'ArrayCloser', 'value' : value};
-                    return acc.concat(token);
                 } else if(value === 'true') {
                     token = {'name' : 'True', 'value' : value};
                     return acc.concat(token);
                 } else if(value === 'false') {
                     token = {'name' : 'False', 'value' : value};
                     return acc.concat(token);
-                } else if(!(value.search(/'.+'/) === -1)) {
+                } else if(!(value.search(/'(.+)'/) === -1)) {
                     token = {'name' : 'String', 'value' : value};
                     return acc.concat(token);
                 } else if(value === 'null') {
-                    token = {'name' : 'null', 'value' : value};
+                    token = {'name' : 'Null', 'value' : value};
+                    return acc.concat(token);
+                } else if(value === ']') {
+                    token = {'name' : 'ArrayCloser', 'value' : value};
                     return acc.concat(token);
                 }
             }, []);
     }
 
-    // Todo : Boolean, String, Nulll token 지원 가능하게 변경할것.
     parse(lexedTokens) {
         const parentNodes = [];
         let [parentNode, arrayElement, countParentNodes] = [{}, {}, 0];
@@ -53,6 +52,15 @@ class ArrayParser {
                 parentNodes.push(parentNode);
             } else if(lexedToken.name === 'Number') {
                 const numberNode = new Node('number', lexedToken.value);
+                parentNode.child.push(numberNode);
+            } else if(lexedToken.name === 'String') {
+                const numberNode = new Node('string', lexedToken.value);
+                parentNode.child.push(numberNode);
+            } else if(lexedToken.name === 'Null') {
+                const numberNode = new Node('null', lexedToken.value);
+                parentNode.child.push(numberNode);
+            } else if(lexedToken.name === 'True' | lexedToken.name === 'False') {
+                const numberNode = new Node('boolean', lexedToken.value);
                 parentNode.child.push(numberNode);
             } else if(lexedToken.name === 'ArrayCloser') {
                 arrayElement = parentNodes.pop();
