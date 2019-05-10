@@ -28,26 +28,22 @@ class ArrayParser {
         arr = arr.map((el) => {
             const obj = {};
             obj.type = this.checkDataType(el);
-            obj.value = this.changeDataType(el);
+            if(el !== '[') {obj.value = this.changeDataType(el);}
+            obj.child = [];
             return obj
         })
         this.lexedData = arr;
     }
 
-    parser(arr) {
-        const resultObj = {
-            type: 'array',
-            child: []
-        };
-        arr.forEach((val) => {
-            if (Array.isArray(val)) { return resultObj.child.push(this.parser(val)); }
-            const obj = {};
-            obj.type = this.checkDataType(val);
-            obj.value = this.changeDataType(val);
-            obj.child = [];
-            resultObj.child.push(obj);
-        });
-        return resultObj
+    parser(inputToken) {
+        while (this.lexedData.length) {
+            let currentToken = this.lexedData.shift();
+            if (currentToken.value === ']') return inputToken;
+            if (currentToken.type=== 'array') {
+                currentToken = this.parser(currentToken);
+            }
+            inputToken.child.push(currentToken);
+        }
     }
 
     checkDataType(val) {
@@ -58,9 +54,9 @@ class ArrayParser {
         if (isString) { return 'string' }
         if (!isNaN(val)) { return 'number' }
         if (val[val.length - 1] === ':') { return 'key' }
-        if (val === '[') { return 'openSquareBracket' }
+        if (val === '[') { return 'array' }
         if (val === ']') { return 'closeSquareBracket' }
-        if (val === '{') { return 'openCurlyBracket'}
+        if (val === '{') { return 'obejct'}
         if (val === '}') { return 'closeCurlyBracket'}
     }
 
