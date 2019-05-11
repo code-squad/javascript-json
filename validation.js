@@ -8,11 +8,11 @@ const validation = {
         if(!(this.checkStringConvention(lexedTokens))) return false;
         return true;
     },
-    
+
     checkNotSupportDataType(tokens) {
-        const countUndefinedTokens = tokens.filter((token) => token.name === undefined).length;
-        if(countUndefinedTokens) {
-            console.log(errorMessage.notHaveDataType);
+        const undefinedTokens = tokens.filter((token) => token.name === undefined);
+        if(undefinedTokens[0]) {
+            undefinedTokens.forEach((token) => errorMessage.printNotHaveDataTypeErrorMsg(token.value));
             return false;
         }
         return true;
@@ -20,7 +20,7 @@ const validation = {
 
     checkNotHaveInitialArray(tokens) {
         if(!(tokens[0].name === 'arrayOpener')) {
-            console.log(errorMessage.notHaveInitialArray);
+            errorMessage.printNotHaveInitialArrayErrorMsg();
             return false;
         }
         return true;
@@ -30,7 +30,7 @@ const validation = {
         const countArrayOpeners = tokens.filter((token) => token.name === 'arrayOpener').length;
         const countArrayClosers = tokens.filter((token) => token.name === 'arrayCloser').length;
         if(!(countArrayOpeners === countArrayClosers)) {
-            console.log(errorMessage.arrayNotMatched);
+            errorMessage.printArrayNotMatchedErrorMsg();
             return false;
         }
         return true;
@@ -40,10 +40,10 @@ const validation = {
         const stringTokens = tokens.filter((token) => token.name === 'string');
         for(let stringToken of stringTokens) {
             if(stringToken.value.startsWith("'") && !(stringToken.value.match(/'/g).length === 2)) {
-                console.log(errorMessage.stringConventionError);
+                errorMessage.printStringConventionErrorMsg(stringToken.value);
                 return false
             } else if(stringToken.value.startsWith('"') && !(stringToken.value.match(/"/g).length === 2)) {
-                console.log(errorMessage.stringConventionError);
+                errorMessage.printStringConventionErrorMsg(stringToken.value);
                 return false
             }
             return true;
