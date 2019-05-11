@@ -5,11 +5,10 @@ class ArrayParser {
 
 	tokenizer(inputStr) {
 		const stack = [];
-		const inputChar = inputStr.split('');
 		const token = [];
 		let makeStr = '';
 
-		for (let char of inputChar) {
+		for (let char of inputStr) {
 			if (stack.length === 0) {
 				if (char === "'" || char === '"') {
 					stack.push(char);
