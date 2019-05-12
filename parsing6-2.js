@@ -41,12 +41,79 @@ class Tokenizing {
     }
 }
 
+// lexer form class
+class LexingForm {
+    constructor(type, input) {
+        this.type = type;
+        this.value = input;
+    }
+} 
+
+// lexer class
+class Lexing {
+    buildLexer(input) {
+        let data = [];
+
+        for(let i=0; i<input.length; i++) {
+            data.push(this.typeCheck(input[i]))
+        }
+        
+        return data;
+    }
+
+    typeCheck(data) {
+        let type;
+        let value;
+        
+        if(data === "[") {
+            type = "ArrayOpen";
+            value = data;
+        
+        } else if(data === "]") {
+            type = "ArrayClose";
+            value = data;
+
+        } else if(data === "null") {
+            type = "Null";
+            value = null;
+
+        } else if(data === "true") {
+            type = "true";
+            value = true;
+
+        } else if(data === "false") {
+            type = "false";
+            value = false;
+
+        } else if(data[0] === "'") {
+            type = "String";
+            value = data;
+
+        } else {
+            type = "Number";
+            value = Number(data);
+
+        }
+
+        return new LexingForm(type, value);
+    }
+    
+
+    runLexer(token) {
+        let lexedData = this.buildLexer(token);
+        console.log(lexedData);
+        return lexedData;
+    }
+}
+
 // main class
 class Parser {
     runParser(rawData) {
         let tokenizing = new Tokenizing();
         let token = tokenizing.runTokenizer(rawData);
-;
+
+        let lexing = new Lexing();
+        let lexedData = lexing.runLexer(token);
     }
 }
 
