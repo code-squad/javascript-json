@@ -1,33 +1,26 @@
 const Parser = require("./Parser");
+const test = require("./test/test");
+const {testingData, result} = require("./test/testingData");
 const parser = new Parser();
 
-const correctData = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const correctData2 = "[1,2,3,4]";
+const TEST_CODE_ENABLE = true;
 
-const incorrectData1 = "['1a'3',[22,23,[11,[112233],112],55],33]";
-const incorrectData2 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
-const incorrectData3 = "[1,2,3,4]]";
+if(!TEST_CODE_ENABLE) {
+  const data = parser.getJson("[ '123', {easy : ['he llo', {a:'a'}, 'world'] } , { a :123, a:'str', b:[ 912,[5656,33], {key : 'innervalue', newkeys: [1,2,3,4,5]} ] } ]");
+  console.log(data);
+} else {
+  test.describe("Parser test", () => {
 
-try {
-  parser.getJson(correctData);
-  parser.getJson(incorrectData1); //'1a'3'은 올바른 문자열이 아닙니다.
-} catch (error) {
-  console.log(error);
-}
+    test.describe("Correct examples test", () => {
 
-try {
-  parser.getJson(incorrectData2);  // 3d3은 알수 없는 타입입니다
-} catch (error) {
-  console.log(error);
-}
-try {
-  parser.getJson(incorrectData3);  // underflow
-} catch (error) {
-  console.log(error);
-}
+      for(let props in testingData) {
+        test.it("should return correct parsed data!", () => {
+          test.expect(parser.getJson(testingData[props])).toBe(result[props]);
+        });
+      }
+    });
 
-try {
-  parser.getJson(correctData2);
-} catch (error) {
-  console.log(error);
+    test.describe("Incorrect examples test", () => {
+    });
+  });
 }
