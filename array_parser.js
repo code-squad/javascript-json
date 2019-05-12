@@ -32,6 +32,12 @@ class ArrayParser {
 	getTypeAndValue(token) {
 		if (!isNaN(token)) {
 			return { type: 'number', value: Number(token) };
+		}
+		if (token === '[') {
+			return { type: 'leftBracket', value: token };
+		}
+		if (token === ']') {
+			return { type: 'rightBracket', value: token };
 		} else {
 			const lowerStrToken = token.toLowerCase();
 			if (lowerStrToken === 'true') {
