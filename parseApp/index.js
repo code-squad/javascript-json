@@ -6,7 +6,7 @@ module.exports = {
     const keyword = require('./keyword');
     const messageObj = require('./message');
 
-    const tokenizer = new Tokenizer({ rawString: str });
+    const tokenizer = new Tokenizer({ rawString: str, keyword, messageObj });
     const tokens = tokenizer.tokenize();
 
     const lexer = new Lexer({ keyword, messageObj, tokens });
