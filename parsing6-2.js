@@ -51,6 +51,7 @@ class LexingForm {
 
 // lexer class
 class Lexing {
+    // 순회하여 렉싱
     buildLexer(input) {
         let data = [];
 
@@ -61,6 +62,7 @@ class Lexing {
         return data;
     }
 
+    // 데이터 타입체크
     typeCheck(data) {
         let type;
         let value;
@@ -98,11 +100,55 @@ class Lexing {
         return new LexingForm(type, value);
     }
     
-
+    // 렉서 메인함수
     runLexer(token) {
         let lexedData = this.buildLexer(token);
         console.log(lexedData);
         return lexedData;
+    }
+}
+
+// parsing form class
+class ParsingForm {
+    constructor(type, value) {
+        this.type = type;
+
+        if(type === 'Array') {
+            this.child = [];
+
+        } else {
+            this.value = value;
+
+        }
+    }
+}
+
+// parser class
+class Parsing {
+    // 파싱 메인함수
+    runParser(lexedData) {
+        let parsedData;
+        const stack = [];
+
+        for(let i=0; i<lexedData.length; i++) {
+            let target = lexedData[i];
+            if(target['type'] === "ArrayOpen") {
+                let parsingForm = new ParsingForm("Array");
+                stack.push(parsingForm);
+
+            } else if(target['type'] === "ArrayClose") {
+                let complete = stack.pop();
+                stack[stack.length -1]["child"].push(complete);
+
+            } else {
+                let parsingForm = new ParsingForm(target["type"], target["value"]);
+                stack[stack.length -1]["child"].push(parsingForm);
+
+            }
+        }
+
+        parsedData = stack[0];
+        return parsedData;
     }
 }
 
@@ -114,6 +160,11 @@ class Parser {
 
         let lexing = new Lexing();
         let lexedData = lexing.runLexer(token);
+
+        let parsing = new Parsing();
+        let parsedData = parsing.runParser(lexedData);
+
+        return parsedData;        
     }
 }
 
