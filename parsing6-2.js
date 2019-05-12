@@ -1,3 +1,60 @@
+// error check class
+class ErrorCheck {
+    // 문자열타입 체크
+    stringCheck(data) {
+        data = this.stringCheck_wrap(data);
+        data = this.stringCheck_inner(data);
+        
+        return data;
+    }
+
+    stringCheck_wrap(data) {
+        let length = data.length - 1;
+        let firstWord = data[0]
+        let lastWord = data[length];
+        let answer;
+
+        if(firstWord !== lastWord) {
+            throw new Error(`${data}는 올바른 문자열이 아닙니다.`);
+
+        } else {
+            answer = data;
+        }
+
+        return data;
+    }
+
+    stringCheck_inner(input) {
+        let answer;
+        let length = input.length - 1;
+        let data = input.slice(1, length).split("");
+        data = data.filter(v => v === "'").length;
+
+        if(data !== 0) {
+            throw new Error(`${input}는 올바른 문자열이 아닙니다.`); 
+
+        } else {
+            answer = input;
+        }
+
+        return answer;
+    }
+
+    // 숫자타입 체크
+    numberCheck(data) {
+        let answer;
+
+        if(Number(data) >= 0) {
+            answer = data;
+
+        } else {
+            throw new Error(`${data}은(는) 알 수 없는 타입입니다.`); 
+        }
+
+        return answer;
+    }
+}
+
 // token class
 class Tokenizing {
     constructor() {
@@ -36,7 +93,7 @@ class Tokenizing {
     runTokenizer(rawData) {
         let data = this.removeSpace(rawData);
         let tokenizedData = this.buildToken(data);
-        console.log(tokenizedData);
+        //console.log(tokenizedData);
         return tokenizedData;
     }
 }
@@ -66,6 +123,7 @@ class Lexing {
     typeCheck(data) {
         let type;
         let value;
+        let errorCheck = new ErrorCheck();
         
         if(data === "[") {
             type = "ArrayOpen";
@@ -89,11 +147,11 @@ class Lexing {
 
         } else if(data[0] === "'") {
             type = "String";
-            value = data;
+            value = errorCheck.stringCheck(data);
 
         } else {
             type = "Number";
-            value = Number(data);
+            value = errorCheck.numberCheck(data);
 
         }
 
@@ -103,7 +161,7 @@ class Lexing {
     // 렉서 메인함수
     runLexer(token) {
         let lexedData = this.buildLexer(token);
-        console.log(lexedData);
+        //console.log(lexedData);
         return lexedData;
     }
 }
@@ -174,6 +232,10 @@ const str2 = "['1a'3',[22,23,[11,[112233],112],55],33]"
 const str3 = "['1a3',[22,23,[11,[112233],112],55],3d3]"
 
 // run program
-const arrayParser = new Parser();
-const result = arrayParser.runParser(str1);
-console.log(JSON.stringify(result, null, 2));
+try {
+    const arrayParser = new Parser();
+    const result = arrayParser.runParser(str1);
+    console.log(JSON.stringify(result, null, 2));
+} catch(e) {
+    console.log(e);
+}   
