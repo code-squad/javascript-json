@@ -1,8 +1,9 @@
 class Node {
-    constructor(type, value) {
+    constructor({ key, type, value, child }) {
+        this.key = key;
         this.type = type;
         this.value = value;
-        this.child = [];
+        this.child = child;
     }
 }
 module.exports = Node;

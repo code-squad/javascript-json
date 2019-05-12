@@ -1,49 +1,57 @@
-const Tokenizer = require('./tokenizer');
-const Lexer = require('./lexer');
-
 class ArrayParser {
-    constructor({ tokenizer, lexer, seperator }) {
-        this.seperator = seperator;
+    constructor({ tokenizer, lexer, errorChecker, stack }) {
+        this.seperator = ',';
         this.tokenizer = tokenizer;
         this.lexer = lexer;
-        this.nodeQueue = [];
+        this.errorChecker = errorChecker;
+        this.stack = stack;
     }
 
-    parseToken(parentNode) {
-        const node = this.nodeQueue.shift();
-        if (node.type === 'end') {
-            return parentNode;
-        } else if (node.type === 'array') {
-            let childNode;
-            while (true) {
-                childNode = this.parseToken(node);
-                if (childNode) break;
-            }
-            parentNode.child.push(childNode);
-        } else {
-            parentNode.child.push(node);
+    getTopNode() {
+        const topNode = this.stack.pop();
+        if (this.stack.isEmpty()) return topNode;
+        this.stack.peek().child.push(topNode);
+    }
+
+    setKeyValueNode(keyNode, tokens) {
+        const valueNode = tokens.shift();
+        valueNode.key = keyNode.key;
+        if (valueNode.type === 'array') {
+            this.stack.push(valueNode);
+        }
+        else {
+            this.stack.peek().child.push(valueNode);
         }
     }
 
-    getParsedStr(str) {
-        const tokens = this.tokenizer.tokenizeByChar(str, this.seperator);
-
-        tokens.forEach(token => this.nodeQueue.push(this.lexer.decideType(token)));
-
-        const rootNode = this.nodeQueue.shift();
-
-        while (this.nodeQueue.length) {
-            this.parseToken(rootNode);
+    parseToken(tokens) {
+        const node = tokens.shift();
+        const nodeType = node.type;
+        const typeMap = {
+            array: () => this.stack.push(node),
+            object: () => this.stack.push(node),
+            key: () => this.setKeyValueNode(node, tokens),
+            number: () => this.stack.peek().child.push(node),
+            string: () => this.stack.peek().child.push(node),
+            boolean: () => this.stack.peek().child.push(node),
+            null: () => this.stack.peek().child.push(node),
+            end: () => this.getTopNode()
         }
-        return rootNode;
+        return typeMap[nodeType]();
+    }
+
+    getParseTree(str) {
+        let tokens = this.tokenizer.getTokens(str, this.seperator);
+        this.errorChecker.checkBrackets(tokens);
+
+        tokens = tokens.map(token => this.lexer.setType(token));
+        this.errorChecker.checkNodes(tokens);
+
+        let parseTree;
+        while (tokens.length) {
+            parseTree = this.parseToken(tokens);
+        }
+        return parseTree;
     }
 }
-
-const seperator = ',';
-const tokenizer = new Tokenizer();
-const lexer = new Lexer();
-const arrayParser = new ArrayParser({ tokenizer, lexer, seperator });
-
-const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const result = arrayParser.getParsedStr(str);
-console.log(JSON.stringify(result, null, 2));
+module.exports = ArrayParser;

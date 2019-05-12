@@ -1,40 +1,64 @@
 const Node = require('./node');
 
 class Lexer {
-    decideType(token) {
-        if (token === '[') {
-            return new Node('array');
-        }
-        if (this.isString(token)) {
-            return new Node('string', token);
-        }
-        if (isFinite(token) && token !== null) {
-            return new Node('number', token);
-        }
-        if (token === 'true' || token === 'false') {
-            return new Node('boolean', token);
-        }
-        if (token === 'null') {
-            return new Node('null');
-        }
-        if (token === ']') {
-            return new Node('end');
-        } else {
-            throw Error(`${token}은 알수 없는 타입입니다.`);
-        }
+    setType(token) {
+        if (this.isOpenArray(token)) return new Node({ type: 'array', child: [] });
+        if (this.isString(token)) return new Node({ type: 'string', value: token });
+        if (isFinite(token)) return new Node({ type: 'number', value: token });
+        if (this.isBoolean(token)) return new Node({ type: 'boolean', value: token });
+        if (this.isNull(token)) return new Node({ type: 'null', value: null });
+        if (this.isOpenObject(token)) return new Node({ type: 'object', child: [] });
+        if (this.isObjectKey(token)) return new Node({ type: 'key', key: token.slice(0,- 1).trim() });
+        if (this.isCloseBracket(token)) return new Node({ type: 'end' });
+        else return this.setErrorType(token);
+    }
+
+    setErrorType(token) {
+        if (token.includes(' ')) return new Node({ type: 'withSpace', value: token });
+        if (this.isWrongString(token)) return new Node({ type: 'wrongString', value: token });
+        else return new Node({ type: 'unknownType', value: token })
+    }
+
+    isWrongString(token) {
+        return (this.isQuotesSurrounded(token, "'") && !this.hasNoMoreQuotes(token, "'")) ||
+            (this.isQuotesSurrounded(token, '"') && !this.hasNoMoreQuotes(token, '"'));
     }
 
     isString(token) {
-        if (token.startsWith("'") && token.endsWith("'")) {
-            const counts = this.countQuotes(token, "'");
-            if (counts) throw Error(`${token}은 올바른 문자열이 아닙니다.`);
-            return counts || true;
-        }
-        return false;
+        return (this.isQuotesSurrounded(token, "'") && this.hasNoMoreQuotes(token, "'")) ||
+            (this.isQuotesSurrounded(token, '"') && this.hasNoMoreQuotes(token, '"'));
     }
-    
-    countQuotes(token, quote) {
-        return token.slice(1, token.length - 1).split(quote).length - 1;
+
+    isQuotesSurrounded(token, quote) {
+        return token.startsWith(quote) && token.endsWith(quote);
+    }
+
+    hasNoMoreQuotes(token, quote) {
+        return !token.slice(1, token.length - 1).includes(quote);
+    }
+
+    isOpenArray(token) {
+        return token === '[';
+    }
+
+    isBoolean(token) {
+        return token === 'true' || token === 'false';
+    }
+
+    isNull(token) {
+        return token === 'null';
+    }
+
+    isOpenObject(token) {
+        return token === '{';
+    }
+
+    isObjectKey(token) {
+        return token.endsWith(':');
+    }
+
+    isCloseBracket(token) {
+        return token === ']' || token === '}';
     }
 }
 module.exports = Lexer;

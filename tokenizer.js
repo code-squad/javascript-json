@@ -1,21 +1,15 @@
 class Tokenizer {
-    insertCommaToBrackets(str) {
-        str = str.replace(/\[/g, '[,');
-        str = str.replace(/\]/g, ',]');
-        return str;
+    insertComma(str) {
+        return str.replace(/\[/g, '[,').replace(/\]/g, ',]').replace(/\{/g, '{,').replace(/\}/g, ',}').replace(/\:/g, ':,');
     }
 
     removeSpace(str) {
-        let arr = str.split(' ');
-        str = arr.join('');
-        return str;
+        return str.split(',').map(el => el.trim()).join();
     }
 
-    tokenizeByChar(str, char) {
-        str = this.insertCommaToBrackets(str);
-        str = this.removeSpace(str);
-        const tokens = str.split(char);
-        return tokens;
+    getTokens(str, seperator) {
+        str = this.insertComma(str);
+        return this.removeSpace(str).split(seperator);
     }
 }
 
