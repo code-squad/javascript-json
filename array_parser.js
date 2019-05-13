@@ -1,6 +1,6 @@
 class ArrayParser {
 	constructor() {
-		this.result = { type: '', child: [] };
+		this.stack = [];
 	}
 
 	tokenizer(inputStr) {
@@ -65,12 +65,40 @@ class ArrayParser {
 		return lexerArr;
 	}
 
+	parser(lexerArr) {
+		const parserArr = [];
+
+		while (lexerArr.length) {
+			const lexeredData = lexerArr.shift();
+
+			if (lexeredData.type === 'leftBracket') {
+				this.stack.push('[');
+				parserArr.push({ type: 'array', child: this.parser(lexerArr) });
+			} else if (lexeredData.type === 'rightBracket') {
+				this.stack.pop();
+				return parserArr;
+			} else {
+				if (this.stack.length === 0) {
+					throw new Error('괄호 안맞음');
+				} else {
+					parserArr.push(lexeredData);
+				}
+			}
+		}
+		return parserArr;
+	}
+
 	arrayParser(inputStr) {
-		const tokens = this.tokenizer(inputStr);
-		console.log(this.lexer(tokens));
+		try {
+			const tokens = this.tokenizer(inputStr);
+			const lexerArr = this.lexer(tokens);
+			return this.parser(lexerArr);
+		} catch (error) {
+			console.log(error.message);
+		}
 	}
 }
 
-const inputStr = '[1, 2, "a,    b"]';
+const inputStr = '[1, "TRUE", ["false", "stririring"], "null", 3, [4]]';
 const myArrayParser = new ArrayParser();
-myArrayParser.arrayParser(inputStr);
+console.log(JSON.stringify(myArrayParser.arrayParser(inputStr), null, 2));
