@@ -4,7 +4,7 @@ class Parser {
   }
 
   checkTypeExceptArray(InputType) {
-    const typeArr = ["string", "number", "boolean", "null"];
+    const typeArr = ["string", "number", "boolean", "null", "object-key"];
     return typeArr.includes(InputType);
   }
 
@@ -25,10 +25,28 @@ class Parser {
     this.tokenStack.push(updateParentToken);
   }
 
+  checkParentTokenisObj(currentParentToken) {
+    if (currentParentToken._type === "object") {
+      if (currentParentToken._child.length > 0) {
+        if (
+          currentParentToken._child[currentParentToken._child.length - 1]
+            ._type == "object-key"
+        ) {
+          return true;
+        }
+      }
+    }
+  }
+
   updateTokenStack(currentChildToken) {
     const currentParentToken = this.findParentToken();
-    if (currentParentToken._type === "object") {
-      currentParentToken._value = currentChildToken._value;
+
+    if (this.checkParentTokenisObj(currentParentToken)) {
+      currentParentToken._child[currentParentToken._child.length - 1]._value =
+        currentChildToken._value;
+      currentParentToken._child[currentParentToken._child.length - 1]._type =
+        currentChildToken._type;
+
       this.pushParentToken(currentParentToken);
     } else {
       const updateParentToken = this.addChildTokenToParentToken(
@@ -39,17 +57,16 @@ class Parser {
     }
   }
 
-  updateObjTokenStack(currentChildToken) {
-    const currentParentToken = this.findParentToken();
-    currentParentToken._key = currentChildToken._key;
-    const updateParentToken = currentParentToken;
-    this.pushParentToken(updateParentToken);
-  }
+  // updateObjTokenStack(currentChildToken) {
+  //   const currentParentToken = this.findParentToken();
+  //   currentParentToken._key = currentChildToken._key;
+  //   const updateParentToken = currentParentToken;
+  //   this.pushParentToken(updateParentToken);
+  // }
 
   updateObjEndToken() {
     const currentChildToken = this.findParentToken();
     const currentParentToken = this.findParentToken();
-
     const updateParentToken = this.addChildTokenToParentToken(
       currentParentToken,
       currentChildToken
@@ -66,8 +83,6 @@ class Parser {
         this.tokenStack.push(token);
       } else if (this.checkTypeExceptArray(token._type)) {
         this.updateTokenStack(token);
-      } else if (token._type === "object-key") {
-        this.updateObjTokenStack(token);
       } else if (token._type === "object-end") {
         this.updateObjEndToken(token);
       } else if (token._type === "array-end") {
@@ -79,7 +94,6 @@ class Parser {
           this.updateTokenStack(topToken);
         }
       }
-      console.log(this.tokenStack);
     });
     return result;
   }
