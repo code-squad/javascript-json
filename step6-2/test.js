@@ -106,6 +106,32 @@ const Test = class {
         })
     }
 
+    // string 데이터를 유의미한 token 단위의 데이터로 분할 후 배열에 넣음
+    tokenizerTest() {
+        const testStr = [
+            "[1,2,3,4,5]",
+            "[true, false]",
+            "['1a3',[null,false,['11',[112233],112],55,'99'], 33 , true]",
+            '["[honux] I say \"Hello, world\""]',
+        ]
+
+        const expectedCases = [
+            ['[', '1', '2', '3', '4', '5', ']'],
+            ['[', 'true', 'false', ']'],
+            ['[', '\'1a3\'', '[', 'null', 'false', '[', '\'11\'', '[', '112233', ']', '112', ']', '55', '\'99\'', ']', '33', 'true', ']'],
+            ['[', '\"[honux] I say \"Hello, world\"\"', ']'],
+        ]
+
+        const testCases = testStr.reduce((acc, str) => {
+            const arrayParser = new ArrayParser(str);
+            acc.push(arrayParser.tokenizer());
+            return acc;
+        }, [])
+
+        testCases.forEach((testCase, index) => {
+            test.assertArrayEquals(expectedCases[index], testCase, this.tokenizerTest)
+        })
+    }
 
 
 
@@ -113,10 +139,11 @@ const Test = class {
         this.pushAndResetTokenTest();
         this.pushQuoteStackTest();
         this.makeStringTokenTest();
+        this.tokenizerTest();
     }
 }
 
 const runTest = (() => {
     const test = new Test();
-    test.unitTest()
+    test.unitTest();
 })();
