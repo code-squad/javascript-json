@@ -21,7 +21,9 @@ const ArrayParser = class {
         return token = ``;
     }
 
-    
+    isSameQuote(quote, quoteStack) {
+        return quote === quoteStack.peek();
+    }
 }
 
 module.exports = ArrayParser;
