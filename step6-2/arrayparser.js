@@ -1,11 +1,16 @@
 const Stack = require('./stack');
 const utils = require('./parserutils');
+const ParseTree = require('./parsetree');
 
 const ArrayParser = class {
     
     constructor(string) {
         this.string = string;
     }  
+
+    get parsetree() {
+        return new ParseTree({root : null, stack : new Stack()});
+    }
 
     get charType() {
         return {
@@ -95,6 +100,19 @@ const ArrayParser = class {
             return acc;
         }, [])
          return lexicalObjArr;
+    }
+    
+    parser() {
+        const parsetree = this.parsetree;
+        this.lexer().forEach((obj) => {
+            parsetree.insert(obj);
+        });
+
+        if (!parsetree.stack.isEmpty()) {
+            throw new Error('올바른 데이터 형식이 아닙니다 (시작 괄호가 더 많습니다)');
+         }
+         
+        return parsetree.root;
     }
 }
 
