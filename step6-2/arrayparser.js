@@ -68,6 +68,25 @@ const ArrayParser = class {
         }
     }
 
+    tokenizer() {
+        let token = ``;
+        const tokenArr = [];
+        const quoteStack = new Stack();
+        
+        this.string.split("").forEach((char) => {
+            this.pushQuoteStack(char, quoteStack, this.charType.stringArr);
+
+            if (this.charType.tokenArr.includes(char) && quoteStack.isEmpty()) {
+                token = this.makeStringToken(this.charType.stringArr, tokenArr, token, char);
+                this.pushBracket(char, tokenArr, this.charType.bracketArr);
+            } else {
+                token+=char;
+            }
+        })
+        return tokenArr;
+    }
+
+
     
 
 }
