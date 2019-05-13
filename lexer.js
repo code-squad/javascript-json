@@ -1,8 +1,29 @@
 const lexer = {
-    //Todo : String 에 ',' ' ' '[]' 포함하면 ...?, 마지막에 시간 남으면 해보기.
     tokenize(string) {
-        const noWhiteSpaceString = string.replace(/ /g, '');
-        return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => value);
+        let token = '';
+        let isString = false;
+        const tokens = [];
+
+        for(let i = 0; i < string.length; i++) {
+            if(string[i] === '[') tokens.push(string[i]);
+            else if(string[i] === ']') {
+                tokens.push(token);
+                tokens.push(string[i]);
+            } else if(string[i] === ',' && !isString) {
+                tokens.push(token); 
+                token = '';
+            } else if(string[i] === ' ' && !isString) {
+            } else if(string[i] === "'" || string[i] === '"') {
+                token += string[i];
+                if(isString) {
+                    isString = false;
+                    continue;
+                }
+                isString = true;
+            }
+            else token += string[i];
+        }
+        return tokens;
     },
     
     lex(string) {

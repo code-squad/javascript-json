@@ -43,13 +43,8 @@ class ArrayParser {
     }
 }
 
-const str = "['1a'3',[22,23,[11,[112233],112],55],33]";
+//const str3 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+const str = "['1 2', '3,4', 'fdsa', 33, true, false       ]";
 const result = ArrayParser.run(str);
-
-const str2 = "['1a3',[22,23,[11,[112233],112],55],3d3]";
-const result2 = ArrayParser.run(str2);
-
-const str3 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const result3 = ArrayParser.run(str3);
-console.log(JSON.stringify(result3, null, 2)); 
+console.log(JSON.stringify(result, null, 2)); 
 
