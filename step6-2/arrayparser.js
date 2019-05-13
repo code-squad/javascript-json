@@ -1,4 +1,5 @@
 const Stack = require('./stack');
+const utils = require('./parserutils');
 
 const ArrayParser = class {
     
@@ -86,9 +87,15 @@ const ArrayParser = class {
         return tokenArr;
     }
 
-
-    
-
+    lexer() {
+        const lexicalObjArr = this.tokenizer().reduce((acc, token) => {
+            let tokenObj = {};
+            [tokenObj.type, tokenObj.value, tokenObj.child] = [utils.getDataType(token), token, []];
+            acc.push(tokenObj);
+            return acc;
+        }, [])
+         return lexicalObjArr;
+    }
 }
 
 module.exports = ArrayParser;
