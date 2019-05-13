@@ -133,13 +133,80 @@ const Test = class {
         })
     }
 
+    // tokenzer 데이터를 type 분류 후 {type, value, child} 로 객체 생성
+    lexerTest() {
 
+        const testStr = [
+            "[1,2,3,4,5]",
+            "[true, false]",
+            "['1a3',[null,false,['11',[112233],112],55,'99'], 33 , 'true']",
+            '["[honux] I say \"Hello, world\""]',
+        ]
+
+        const expectedCases = [
+            [ 
+                { type: 'array', value: '[', child: [] },
+                { type: 'number', value: '1', child: [] },
+                { type: 'number', value: '2', child: [] },
+                { type: 'number', value: '3', child: [] },
+                { type: 'number', value: '4', child: [] },
+                { type: 'number', value: '5', child: [] },
+                { type: 'endArray', value: ']', child: [] } 
+            ],
+            
+            [
+                { type: 'array', value: '[', child: [] },
+                { type: 'boolean', value: 'true', child: [] },
+                { type: 'boolean', value: 'false', child: [] },
+                { type: 'endArray', value: ']', child: [] } 
+            ],
+    
+            [ 
+                { type: 'array', value: '[', child: [] },
+                { type: 'string', value: '\'1a3\'', child: [] },
+                { type: 'array', value: '[', child: [] },
+                { type: 'null', value: 'null', child: [] },
+                { type: 'boolean', value: 'false', child: [] },
+                { type: 'array', value: '[', child: [] },
+                { type: 'string', value: '\'11\'', child: [] },
+                { type: 'array', value: '[', child: [] },
+                { type: 'number', value: '112233', child: [] },
+                { type: 'endArray', value: ']', child: [] },
+                { type: 'number', value: '112', child: [] },
+                { type: 'endArray', value: ']', child: [] },
+                { type: 'number', value: '55', child: [] },
+                { type: 'string', value: '\'99\'', child: [] },
+                { type: 'endArray', value: ']', child: [] },
+                { type: 'number', value: '33', child: [] },
+                { type: 'string', value: '\'true\'', child: [] },
+                { type: 'endArray', value: ']', child: [] } 
+            ],
+
+            [ 
+                { type: 'array', value: '[', child: [] },
+                { type: 'string', value: '"[honux] I say \"Hello, world\""', child: [] },
+                { type: 'endArray', value: ']', child: [] },
+
+            ]
+        ]
+
+        const testCases = testStr.reduce((acc, str) => {
+            const arrayParser = new ArrayParser(str);
+            acc.push(arrayParser.lexer());
+            return acc;
+        }, [])
+    
+        testCases.forEach((testCase, index) => {
+            test.assertObjArrEquals(expectedCases[index], testCase , this.lexerTest)
+        })
+    }
 
     unitTest() {
         this.pushAndResetTokenTest();
         this.pushQuoteStackTest();
         this.makeStringTokenTest();
         this.tokenizerTest();
+        this.lexerTest();
     }
 }
 
