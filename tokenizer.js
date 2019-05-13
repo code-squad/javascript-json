@@ -5,6 +5,17 @@ class Tokenizer {
     return inputStr;
   }
 
+  addCommaToBrace(inputStr) {
+    inputStr = inputStr.replace(/\{/g, "{,");
+    inputStr = inputStr.replace(/\}/g, ",}");
+    return inputStr;
+  }
+
+  addCommaToColon(inputStr) {
+    inputStr = inputStr.replace(/\:/g, ":,");
+    return inputStr;
+  }
+
   removeWhiteSpace(inputStr) {
     return inputStr.replace(/\s/g, "");
   }

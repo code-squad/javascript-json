@@ -21,6 +21,7 @@ class Lexer {
   }
 
   makeToken(tokenizeredData) {
+    let objKey;
     const lexeredData = tokenizeredData.map(element => {
       if (element === "[") {
         return new Token({ type: "array" });
@@ -33,6 +34,18 @@ class Lexer {
       }
       if (element === "true" || element === "false") {
         return new Token({ type: "boolean", value: element });
+      }
+      if (element === "{") {
+        return new Token({ type: "object" });
+      }
+      if (element[element.length - 1] === ":") {
+        // console.log(element);
+        objKey = element.slice(1, element.length - 2);
+        // console.log(objValue);
+        return new Token({ type: "object-key", key: objKey });
+      }
+      if (element === "}") {
+        return new Token({ type: "object-end" });
       }
       if (this.isStr(element)) {
         return new Token({ type: "string", value: element });

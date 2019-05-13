@@ -27,6 +27,36 @@ class Parser {
 
   updateTokenStack(currentChildToken) {
     const currentParentToken = this.findParentToken();
+    console.log(currentChildToken);
+    console.log(currentParentToken);
+    if (currentParentToken._type === "object") {
+      currentParentToken._value = currentChildToken._value;
+      this.pushParentToken(currentParentToken);
+    } else {
+      const updateParentToken = this.addChildTokenToParentToken(
+        currentParentToken,
+        currentChildToken
+      );
+      console.log(updateParentToken);
+      this.pushParentToken(updateParentToken);
+    }
+  }
+
+  updateObjTokenStack(currentChildToken) {
+    const currentParentToken = this.findParentToken();
+    console.log(currentChildToken);
+    console.log(currentParentToken);
+    currentParentToken._key = currentChildToken._key;
+    const updateParentToken = currentParentToken;
+    // console.log("=============");
+    console.log(updateParentToken);
+    this.pushParentToken(updateParentToken);
+  }
+
+  updateObjEndToken() {
+    const currentChildToken = this.findParentToken();
+    const currentParentToken = this.findParentToken();
+
     const updateParentToken = this.addChildTokenToParentToken(
       currentParentToken,
       currentChildToken
@@ -39,10 +69,15 @@ class Parser {
     let result;
 
     lexeredData.forEach((token, index) => {
-      if (token._type === "array") {
+      // console.log(token);
+      if (token._type === "array" || token._type === "object") {
         this.tokenStack.push(token);
       } else if (this.checkTypeExceptArray(token._type)) {
         this.updateTokenStack(token);
+      } else if (token._type === "object-key") {
+        this.updateObjTokenStack(token);
+      } else if (token._type === "object-end") {
+        this.updateObjEndToken(token);
       } else if (token._type === "array-end") {
         topToken = this.findParentToken();
 
@@ -52,6 +87,8 @@ class Parser {
           this.updateTokenStack(topToken);
         }
       }
+      console.log(this.tokenStack);
+      console.log("================");
     });
     return result;
   }
