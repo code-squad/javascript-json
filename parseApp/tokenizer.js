@@ -48,6 +48,10 @@ class Tokenizer {
       throw new Error(this.messageObj.INVALID_STRING);
     }
 
+    if (this.isEmpty(tokens)) {
+      throw new Error(this.messageObj.EMPTY_STRING);
+    }
+
     return tokens;
   }
 }
