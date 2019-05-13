@@ -86,8 +86,10 @@ class Parser {
   parse(node, parseType) {
     while (this.lexedData.length !== 0) {
       const lexedToken = this.getNextToken();
+      const { context } = lexedToken;
+      let { newNode } = lexedToken;
 
-      if (this.isClosingContext(lexedToken.context)) {
+      if (this.isClosingContext(context)) {
         if (!this.isValidClosing()) {
           throw new Error(this.messageObj.INVALID_GROUP);
         }
@@ -96,12 +98,12 @@ class Parser {
         return node;
       }
 
-      if (this.isOpeningContext(lexedToken.context)) {
-        lexedToken.newNode = this.run(lexedToken, lexedToken.newNode.type);
+      if (this.isOpeningContext(context)) {
+        newNode = this.run(lexedToken, newNode.type);
       }
 
       if (parseType === 'Array') {
-        if (this.isSeperatorContext(lexedToken.context)) {
+        if (this.isSeperatorContext(context)) {
           throw new Error(this.messageObj.START_SEPERATOR);
         }
 
@@ -111,12 +113,12 @@ class Parser {
       }
 
       if (parseType === 'Object') {
-        lexedToken.newNode.context = 'key';
+        newNode.context = 'key';
         this.passObjectSeperator();
-        lexedToken.newNode.child.push(this.getValueNode());
+        newNode.child.push(this.getValueNode());
       }
 
-      node.pushChild(lexedToken.newNode);
+      node.pushChild(newNode);
     }
   }
 
@@ -125,10 +127,12 @@ class Parser {
       lexedToken = this.getNextToken();
     }
 
-    if (this.isOpeningContext(lexedToken.context)) {
-      this.parseStack.push(lexedToken.context);
+    const { context, newNode } = lexedToken;
 
-      return this.parse(lexedToken.newNode, lexedToken.newNode.type);
+    if (this.isOpeningContext(context)) {
+      this.parseStack.push(context);
+
+      return this.parse(newNode, newNode.type);
     }
   }
 }
