@@ -45,6 +45,14 @@ const ArrayParser = class {
         }
     }
 
+    get pushBracket() {
+        return (char, tokenArr, bracketPropertyArr) => {
+            if (bracketPropertyArr.includes(char)) {
+                tokenArr.push(char);
+            }
+        }
+    }
+
     
 
 }
