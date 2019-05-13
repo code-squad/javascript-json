@@ -20,6 +20,34 @@ const test = {
             this.logFail(actual, expected, testFunction);
         }
     },
+
+    // 배열 
+    // todo : 재귀나 while 이용해 배열의 n depth 까지 검사하도록 개선 필요
+    assertArrayEquals(expectedArr, actualArr, testFunction) {
+
+        if (expectedArr.length === 0 && actualArr.length === 0) {
+            this.logSuccess('빈배열', '빈배열', testFunction);
+        }
+
+        let flag = true;
+        expectedArr.forEach((val, index) => {
+            if(this.assertEquals(val, actualArr[index], testFunction)) {
+                flag = false;
+            };
+        })
+
+        if(flag) {
+            console.log('========================================================')
+            this.logSuccess(actualArr, expectedArr, testFunction);
+            console.log('========================================================')
+            return;
+        } else {
+            console.log('========================================================')
+            this.logFail(actualArr, expectedArr, testFunction);
+            console.log('========================================================')
+            return;
+        }
+    },
 }
 
 module.exports = test;
