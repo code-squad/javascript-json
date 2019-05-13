@@ -27,8 +27,6 @@ class Parser {
 
   updateTokenStack(currentChildToken) {
     const currentParentToken = this.findParentToken();
-    console.log(currentChildToken);
-    console.log(currentParentToken);
     if (currentParentToken._type === "object") {
       currentParentToken._value = currentChildToken._value;
       this.pushParentToken(currentParentToken);
@@ -37,19 +35,14 @@ class Parser {
         currentParentToken,
         currentChildToken
       );
-      console.log(updateParentToken);
       this.pushParentToken(updateParentToken);
     }
   }
 
   updateObjTokenStack(currentChildToken) {
     const currentParentToken = this.findParentToken();
-    console.log(currentChildToken);
-    console.log(currentParentToken);
     currentParentToken._key = currentChildToken._key;
     const updateParentToken = currentParentToken;
-    // console.log("=============");
-    console.log(updateParentToken);
     this.pushParentToken(updateParentToken);
   }
 
@@ -69,7 +62,6 @@ class Parser {
     let result;
 
     lexeredData.forEach((token, index) => {
-      // console.log(token);
       if (token._type === "array" || token._type === "object") {
         this.tokenStack.push(token);
       } else if (this.checkTypeExceptArray(token._type)) {
@@ -88,7 +80,6 @@ class Parser {
         }
       }
       console.log(this.tokenStack);
-      console.log("================");
     });
     return result;
   }
