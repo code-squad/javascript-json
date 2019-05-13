@@ -53,6 +53,21 @@ const ArrayParser = class {
         }
     }
 
+    get makeStringToken() {
+        return (stringPropertyArr, tokenArr, token, char) => {
+            if (stringPropertyArr.includes(token[0])) {
+                if (token[0] === (token[token.length-1])) {
+                    token = this.pushAndResetToken(token, tokenArr);
+                } else {
+                    token+=char;
+                }
+            } else {
+                token = this.pushAndResetToken(token, tokenArr);
+            }
+            return token;
+        }
+    }
+
     
 
 }
