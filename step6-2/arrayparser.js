@@ -14,6 +14,13 @@ const ArrayParser = class {
         }
     }
 
+    pushAndResetToken(token, tokenArr) {
+        if (token !== ``) {
+            tokenArr.push(token.trim());
+        }
+        return token = ``;
+    }
+
     
 }
 
