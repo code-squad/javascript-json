@@ -28,6 +28,25 @@ const ArrayParser = class {
             return quote === quoteStack.peek();
         }
     }
+
+    get pushQuoteStack() {
+        return (quote, quoteStack, stringPropertyArr) => {
+            if (stringPropertyArr.includes(quote)) {
+                if (quoteStack.isEmpty()) {
+                    quoteStack.push(quote);
+                } else {
+                    if (this.isSameQuote(quote, quoteStack)) {
+                        quoteStack.pop();
+                    } else {
+                        quoteStack.push(quote);
+                    }
+                }
+            }
+        }
+    }
+
+    
+
 }
 
 module.exports = ArrayParser;
