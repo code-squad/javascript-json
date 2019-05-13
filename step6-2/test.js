@@ -41,8 +41,40 @@ const Test = class {
         })
     }
 
+    // single quote, double quote 둘 중 하나가 존재할 시, quoteStack이 비어있으면 stack에 push
+    // quoteStack이 비어있지 않으면 peek()을 사용해 동일한 quote일 경우 pop, 동일하지 않을 경우 push
+    pushQuoteStackTest() {
+        const testCases = [
+            "\"this is paired double\"",
+            '\'this is paired sigle\'',
+            "\' this is unpaired",
+            '"this is not paired" too "'
+        ]
+
+        const expectedCases = [
+            [],
+            [],
+            ['\''],
+            ['\"']
+        ]
+
+        const arrayParser = new ArrayParser('');
+        const stringArr = ['\'','\"'];
+
+        testCases.forEach((testCase, index) => {
+            const quoteStack = new Stack();
+            testCase.split("").forEach((char) => {
+                arrayParser.pushQuoteStack(char, quoteStack, stringArr);
+            })
+
+            test.assertArrayEquals(expectedCases[index], quoteStack.stack, this.pushQuoteStackTest);
+        })
+    }
+
+
     unitTest() {
         this.pushAndResetTokenTest();
+        this.pushQuoteStackTest();
     }
 }
 
