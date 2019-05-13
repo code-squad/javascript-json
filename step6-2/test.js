@@ -71,10 +71,48 @@ const Test = class {
         })
     }
 
+    // 1.token의 첫번째 char가 quote 종류 중 하나면
+    //      1. token의 마지막 char가 token의 첫번째 quote와 동일할 때 문자가 끝난 것으로 간주, token을 push
+    //      2. 일치하지 않을 경우 문자열을 token에 계속 더해나감
+    makeStringTokenTest() {
+        const testCases = [
+            '\'this is string ',
+            "\"this is string ",
+            '\"12345\'Token '
+        ]
+
+        const expectedCases = [
+            '\'this is string token\'',
+            "\"this is string token\"",
+            "\"12345\'Token not Ended'"
+        ]
+
+        const chars = [
+            'token\'',
+            'token\"',
+            'not Ended\''
+        ]
+
+        const stringArr = ['\'','\"'];
+        let token = ``;
+        
+        const tokenArr = [];
+        testCases.forEach((testStr, index) => {
+            token = testStr;
+            const arrayParser = new ArrayParser(testStr);
+            token = arrayParser.makeStringToken(stringArr, tokenArr, token, chars[index]);
+            
+            test.assertEquals(expectedCases[index], token, this.makeStringTokenTest);
+        })
+    }
+
+
+
 
     unitTest() {
         this.pushAndResetTokenTest();
         this.pushQuoteStackTest();
+        this.makeStringTokenTest();
     }
 }
 
