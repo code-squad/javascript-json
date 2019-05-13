@@ -14,15 +14,19 @@ const ArrayParser = class {
         }
     }
 
-    pushAndResetToken(token, tokenArr) {
-        if (token !== ``) {
-            tokenArr.push(token.trim());
+    get pushAndResetToken() {
+        return (token, tokenArr) => {
+            if (token !== ``) {
+                tokenArr.push(token.trim());
+            }
+            return token = ``;
         }
-        return token = ``;
     }
 
-    isSameQuote(quote, quoteStack) {
-        return quote === quoteStack.peek();
+    get isSameQuote() {
+        return (quote, quoteStack) => {
+            return quote === quoteStack.peek();
+        }
     }
 }
 
