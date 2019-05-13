@@ -201,6 +201,28 @@ const Test = class {
         })
     }
 
+    // todo : parserTest는 대체 어떻게 검증하지..? JSON.parse(JSON.stringfy(...))로 변환한 다음에 객체를 순회하면서 값을 검증해야 하나?
+    // 그럼 expected 값은 직접 일일이 다 적어야 되나?
+    // 검증 방법과 검증할 수 있는 test tool 필요
+    parserTest() {
+        const testStr = [
+            "[1,2,3,4,5]",
+            "[true, false]",
+            "['1a3',[null,false,['11',[112233],112],55,'99'], 33 , 'true']",
+            '["[honux] I say \"Hello, world\""]',
+        ]
+
+        const testCases = testStr.reduce((acc, str) => {
+            const arrayParser = new ArrayParser(str);
+            acc.push(arrayParser.parser());
+            return acc;
+        }, [])
+
+        testCases.forEach((testCase, index) => {
+            console.log(JSON.stringify(testCase, null, 5));
+        })
+    }
+
     unitTest() {
         this.pushAndResetTokenTest();
         this.pushQuoteStackTest();
@@ -208,9 +230,14 @@ const Test = class {
         this.tokenizerTest();
         this.lexerTest();
     }
+
+    integrationTest() {
+        this.parserTest();
+    }
 }
 
 const runTest = (() => {
     const test = new Test();
     test.unitTest();
+    test.integrationTest();
 })();
