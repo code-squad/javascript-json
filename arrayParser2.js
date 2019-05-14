@@ -57,20 +57,30 @@ const ArrayParser = class {
     }
 
     parser(lexerArr) {
-        lexerArr.forEach((el)=>{
-            let elIndex = lexerArr.indexOf(el)
-            if(el.value ==="["){
-                this.openBracketIdxStack.push(lexerArr.indexOf(el))
-                this.parserArr.push(lexerArr[elIndex])
-            }else if(el.value === ']'){ 
+        lexerArr.forEach((lexerObj)=>{
+            let lexerObjIndex = lexerArr.indexOf(lexerObj)
+            if(lexerObj.value ==="["){
+                this.openBracketIdxStack.push(lexerArr.indexOf(lexerObj))
+                this.parserArr.push(lexerArr[lexerObjIndex])
+            }else if(lexerObj.value === ']'){ 
                 this.openBracketIdxStack.pop();
             }else{
-                this.parserArr[this.openBracketIdxStack.length-1].child.push(el)
+                this.parserArr[this.openBracketIdxStack.length-1].child.push(lexerObj)
             }
         })
+        this.parserArr.reverse();
+        this.parserArr.forEach((parserObj)=>{
+            let parserObjIndex = this.parserArr.indexOf(parserObj)
+            if(parserObjIndex !==0){
+                parserObj.child.push(this.parserArr[parserObjIndex-1])
+            }
+        })
+        this.parserArr = this.parserArr[this.parserArr.length-1]
         
         return this.parserArr 
     }
+
+
  }
 
 const arrayParser = new ArrayParser()
