@@ -18,6 +18,13 @@ class Parser {
 
   addChildTokenToParentToken(currentParentToken, currentChildToken) {
     currentParentToken._child.push(currentChildToken);
+
+    // if (
+    //   currentParentToken._type == "object" &&
+    //   currentChildToken._type == "object-key"
+    // ) {
+    //   currentParentToken._child._key = currentChildToken._key;
+    // }
     return currentParentToken;
   }
 
@@ -48,7 +55,7 @@ class Parser {
       //currentChildToken._child가 없고, 원소 값이 들어 있다면
       //currentParentToken._child에 child.value를 넣고
       if (currentChildToken._child.length > 0) {
-        currentParentToken._child[currentParentToken._child.length - 1]._value =
+        currentParentToken._child[currentParentToken._child.length - 1]._child =
           currentChildToken._child;
       } else {
         currentParentToken._child[currentParentToken._child.length - 1]._value =

@@ -53,4 +53,4 @@ const result = arrayParser.startParsing(targetStr);
 
 console.log(result);
 console.log("=======");
-console.log(JSON.stringify(result));
+console.log(JSON.stringify(result, null, 2));

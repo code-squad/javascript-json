@@ -39,7 +39,7 @@ class Lexer {
         return new Token({ type: "object" });
       }
       if (element[element.length - 1] === ":") {
-        objKey = element.slice(1, element.length - 2);
+        objKey = element.slice(0, element.length - 1);
         return new Token({ type: "object-key", value: [], key: objKey });
       }
       if (element === "}") {
