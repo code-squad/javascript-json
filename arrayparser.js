@@ -32,12 +32,22 @@ const lexer = new Lexer();
 const parser = new Parser();
 const arrayParser = new ArrayParser(tokenizer, lexer, parser);
 
+//<!--배열이 포함된 string Data-->
 // const targetStr = "[123, 22, 33]";
+
+//<!--중첩된 배열이 포함된 string Data-->
 // const targetStr = "[123, 22, [33]]";
-// const targetStr = "['123',[ '456', '789',['11',['22']],'55', '99'], '33']";
+
+//<!--number, boolean, null 타입이 포함된 배열이 포함된 string Data-->
 // const targetStr = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
-const targetStr = "['1a3',[null, {'easy' : 'hello'},112]]";
-// const targetStr = "['1a3',[null, {'easy' : 'hello', 'middle' : 'world' },112]";
+
+//<!--obj 타입이 포함된 배열이 포함된 string Data-->
+// const targetStr = "['1a3',[null, {'easy' : 'hello', 'middle' : 'world' },112]]"; 객체
+
+//<!--obj의 value에 배열이 포함된 string Data-->
+
+const targetStr =
+  "['1a3',[null,false,['11',[112233],{easy: ['hello', {a:'a'}, 'world']},112],55, '99'],{a:'str', b:[912,[5656,33],{key : 'innervalue', newkeys: [1,2,3,4,5]}]}, true]";
 
 const result = arrayParser.startParsing(targetStr);
 

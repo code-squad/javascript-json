@@ -42,8 +42,18 @@ class Parser {
     const currentParentToken = this.findParentToken();
 
     if (this.checkParentTokenisObj(currentParentToken)) {
-      currentParentToken._child[currentParentToken._child.length - 1]._value =
-        currentChildToken._value;
+      //currentChildToken._child의 길이가 0보다 크면
+      //currentParentToken._child[]에 child._child 배열을 넣고
+
+      //currentChildToken._child가 없고, 원소 값이 들어 있다면
+      //currentParentToken._child에 child.value를 넣고
+      if (currentChildToken._child.length > 0) {
+        currentParentToken._child[currentParentToken._child.length - 1]._value =
+          currentChildToken._child;
+      } else {
+        currentParentToken._child[currentParentToken._child.length - 1]._value =
+          currentChildToken._value;
+      }
       currentParentToken._child[currentParentToken._child.length - 1]._type =
         currentChildToken._type;
 

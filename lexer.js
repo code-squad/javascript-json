@@ -40,7 +40,7 @@ class Lexer {
       }
       if (element[element.length - 1] === ":") {
         objKey = element.slice(1, element.length - 2);
-        return new Token({ type: "object-key", key: objKey });
+        return new Token({ type: "object-key", value: [], key: objKey });
       }
       if (element === "}") {
         return new Token({ type: "object-end" });
