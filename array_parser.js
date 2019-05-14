@@ -7,21 +7,35 @@ class ArrayParser {
 		const stack = [];
 		const tokens = [];
 		let makeStr = '';
+		let doubleQuotes = false;
 
 		for (let char of inputStr) {
 			if (stack.length === 0) {
-				if (char === "'" || char === '"') {
-					stack.push(char);
-				} else if (char !== ' ') {
+				if (char === '[' || char === ']' || char === ',' || char === ' ') {
+					if (makeStr !== '') {
+						tokens.push(makeStr);
+						makeStr = '';
+					}
 					tokens.push(char);
-				}
-			} else {
-				if (char === "'" || char === '"') {
-					tokens.push(makeStr);
-					makeStr = '';
-					stack.pop();
+				} else if (char === '"' || char === "'") {
+					makeStr += char;
+					stack.push(char);
 				} else {
 					makeStr += char;
+				}
+			} else {
+				if (char === '"' || char === "'") {
+					makeStr += char;
+					doubleQuotes = true;
+				} else if ((char === ',' || char === ']') && doubleQuotes === true) {
+					tokens.push(makeStr);
+					tokens.push(char);
+					stack.pop();
+					makeStr = '';
+					doubleQuotes = false;
+				} else {
+					makeStr += char;
+					doubleQuotes = false;
 				}
 			}
 		}
@@ -91,14 +105,13 @@ class ArrayParser {
 	arrayParser(inputStr) {
 		try {
 			const tokens = this.tokenizer(inputStr);
-			const lexerArr = this.lexer(tokens);
-			return this.parser(lexerArr);
+			console.log(tokens);
 		} catch (error) {
 			console.log(error.message);
 		}
 	}
 }
 
-const inputStr = '[1, "TRUE", [4]]';
+const inputStr = '[1, true, "abc", ["4"b"]]';
 const myArrayParser = new ArrayParser();
-console.log(JSON.stringify(myArrayParser.arrayParser(inputStr), null, 2));
+myArrayParser.arrayParser(inputStr);
