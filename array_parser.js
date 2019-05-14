@@ -38,19 +38,19 @@ class ArrayParser {
 		}
 		if (token === ']') {
 			return { type: 'rightBracket', value: token };
-		} else {
-			const lowerStrToken = token.toLowerCase();
-			if (lowerStrToken === 'true') {
-				return { type: 'boolean', value: token };
-			}
-			if (lowerStrToken === 'false') {
-				return { type: 'boolean', value: token };
-			}
-			if (lowerStrToken === 'null') {
-				return { type: 'null', value: token };
-			}
-			return { type: 'string', value: token };
 		}
+
+		const lowerStrToken = token.toLowerCase();
+		if (lowerStrToken === 'true') {
+			return { type: 'boolean', value: token };
+		}
+		if (lowerStrToken === 'false') {
+			return { type: 'boolean', value: token };
+		}
+		if (lowerStrToken === 'null') {
+			return { type: 'null', value: token };
+		}
+		return { type: 'string', value: token };
 	}
 
 	lexer(tokens) {
@@ -99,6 +99,6 @@ class ArrayParser {
 	}
 }
 
-const inputStr = '[1, "TRUE", ["false", "stririring"], "null", 3, [4]]';
+const inputStr = '[1, "TRUE", [4]]';
 const myArrayParser = new ArrayParser();
 console.log(JSON.stringify(myArrayParser.arrayParser(inputStr), null, 2));
