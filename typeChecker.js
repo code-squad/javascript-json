@@ -23,6 +23,9 @@ const typeChecker = {
     },    
     isString (value) {
         return (/^'.+'$/g.test(value) || /^".+"$/g.test(value)) && this.isValidString(value)
+    },
+    isSperator (value) {
+        return /\[|\]|,|:|\{|\}/.test(value)
     }
 }
 module.exports = typeChecker;
