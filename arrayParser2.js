@@ -1,4 +1,6 @@
-const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
+//const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
+//const str = "['1a'3']"
+const str = "[3d3]"
 
 const ArrayParser = class {
     constructor(){
@@ -41,11 +43,17 @@ const ArrayParser = class {
                 }else if (!isNaN(token)){
                     lexerToken = Number(token)
                 }else if(token[0] === "'"){
-                    lexerToken = token.match(/\w+/g)[0]
+                    if(token.match(/'/g).length%2 === 0){
+                        lexerToken = token.match(/\w+/g)[0]
+                    }else{
+                        throw new Error("'1a'3'은 올바른 문자열이 아닙니다!")
+                    }
                 }else if(token === "null"){
                     lexerToken = null
                 }else if(token === "true" || token === "false"){
                     lexerToken = Boolean(token)
+                }else{
+                    throw new Error("3d3은 알수 없는 타입입니다")
                 }
                 lexerObj.type = typeof(lexerToken)
                 lexerObj.value = lexerToken
