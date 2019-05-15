@@ -1,5 +1,5 @@
 const errorMsg = require('./errorMsg.js');
-const str = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]"
+const str = "['1a3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]"
 
 // Error Case
 // const str = "['1a'3']"
@@ -39,11 +39,9 @@ const ArrayParser = class {
             if (token === '[' || token === ']'){
                 lexerObj.type = "array"
                 lexerObj.value = token
+                lexerToken = token
             }else{
-                if((token === '[' || token === ']')){
-                    lexerObj.type = "array"
-                    lexerToken = token
-                }else if (!isNaN(token)){
+                if (!isNaN(token)){
                     lexerToken = Number(token)
                 }else if(token[0] === "'"){
                     if(token.match(/'/g).length%2 === 0){
@@ -54,7 +52,7 @@ const ArrayParser = class {
                 }else if(token === "null"){
                     lexerToken = null
                 }else if(token === "true" || token === "false"){
-                    lexerToken = Boolean(token)
+                    token === "true" ? lexerToken = true : lexerToken = false 
                 }else{
                     throw new Error(errorMsg.syntaxError(token))
                 }
