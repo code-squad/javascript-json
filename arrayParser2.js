@@ -14,21 +14,23 @@ const ArrayParser = class {
     }
     tokenizer(str){
         let word = ""
-        for(let i = 0; i<str.length; i++){
-            if(str[i] === "[" || str[i] === "," || str[i] === "]"){
+        for(let token of str){
+            if(token === "[" || token === "," || token === "]"){
                 this.tokenArr.push(word)                                        
                 word = ""
-                if(str[i] === "[" || str[i] === "]"){this.tokenArr.push(str[i])} //배열 토큰 푸쉬
+                if(token === "[" || token === "]"){this.tokenArr.push(token)} 
             }else{
-                if(!(str[i] ===" " && str[i] === "[")){word = word + str[i].trim()} //일반 토큰 생성
+                word = word + token.trim() 
             }
         }
+
         this.removeToken(this.tokenArr,"")
+        
         return this.tokenArr
     }
 
     removeToken(arr,token){
-        arr.forEach((arrParam) => {if(arrParam===token){arr.splice(arr.indexOf(token),1)}})
+        this.tokenArr  =  arr.filter(el => el !== token)
     }
 
 
@@ -97,6 +99,8 @@ const ArrayParser = class {
 
 const arrayParser = new ArrayParser()
 
+const token = arrayParser.tokenizer(str)
 const parser = arrayParser.parser(str)
 console.log(JSON.stringify(parser, null, 2))
+console.log(token)
 
