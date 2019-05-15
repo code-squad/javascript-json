@@ -38,22 +38,21 @@ const ArrayParser = class {
         tokenArr.forEach((token)=>{
             const lexerObj = {}
             let lexerToken
-            if (token === '[' || token === ']'){
+            if (this.isArray(token)){
                 lexerObj.type = "array"
                 lexerObj.value = token
-                lexerToken = token
             }else{
-                if (!isNaN(token)){
+                if (this.isNumber(token)){
                     lexerToken = Number(token)
-                }else if(token[0] === "'"){
+                }else if(this.isString(token)){
                     if(token.match(/'/g).length%2 === 0){
                         lexerToken = token.match(/\w+/g)[0]
                     }else{
                         throw new Error(errorMsg.notString(token))
                     }
-                }else if(token === "null"){
+                }else if(this.isNull(token)){
                     lexerToken = null
-                }else if(token === "true" || token === "false"){
+                }else if(this.isBoolean(token)){
                     token === "true" ? lexerToken = true : lexerToken = false 
                 }else{
                     throw new Error(errorMsg.syntaxError(token))
@@ -65,6 +64,26 @@ const ArrayParser = class {
             this.lexerArr.push(lexerObj);
         });
         return this.lexerArr;
+    }
+
+    isArray(token){
+        return token === '[' || token === ']' ? true : false
+    }
+    
+    isNumber(token){
+        return !isNaN(token) ? true : false
+    }
+    
+    isString(token){
+        return token[0] === "'" ? true : false
+    }
+
+    isNull(token){
+        return token === "null" ? true : false
+    }
+
+    isBoolean(token){
+        return token === "true" || token === "false" ? true : false
     }
 
     parser(str) {
@@ -100,7 +119,10 @@ const ArrayParser = class {
 const arrayParser = new ArrayParser()
 
 const token = arrayParser.tokenizer(str)
-const parser = arrayParser.parser(str)
-console.log(JSON.stringify(parser, null, 2))
+const lexer = arrayParser.lexer(token)
+//const parser = arrayParser.parser(str)
+//console.log(JSON.stringify(parser, null, 2))
 console.log(token)
+console.log(lexer)
+
 
