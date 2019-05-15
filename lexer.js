@@ -20,6 +20,15 @@ class Lexer {
     }
   }
 
+  isObjKey(element) {
+    return element[element.length - 1] === ":";
+  }
+
+  getKeydatafromObjKey(element) {
+    const objKey = element.slice(0, element.length - 1);
+    return objKey;
+  }
+
   makeToken(tokenizeredData) {
     let objKey;
     const lexeredData = tokenizeredData.map(element => {
@@ -38,9 +47,9 @@ class Lexer {
       if (element === "{") {
         return new Token({ type: "object" });
       }
-      if (element[element.length - 1] === ":") {
-        objKey = element.slice(0, element.length - 1);
-        return new Token({ type: "object-key", value: [], key: objKey });
+      if (this.isObjKey(element)) {
+        objKey = this.getKeydatafromObjKey(element);
+        return new Token({ type: "object-key", key: objKey });
       }
       if (element === "}") {
         return new Token({ type: "object-end" });
