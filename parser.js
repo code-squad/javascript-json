@@ -18,13 +18,6 @@ class Parser {
 
   addChildTokenToParentToken(currentParentToken, currentChildToken) {
     currentParentToken._child.push(currentChildToken);
-
-    // if (
-    //   currentParentToken._type == "object" &&
-    //   currentChildToken._type == "object-key"
-    // ) {
-    //   currentParentToken._child._key = currentChildToken._key;
-    // }
     return currentParentToken;
   }
 
@@ -32,39 +25,58 @@ class Parser {
     this.tokenStack.push(updateParentToken);
   }
 
+  // 부모가 obj인지 검사하는 함수
   checkParentTokenisObj(currentParentToken) {
-    if (currentParentToken._type === "object") {
-      if (currentParentToken._child.length > 0) {
-        if (
-          currentParentToken._child[currentParentToken._child.length - 1]
-            ._type == "object-key"
-        ) {
-          return true;
-        }
+    // const childOfParentToken = currentParentToken._child;
+
+    return currentParentToken._type === "object";
+  }
+
+  // 부모가 child로 obj-key를 가지고 있는 obj인지 검사하는 함수
+  objHasObjectkey(currentParentToken) {
+    if (currentParentToken.length > 0) {
+      const childOfParentToken = currentParentToken._child;
+      const lastTokenOfChild = childOfParentToken.length - 1;
+
+      if (childOfParentToken[lastTokenOfChild]._type == "object-key") {
+        return true;
       }
     }
+  }
+
+  // value가 배열인지 아닌지 검사하는 함수
+  checkChildTokentype(currentChildToken) {
+    const childOfChildToken = currentChildToken._child;
+
+    if (childOfChildToken.length > 0) {
+      // object의 value가 배열인경우
+      return "array";
+    }
+  }
+
+  updataObjParentToken(currentParentToken, currentChildToken) {
+    const childOfParentToken = currentParentToken._child;
+    const lastTokenOfChild = childOfParentToken.length - 1;
+
+    if (checkChildTokentype(currentChildToken) === "array") {
+      childOfParentToken[lastTokenOfChild]._child = currentChildToken._child;
+    } else {
+      // obj의 value가 number, string, boolean의 경우
+      childOfParentToken[lastTokenOfChild]._value = currentChildToken._value;
+    }
+    childOfParentToken[lastTokenOfChild]._type = currentChildToken._type;
+
+    this.pushParentToken(currentParentToken);
   }
 
   updateTokenStack(currentChildToken) {
     const currentParentToken = this.findParentToken();
 
-    if (this.checkParentTokenisObj(currentParentToken)) {
-      //currentChildToken._child의 길이가 0보다 크면
-      //currentParentToken._child[]에 child._child 배열을 넣고
-
-      //currentChildToken._child가 없고, 원소 값이 들어 있다면
-      //currentParentToken._child에 child.value를 넣고
-      if (currentChildToken._child.length > 0) {
-        currentParentToken._child[currentParentToken._child.length - 1]._child =
-          currentChildToken._child;
-      } else {
-        currentParentToken._child[currentParentToken._child.length - 1]._value =
-          currentChildToken._value;
-      }
-      currentParentToken._child[currentParentToken._child.length - 1]._type =
-        currentChildToken._type;
-
-      this.pushParentToken(currentParentToken);
+    if (
+      this.checkParentTokenisObj(currentParentToken) &&
+      this.objHasObjectkey(currentParentToken)
+    ) {
+      this.updataObjParentToken(currentParentToken, currentChildToken);
     } else {
       const updateParentToken = this.addChildTokenToParentToken(
         currentParentToken,
@@ -73,13 +85,6 @@ class Parser {
       this.pushParentToken(updateParentToken);
     }
   }
-
-  // updateObjTokenStack(currentChildToken) {
-  //   const currentParentToken = this.findParentToken();
-  //   currentParentToken._key = currentChildToken._key;
-  //   const updateParentToken = currentParentToken;
-  //   this.pushParentToken(updateParentToken);
-  // }
 
   updateObjEndToken() {
     const currentChildToken = this.findParentToken();
