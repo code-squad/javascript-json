@@ -30,29 +30,39 @@ class Lexer {
   }
 
   makeToken(tokenizeredData) {
-    let objKey;
-    const lexeredData = tokenizeredData.map(element => {
-      if (element === "[") {
+    const typeMap = {
+      "[": function() {
         return new Token({ type: "array" });
-      }
-      if (element === "]") {
+      },
+      "]": function() {
         return new Token({ type: "array-end" });
-      }
-      if (element === "null") {
+      },
+      null: function() {
         return new Token({ type: "null" });
-      }
-      if (element === "true" || element === "false") {
-        return new Token({ type: "boolean", value: element });
-      }
-      if (element === "{") {
+      },
+      true: function() {
+        return new Token({ type: "boolean", value: true });
+      },
+      false: function() {
+        return new Token({ type: "boolean", value: false });
+      },
+      "{": function() {
         return new Token({ type: "object" });
+      },
+      "}": function() {
+        return new Token({ type: "object-end" });
+      }
+    };
+
+    let objKey;
+
+    const lexeredData = tokenizeredData.map(element => {
+      if (Object.keys(typeMap).includes(element)) {
+        return typeMap[element]();
       }
       if (this.isObjKey(element)) {
         objKey = this.getKeydatafromObjKey(element);
         return new Token({ type: "object-key", key: objKey });
-      }
-      if (element === "}") {
-        return new Token({ type: "object-end" });
       }
       if (this.isStr(element)) {
         return new Token({ type: "string", value: element });
