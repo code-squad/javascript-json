@@ -20,19 +20,49 @@ class Lexer {
     }
   }
 
+  isObjKey(element) {
+    return element[element.length - 1] === ":";
+  }
+
+  getKeydatafromObjKey(element) {
+    const objKey = element.slice(0, element.length - 1);
+    return objKey;
+  }
+
   makeToken(tokenizeredData) {
-    const lexeredData = tokenizeredData.map(element => {
-      if (element === "[") {
+    const typeMap = {
+      "[": function() {
         return new Token({ type: "array" });
-      }
-      if (element === "]") {
+      },
+      "]": function() {
         return new Token({ type: "array-end" });
-      }
-      if (element === "null") {
+      },
+      null: function() {
         return new Token({ type: "null" });
+      },
+      true: function() {
+        return new Token({ type: "boolean", value: true });
+      },
+      false: function() {
+        return new Token({ type: "boolean", value: false });
+      },
+      "{": function() {
+        return new Token({ type: "object" });
+      },
+      "}": function() {
+        return new Token({ type: "object-end" });
       }
-      if (element === "true" || element === "false") {
-        return new Token({ type: "boolean", value: element });
+    };
+
+    let objKey;
+
+    const lexeredData = tokenizeredData.map(element => {
+      if (Object.keys(typeMap).includes(element)) {
+        return typeMap[element]();
+      }
+      if (this.isObjKey(element)) {
+        objKey = this.getKeydatafromObjKey(element);
+        return new Token({ type: "object-key", key: objKey });
       }
       if (this.isStr(element)) {
         return new Token({ type: "string", value: element });
