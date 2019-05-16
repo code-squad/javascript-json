@@ -54,6 +54,18 @@ class ArrayParser {
 			return { type: 'rightBracket', value: token };
 		}
 
+		if (token.includes('"') || token.includes("'")) {
+			if (
+				!(
+					(token[0] === '"' || token[0] === "'") &&
+					(token[token.length - 1] === '"' || token[token.length - 1] === "'")
+				)
+			)
+				throw new Error(`${token} 은(는) 올바른 문자열이 아닙니다.`);
+		} else {
+			return { type: 'string', value: token };
+		}
+
 		const lowerStrToken = token.toLowerCase();
 		if (lowerStrToken === 'true') {
 			return { type: 'boolean', value: token };
@@ -64,7 +76,7 @@ class ArrayParser {
 		if (lowerStrToken === 'null') {
 			return { type: 'null', value: token };
 		}
-		return { type: 'string', value: token };
+		throw new Error(`${token} 은(는) 알 수 없는 타입입니다.`);
 	}
 
 	lexer(tokens) {
