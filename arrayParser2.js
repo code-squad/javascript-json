@@ -1,4 +1,6 @@
 const errorMsg = require('./errorMsg.js');
+const Node = require('./node.js');
+
 const str = "['1a3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]"
 
 // Error Case
@@ -32,35 +34,11 @@ const ArrayParser = class {
     removeToken(arr,token){
         this.tokenArr  =  arr.filter(el => el !== token)
     }
-
+    
 
     lexer(tokenArr){
         tokenArr.forEach((token)=>{
-            const lexerObj = {}
-            let lexerToken
-            if (this.isArray(token)){
-                lexerObj.type = "array"
-                lexerObj.value = token
-            }else{
-                if (this.isNumber(token)){
-                    lexerToken = Number(token)
-                }else if(this.isString(token)){
-                    if(token.match(/'/g).length%2 === 0){
-                        lexerToken = token.match(/\w+/g)[0]
-                    }else{
-                        throw new Error(errorMsg.notString(token))
-                    }
-                }else if(this.isNull(token)){
-                    lexerToken = null
-                }else if(this.isBoolean(token)){
-                    token === "true" ? lexerToken = true : lexerToken = false 
-                }else{
-                    throw new Error(errorMsg.syntaxError(token))
-                }
-                lexerObj.type = typeof(lexerToken)
-                lexerObj.value = lexerToken
-            }
-            lexerObj.child = []
+            let lexerObj = this.makeLexerNode(token)
             this.lexerArr.push(lexerObj);
         });
         return this.lexerArr;
@@ -84,6 +62,34 @@ const ArrayParser = class {
 
     isBoolean(token){
         return token === "true" || token === "false" ? true : false
+    }
+
+
+    makeLexerNode(token){
+        if (this.isArray(token)) {
+            return new Node("array", token)
+        }
+        else if (this.isNumber(token)) {
+            return new Node("number", Number(token))
+        }
+        else if (this.isNull(token)) {
+            return new Node("null", null)
+        }
+        else if (this.isBoolean(token)) {
+            token === "true" ? token = true : token = false 
+            return new Node("boolean", token)
+        } 
+        else if (this.isString(token)) {
+            if(token.match(/'/g).length % 2 === 0){
+                token = token.match(/\w+/g)[0]
+                return new Node("string", token)
+            }else{
+                throw new Error(errorMsg.notString(token))
+            }
+        }
+        else {
+            throw new Error(errorMsg.syntaxError(token))
+        }
     }
 
     parser(str) {
@@ -118,11 +124,7 @@ const ArrayParser = class {
 
 const arrayParser = new ArrayParser()
 
-const token = arrayParser.tokenizer(str)
-const lexer = arrayParser.lexer(token)
-//const parser = arrayParser.parser(str)
-//console.log(JSON.stringify(parser, null, 2))
-console.log(token)
-console.log(lexer)
+const parser = arrayParser.parser(str)
+console.log(JSON.stringify(parser, null, 2))
 
 
