@@ -1,24 +1,30 @@
 module.exports = {
-    stack : [],
-    openArr : '[',
-    closeArr : ']',
-    stackSize : 0,
-
-    appendInStack: function(data) {
+    stack: [],
+    stackSize: 0,
+    
+    appendInStack: function(arrayFormat) {
+        this.stack.push(arrayFormat);
         this.stackSize++;
-        this.stack.push(data);      
     },
 
-    pop: function() {
+    appendInChild: function(dataFormat) {
+        const lastIdx = this.stackSize-1;
+        let arrayIs;
+        this.getLastStackType()[key] ? arrayIs = 'key' : arrayIs = 'child';
+        this.stack[lastIdx][arrayIs].push(dataFormat);
+    },
+
+    popData: function() {
         this.stackSize--;
         return this.stack.pop();
     },
 
-    appendInChild: function(data) {
-        this.stack[this.stackSize-1].child.push(data)
-    },
-
     countStack: function() {
         return this.stackSize;
+    },
+
+    getLastStackType: function() {
+        const lastIdx = this.stackSize-1;
+        return this.stack[lastIdx].type;
     }
 }
