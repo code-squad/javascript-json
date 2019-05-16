@@ -12,7 +12,7 @@ class Parser {
     return this.tokenStack.length === 0;
   }
 
-  findParentToken() {
+  findTopToken() {
     return this.tokenStack.pop();
   }
 
@@ -65,7 +65,7 @@ class Parser {
   }
 
   updateTokenStack(currentChildToken) {
-    const currentParentToken = this.findParentToken();
+    const currentParentToken = this.findTopToken();
 
     if (
       this.checkParentTokenisObj(currentParentToken) &&
@@ -95,10 +95,10 @@ class Parser {
       } else if (this.checkTypeExceptArray(token._type)) {
         this.updateTokenStack(token);
       } else if (token._type === "object-end") {
-        topToken = this.findParentToken();
+        topToken = this.findTopToken();
         this.updateTokenStack(topToken);
       } else if (token._type === "array-end") {
-        topToken = this.findParentToken();
+        topToken = this.findTopToken();
 
         if (this.completeCondition()) {
           result = topToken;
