@@ -43,7 +43,7 @@ module.exports = {
            }
     },
 
-    doesDataExist: function(inputString) {
+    isData: function(inputString) {
         if(inputString === undefined) throw new Error(this.errorComment.noData);
     }
 }
