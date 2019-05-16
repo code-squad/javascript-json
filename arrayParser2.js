@@ -93,33 +93,46 @@ const ArrayParser = class {
     }
 
     parser(str) {
-        const token = arrayParser.tokenizer(str)
-        const lexerArr = arrayParser.lexer(token)
+        const token = this.tokenizer(str)
+        const lexerArr = this.lexer(token)
 
-        lexerArr.forEach((lexerObj)=>{
-            let lexerObjIndex = lexerArr.indexOf(lexerObj)
-            if(lexerObj.value ==="["){
-                this.openBracketIdxStack.push(lexerArr.indexOf(lexerObj))
-                this.parserArr.push(lexerArr[lexerObjIndex])
-            }else if(lexerObj.value === ']'){ 
-                this.openBracketIdxStack.pop();
-            }else{
-                this.parserArr[this.openBracketIdxStack.length-1].child.push(lexerObj)
-            }
+        lexerArr.forEach((node)=>{
+            this.makeParserArray(node)
         })
         this.parserArr.reverse();
-        this.parserArr.forEach((parserObj)=>{
-            let parserObjIndex = this.parserArr.indexOf(parserObj)
-            if(parserObjIndex !==0){
-                parserObj.child.push(this.parserArr[parserObjIndex-1])
-            }
+
+        this.parserArr.forEach((parserArrObj)=>{
+            this.parserArrayInOrder(parserArrObj)
         })
+        
         this.parserArr = this.parserArr[this.parserArr.length-1]
         
         return this.parserArr 
     }
 
+    makeParserArray(node){
+        const token = this.tokenizer(str)
+        const lexerArr = this.lexer(token)
 
+        const nodeIndex = lexerArr.indexOf(node)
+        if(node.value === '['){
+            this.openBracketIdxStack.push(lexerArr.indexOf(node))
+            this.parserArr.push(lexerArr[nodeIndex])
+        }else if(node.value === ']'){ 
+            this.openBracketIdxStack.pop();
+        }else{
+            this.parserArr[this.openBracketIdxStack.length-1].child.push(node)
+        }
+        return this.parserArr
+    }
+
+    parserArrayInOrder(parserArrObj){
+        const parserObjIndex = this.parserArr.indexOf(parserArrObj)
+        if(parserObjIndex !== 0){
+            parserArrObj.child.push(this.parserArr[parserObjIndex-1])
+        }
+        return this.parserArr
+    }
  }
 
 const arrayParser = new ArrayParser()
