@@ -5,7 +5,8 @@ class ArrayParser {
 
     //토큰화
     tokenize() {
-       
+        const token = this.jsonStr.replace(/\[/g, '[,').replace(/]/g, ',]').split(',').map(v => v.trim());
+        return token;
     }
 
     //의미 부여
