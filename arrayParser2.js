@@ -15,26 +15,21 @@ const ArrayParser = class {
         this.parserArr = [];
     }
     tokenizer(str){
-        let word = "";
+        let word = ""
         for(let token of str){
             if(token === "[" || token === "," || token === "]"){
-                this.tokenArr.push(word);                                        
-                word = "";
+                if(word !== ""){
+                    this.tokenArr.push(word); 
+                    word = "";
+                }                                    
                 if(token === "[" || token === "]"){this.tokenArr.push(token)} 
             }else{
-                word = word + token.trim(); 
+                word = word + token.replace(/\s/g, '');
             }
         }
-
-        this.removeToken(this.tokenArr,"");
         
-        return this.tokenArr;
+        return this.tokenArr
     }
-
-    removeToken(arr,token){
-        this.tokenArr  =  arr.filter(el => el !== token);
-    }
-    
 
     lexer(tokenArr){
         tokenArr.forEach((token)=>{

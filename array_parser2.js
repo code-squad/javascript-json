@@ -139,6 +139,7 @@ const ArrayParser = class {
 
 const arrayParser = new ArrayParser();
 
+const token = arrayParser.tokenizer(str);
 const parser = arrayParser.parser(str);
 console.log(JSON.stringify(parser, null, 2));
 
