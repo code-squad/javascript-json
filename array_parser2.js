@@ -16,21 +16,24 @@ const ArrayParser = class {
     }
 
     tokenizer(str){
-        let word = ""
-        for(let token of str){
-            if(token === "[" || token === "," || token === "]"){
-                if(word !== ""){
-                    this.tokenArr.push(word); 
-                    word = "";
-                }                                    
-                if(token === "[" || token === "]"){this.tokenArr.push(token)} 
-            }else{
-                word = word + token.replace(/\s/g, '');
-            }
-        }
-        
+        const removeWhiteSpace = this.removeWhiteSpace(str);
+        const makeSeperator = this.makeSeperator(removeWhiteSpace);
+        this.tokenArr = this.makeTokenArr(makeSeperator);
         return this.tokenArr
     }
+
+    removeWhiteSpace(str){
+        return str.replace(/\s/g, '');
+    }
+
+    makeSeperator(str){
+        return str.replace(/\[/g, '[,').replace(/\]/g, ',]');
+    }
+
+    makeTokenArr(str){
+        return str.split(',');
+    }
+    
     
 
     lexer(tokenArr){
