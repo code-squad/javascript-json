@@ -2,7 +2,10 @@ const msgObj = module.require('./error_message');
 
 class ArrayParser {
 	constructor() {
-		this.stack = [];
+		this.parserStack = [];
+		this.quoteArr = ["'", '"'];
+		this.bracketArr = ['[', ']'];
+		this.commaAndSpaceArr = [',', ' '];
 	}
 
 	tokenizer(inputStr) {
@@ -13,23 +16,23 @@ class ArrayParser {
 
 		for (let char of inputStr) {
 			if (stack.length === 0) {
-				if (char === '[' || char === ']' || char === ',' || char === ' ') {
+				if (this.bracketArr.includes(char) || this.commaAndSpaceArr.includes(char)) {
 					if (makeStr !== '') {
 						tokens.push(makeStr);
 						makeStr = '';
 					}
 					tokens.push(char);
-				} else if (char === '"' || char === "'") {
+				} else if (this.quoteArr.includes(char)) {
 					makeStr += char;
 					stack.push(char);
 				} else {
 					makeStr += char;
 				}
 			} else {
-				if (char === '"' || char === "'") {
+				if (this.quoteArr.includes(char)) {
 					makeStr += char;
 					doubleQuotes = true;
-				} else if ((char === ',' || char === ']') && doubleQuotes === true) {
+				} else if ((this.commaAndSpaceArr.includes(char) || this.bracketArr.includes(char)) && doubleQuotes === true) {
 					tokens.push(makeStr);
 					tokens.push(char);
 					stack.pop();
@@ -57,15 +60,10 @@ class ArrayParser {
 		}
 
 		if (token.includes('"') || token.includes("'")) {
-			if (
-				!(
-					(token[0] === '"' || token[0] === "'") &&
-					(token[token.length - 1] === '"' || token[token.length - 1] === "'")
-				)
-			)
-				throw new Error(`${token} 은(는) 올바른 문자열이 아닙니다.`);
-		} else {
-			return { type: 'string', value: token };
+			if (this.quoteArr.includes(token[0]) && this.quoteArr.includes(token[token.length - 1])) {
+				return { type: 'string', value: token };
+			}
+			throw new Error(`${token} 은(는) 올바른 문자열이 아닙니다.`);
 		}
 
 		const lowerStrToken = token.toLowerCase();
@@ -80,11 +78,12 @@ class ArrayParser {
 		}
 		throw new Error(`${token}${msgObj.INVALID_TYPE}`);
 	}
+
 	lexer(tokens) {
 		const lexerArr = [];
 
 		for (let token of tokens) {
-			if (token !== ',' && token !== ' ') {
+			if (!this.commaAndSpaceArr.includes(token)) {
 				lexerArr.push(this.getTypeAndValue(token));
 			}
 		}
@@ -99,33 +98,34 @@ class ArrayParser {
 			const lexeredData = lexerArr.shift();
 
 			if (lexeredData.type === 'leftBracket') {
-				this.stack.push('[');
+				this.parserStack.push('[');
 				parserArr.push({ type: 'array', child: this.parser(lexerArr) });
 			} else if (lexeredData.type === 'rightBracket') {
-				if (this.stack.length < 1) throw new Error(`${msgObj.INVALID_BRACKET}`);
-				this.stack.pop();
-				return parserArr;
+				if (this.parserStack.length > 0) {
+					this.parserStack.pop();
+					return parserArr;
+				}
+				throw new Error(`${msgObj.INVALID_BRACKET}`);
 			} else {
-				if (this.stack.length === 0) {
-					throw new Error(`${msgObj.INVALID_BRACKET}`);
-				} else {
+				if (this.parserStack.length > 0) {
 					parserArr.push(lexeredData);
+				} else {
+					throw new Error(`${msgObj.INVALID_BRACKET}`);
 				}
 			}
 		}
 		return parserArr;
 	}
+
 	arrayParser(inputStr) {
 		try {
-			const tokens = this.tokenizer(inputStr);
-			const lexerArr = this.lexer(tokens);
-			const parserArr = this.parser(lexerArr);
+			console.log(JSON.stringify(this.parser(this.lexer(this.tokenizer(inputStr))), null, 2));
 		} catch (error) {
 			console.log(error.message);
 		}
 	}
 }
 
-const inputStr = '[1, true, "ab,c", ["4"b"]]';
+const inputStr = '[1, true, "ab,c", ["4b", 55]]';
 const myArrayParser = new ArrayParser();
 myArrayParser.arrayParser(inputStr);
