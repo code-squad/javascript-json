@@ -9,8 +9,27 @@ class ArrayParser {
         return token;
     }
 
+    //타입 체크
+    getTypeToken(token) {
+        if (!isNaN(token)) {
+            return new Node('number', Number(token));
+        } else if (token === 'true') {
+            return new Node('boolean', true);
+        } else if (token === 'false') {
+            return new Node('boolean', false);
+        } else if (token === 'null') {
+            return new Node('null', null);
+        } else if (token === '[') {
+            return new Node('startArray', '[');
+        } else if (token === ']') {
+            return new Node('endArray', ']');
+        } else if (typeof(token) === 'string') {
+            return new Node('string', token);
+        }
+    }
+
     //의미 부여
-    lex() {
+    lex(token) {
         
     }
 
@@ -21,7 +40,8 @@ class ArrayParser {
 
     //실행
     run() {
-
+        const token = this.tokenize();
+        const lexer = this.lex(token);
     }
 }
 
