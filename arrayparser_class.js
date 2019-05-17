@@ -13,13 +13,11 @@ class ArrayParser {
         this.jsonStr = jsonStr;
     }
 
-    //토큰화
     tokenize() {
         const token = this.jsonStr.replace(/\[/g, '[,').replace(/]/g, ',]').split(',').map(v => v.trim());
         return token;
     }
 
-    //타입 체크
     getTypeToken(token) {
         if (!isNaN(token)) {
             return new Node('number', Number(token));
@@ -39,7 +37,6 @@ class ArrayParser {
         }
     }
 
-    //잘못된 문자열인지 아닌지 체크
     isCorrectString(token) {
         let count = 0;
         let position = token.indexOf("\'");
@@ -58,27 +55,44 @@ class ArrayParser {
         }
     }
 
-    //의미 부여
     lex(token) {
         const lexArr = token.map(el => this.getTypeToken(el));
         return lexArr;
     }
 
-    //구조화
-    parse() {
-       
+    parse(lexer) {
+        const stack = [];
+        let currentNode;
+        let result;
+
+        for (let value of lexer) {
+            if (value.type === 'startArray') {
+                stack.push({type: 'array', child: []});
+            } else if (value.type === 'endArray'){
+                currentNode = stack.pop();
+                if (stack.length === 0) {
+                    result = currentNode;
+                } else {
+                    stack[stack.length-1].child.push(currentNode);
+                }
+            } else {
+                stack[stack.length-1].child.push(value);
+            }
+        }
+        return result;
     }
 
-    //실행
     run() {
         const token = this.tokenize();
         const lexer = this.lex(token);
+        const parser = this.parse(lexer);
+        return parser;
     }
 }
 
 const jsonStr = "['1a3',[null, false, ['11', [112233], 112], 55, '99'], 33, true]";
 const jsonStr2 = "['1a'3', [22, 23, [11, [112233], 112], 55], 33]"; // '1a'3'은 올바른 문자열이 아닙니다.
-const jsonStr2 = "['1a3', [22, 23, [11, [112233], 112], 55], 3d3]"; // 3d3은 알수 없는 타입입니다.
+const jsonStr3 = "['1a3', [22, 23, [11, [112233], 112], 55], 3d3]"; // 3d3은 알수 없는 타입입니다.
 const arrayParser = new ArrayParser(jsonStr);
 const result = arrayParser.run();
 console.log(JSON.stringify(result, null, 2));
