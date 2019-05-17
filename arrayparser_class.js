@@ -60,7 +60,8 @@ class ArrayParser {
 
     //의미 부여
     lex(token) {
-        
+        const lexArr = token.map(el => this.getTypeToken(el));
+        return lexArr;
     }
 
     //구조화
