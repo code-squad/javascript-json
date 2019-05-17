@@ -3,11 +3,6 @@ const errorMesg = require('./error_message.js');
 
 const node = new Node();
 
-module.exports = {
-    'NOT_VALID_STRING' : '올바른 문자열이 아닙니다.',
-    'UNKNOWN_TYPE' : '알 수 없는 타입입니다.'
-}
-
 class ArrayParser {
     constructor(jsonStr) {
         this.jsonStr = jsonStr;
