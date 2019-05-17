@@ -60,10 +60,10 @@ class ArrayParser {
 		}
 
 		if (token.includes('"') || token.includes("'")) {
-			if (this.quoteArr.includes(token[0]) && this.quoteArr.includes(token[token.length - 1])) {
+			if (this.isValidString(token)) {
 				return { type: 'string', value: token };
 			}
-			throw new Error(`${token} 은(는) 올바른 문자열이 아닙니다.`);
+			throw new Error(`${token}${msgObj.INVALID_STRING}`);
 		}
 
 		const lowerStrToken = token.toLowerCase();
@@ -115,6 +115,15 @@ class ArrayParser {
 			}
 		}
 		return parserArr;
+	}
+
+	isValidString(token) {
+		const tokenArr = [...token];
+		const filteredQuotes = tokenArr.filter(char => this.quoteArr.includes(char));
+
+		if (filteredQuotes.length !== 2) return false;
+		if (!(this.quoteArr.includes(token[0]) && this.quoteArr.includes(token[token.length - 1]))) return false;
+		return true;
 	}
 
 	arrayParser(inputStr) {
