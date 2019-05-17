@@ -1,4 +1,4 @@
-const errorMsg = require('./errorMsg');
+const errorMsg = require('./errormsg');
 const Node = require('./node');
 
 const str = "['1a3', [null, false, ['11', [112233], 112], 55, '99'], 33, true]";
@@ -14,7 +14,6 @@ const ArrayParser = class {
         this.openBracketIdxStack = [];
         this.parserArr = [];
     }
-
     tokenizer(str){
         const removeWhiteSpace = this.removeWhiteSpace(str);
         const makeSeperator = this.makeSeperator(removeWhiteSpace);
@@ -33,7 +32,6 @@ const ArrayParser = class {
     makeTokenArr(str){
         return str.split(',');
     }
-    
     
 
     lexer(tokenArr){
@@ -92,8 +90,6 @@ const ArrayParser = class {
         }
     }
 
-
-
     parser(str) {
         const token = this.tokenizer(str);
         const lexerArr = this.lexer(token);
@@ -139,7 +135,6 @@ const ArrayParser = class {
 
 const arrayParser = new ArrayParser();
 
-const token = arrayParser.tokenizer(str);
 const parser = arrayParser.parser(str);
 console.log(JSON.stringify(parser, null, 2));
 
