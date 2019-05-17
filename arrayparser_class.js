@@ -1,3 +1,13 @@
+const Node = require('./node_class.js');
+const errorMesg = require('./error_message.js');
+
+const node = new Node();
+
+module.exports = {
+    'NOT_VALID_STRING' : '올바른 문자열이 아닙니다.',
+    'UNKNOWN_TYPE' : '알 수 없는 타입입니다.'
+}
+
 class ArrayParser {
     constructor(jsonStr) {
         this.jsonStr = jsonStr;
@@ -24,7 +34,27 @@ class ArrayParser {
         } else if (token === ']') {
             return new Node('endArray', ']');
         } else if (typeof(token) === 'string') {
+            this.isCorrectString(token);
             return new Node('string', token);
+        }
+    }
+
+    //잘못된 문자열인지 아닌지 체크
+    isCorrectString(token) {
+        let count = 0;
+        let position = token.indexOf("\'");
+
+        while (position !== -1) {
+            count++;
+            position = token.indexOf("\'", position + 1);
+        }
+
+        if (count !==0 && count % 2 === 0) {
+            return true;
+        } else if (count % 2 !== 0 ) {
+            throw new Error(`${token}은 ${errorMesg.NOT_VALID_STRING}`);
+        } else {
+            throw new Error(`${token}은 ${errorMesg.UNKNOWN_TYPE}`);
         }
     }
 
