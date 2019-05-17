@@ -1,3 +1,5 @@
+const msgObj = module.require('./error_message');
+
 class ArrayParser {
 	constructor() {
 		this.stack = [];
@@ -76,14 +78,13 @@ class ArrayParser {
 		if (lowerStrToken === 'null') {
 			return { type: 'null', value: token };
 		}
-		throw new Error(`${token} 은(는) 알 수 없는 타입입니다.`);
+		throw new Error(`${token}${msgObj.INVALID_TYPE}`);
 	}
-
 	lexer(tokens) {
 		const lexerArr = [];
 
 		for (let token of tokens) {
-			if (token !== ',') {
+			if (token !== ',' && token !== ' ') {
 				lexerArr.push(this.getTypeAndValue(token));
 			}
 		}
@@ -101,11 +102,12 @@ class ArrayParser {
 				this.stack.push('[');
 				parserArr.push({ type: 'array', child: this.parser(lexerArr) });
 			} else if (lexeredData.type === 'rightBracket') {
+				if (this.stack.length < 1) throw new Error(`${msgObj.INVALID_BRACKET}`);
 				this.stack.pop();
 				return parserArr;
 			} else {
 				if (this.stack.length === 0) {
-					throw new Error('괄호 안맞음');
+					throw new Error(`${msgObj.INVALID_BRACKET}`);
 				} else {
 					parserArr.push(lexeredData);
 				}
@@ -113,17 +115,17 @@ class ArrayParser {
 		}
 		return parserArr;
 	}
-
 	arrayParser(inputStr) {
 		try {
 			const tokens = this.tokenizer(inputStr);
-			console.log(tokens);
+			const lexerArr = this.lexer(tokens);
+			const parserArr = this.parser(lexerArr);
 		} catch (error) {
 			console.log(error.message);
 		}
 	}
 }
 
-const inputStr = '[1, true, "abc", ["4"b"]]';
+const inputStr = '[1, true, "ab,c", ["4"b"]]';
 const myArrayParser = new ArrayParser();
 myArrayParser.arrayParser(inputStr);
