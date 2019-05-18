@@ -1,6 +1,10 @@
 const util = {
-  deleteFirstLastChar(str) {
-    return str.substring(1, str.length - 1);
+  toggleBool = value => {
+    return value ? false : true;
+  }
+  
+  isEmptry = str => {
+    return str.length === 0;
   }
 };
 
