@@ -36,6 +36,9 @@ const typeChecker = {
   },
 
   isBlank(value) {
+    return value === ' ';
+  },
+  isEmpty(value) {
     return value === '';
   },
 };
