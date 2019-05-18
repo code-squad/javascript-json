@@ -1,9 +1,11 @@
+const tc = require('./typeChecker');
+
 const util = {
   toggleBool(value) {
     return value ? false : true;
   },
-  isEmpty(str) {
-    return str.length === 0;
+  countQuote(str) {
+    return str.split('').filter(v => tc.isQuote(v)).length;
   },
 };
 
