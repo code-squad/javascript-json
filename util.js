@@ -1,11 +1,10 @@
 const util = {
-  toggleBool = value => {
+  toggleBool(value) {
     return value ? false : true;
-  }
-  
-  isEmptry = str => {
+  },
+  isEmpty(str) {
     return str.length === 0;
-  }
+  },
 };
 
 module.exports = util;
