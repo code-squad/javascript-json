@@ -23,13 +23,20 @@ const typeChecker = {
     return value === ']';
   },
   isString(value) {
-    return (/^'.+'$/g.test(value) || /^".+"$/g.test(value)) && this.isValidString(value);
+    return (
+      (/^'.+'$/g.test(value) || /^".+"$/g.test(value)) &&
+      this.isValidString(value)
+    );
   },
   isSperator(value) {
     return /\[|\]|,|:|\{|\}/.test(value);
   },
   isQuote(value) {
     return /'|"/.test(value);
-  }
+  },
+
+  isBlank(value) {
+    return value === '';
+  },
 };
 module.exports = typeChecker;
