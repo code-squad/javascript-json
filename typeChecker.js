@@ -31,6 +31,9 @@ const typeChecker = {
   isComma(value) {
     return value === ',';
   },
+  isColon(value) {
+    return value === ':';
+  },
   isString(value) {
     return (
       (/^'.+'$/g.test(value) || /^".+"$/g.test(value)) &&
