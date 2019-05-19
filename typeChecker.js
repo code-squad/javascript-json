@@ -22,6 +22,15 @@ const typeChecker = {
   isCloseBraket(value) {
     return value === ']';
   },
+  isOpenBrace(value) {
+    return value === '{';
+  },
+  isCloseBrace(value) {
+    return value === '}';
+  },
+  isComma(value) {
+    return value === ',';
+  },
   isString(value) {
     return (
       (/^'.+'$/g.test(value) || /^".+"$/g.test(value)) &&
