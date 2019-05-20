@@ -1,4 +1,4 @@
-const Node = require('./node_class.js');
+const Node = require('./token_node.js');
 const errorMesg = require('./error_message.js');
 
 const node = new Node();
