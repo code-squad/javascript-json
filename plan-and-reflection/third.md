@@ -10,16 +10,35 @@
   - 기존 정규식을 활용한 로직을 변경한다.
 
 ```js
-const context =""
-const queueOfTokens = []
-let tempStack = []
-function tokenize(str){
-  const rawToken = str.split("")
-  rawToken.forEach((char, index , arr) => {
-    if (isSePerator(char)) queueOfTokens.push(char);
-    tempStack.push(char)
-    if (isSePerator(arr[i+1])) return tempStack;
-  })
+let tempStr = "";
+let inQuote = false;
+const makeToken = (tokens, char, index, arrOfChar) {
+  // quote 를 만나면 inQuote 의 값을 뒤바꿈
+  if(isQuote(char)){
+    toggle(inQuote);
+  }
+  
+  // quote가 열려있으면 sperator 와 무관하게 char를 임시 문자열에 더함 
+  if(isInQuote) {
+    tempStr += char;
+    return tokens
+  }
+  if(isSeperator(char)) {
+    tempStr = "";
+    return [...tokens, char];
+  }
+  // 다음 문자열이 sperator 면 char를 더함
+  if(isSpearator(nextChar)) {
+    tempStr += char;
+    return [...tokens, tempStr.trim()]
+    
+  }
+}
+
+const tokenize = (str) => {
+  return str.split("")
+  					.reduce(makeToken, [])
+  	
 }
 ```
 
@@ -45,11 +64,25 @@ function tokenize(str){
 - 기존에 없었던 객체 관련 타입에 대해서 정의 내려야 함
 - "{ " , "}" , " : "
 
+```js
+makeLexedToken(lexedTokens, token, index, tokens ) {
+  
+	if(tokens[i+1=== :]) return new Node({key: "key"})
+	if(isOpenBraket()) return new Node({type: "Array"})
+	... 나머지 로직 동일
+  
+}
+tokensQue.reduce(makeLexedToken, [])
+```
+
+
+
 ### Lexer Type
 
-- Array -> `[...]`
-- Object -> `{.. : .. , ...}`
-
+- Array -> `[`
+- EndArray -> `]`
+- Object -> `{`
+- EndObject  -> `}`
 - String → `"` + `Characters` + `"`
 - Number → `consequtive digits`   | `NaN` | `Infinity`
 - Boolean → `true|false`
@@ -59,4 +92,17 @@ function tokenize(str){
 
 0bject value를 어떻게 표현할 것인가?
 
-{key : {type }}
+```js
+{
+  type: object,
+  child: [
+    {
+			key: "",
+    	type: "",
+      value: 
+    }
+  ]
+
+}
+```
+
