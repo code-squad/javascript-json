@@ -38,7 +38,7 @@ class Tokenizer {
   }
 }
 
-// const tokenizer = new Tokenizer("['asd',[null,false,['11',[112233],112],55, '99'],33, true]");
+// const tokenizer = new Tokenizer("['123',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]]");
 // console.log(tokenizer.tokenizing());
 
 module.exports = Tokenizer;

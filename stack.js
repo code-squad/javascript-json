@@ -1,17 +1,19 @@
 module.exports = {
     stack: [],
     stackSize: 0,
+    lastDataType: undefined,
     
     appendInStack: function(arrayFormat) {
         this.stack.push(arrayFormat);
         this.stackSize++;
     },
 
-    appendInChild: function(dataFormat) {
-        const lastIdx = this.stackSize-1;
-        let arrayIs;
-        this.getLastStackType()[key] ? arrayIs = 'key' : arrayIs = 'child';
-        this.stack[lastIdx][arrayIs].push(dataFormat);
+    appendInPreviousData: function(popData) {
+        const lastInStack = this.getLastData();
+        let arrayName;
+        lastInStack['value'] ? arrayName = 'value' : arrayName = 'child';
+        const arrayInLastStack = lastInStack[arrayName];
+        arrayInLastStack.push(popData);
     },
 
     popData: function() {
@@ -23,8 +25,17 @@ module.exports = {
         return this.stackSize;
     },
 
-    getLastStackType: function() {
+    setLastDataType: function() {
+        const lastInStack = this.getLastData();
+        this.lastDataType = lastInStack.type;
+    },
+
+    getLastDataType: function() {
+        return this.lastDataType;
+    },
+    
+    getLastData: function() {
         const lastIdx = this.stackSize-1;
-        return this.stack[lastIdx].type;
+        return this.stack[lastIdx]
     }
 }

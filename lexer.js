@@ -5,21 +5,25 @@ class Lexer {
     lexing(tokenizedList) {
         const lexedList = [];
         tokenizedList.forEach( token => {
-            if(this.isSeparator(token)) {
-                lexedList.push(token);
-                return
+            let lexedData;
+            const separatorKey = this.getSeparatorName(token);
+            if(separatorKey) {
+                lexedData = this.convertValue(separatorKey, token);
+                lexedList.push(lexedData);
             }
-            const type = this.getType(token);
-            const lexedData =  this.convertValue(type, token);
-            lexedList.push(lexedData);
+            else {
+                const type = this.getType(token);
+                lexedData =  this.convertValue(type, token);
+                lexedList.push(lexedData);
+            }
         });
         errorChecker.typeValidator(lexedList);
         return lexedList;
     }
 
-    isSeparator(token) {
-        for(const key in separators) {
-            if(separators[key] === token) return true;
+    getSeparatorName(token) {
+        for(let key in separators) {
+            if(separators[key] === token) return key;
         }
     }
 
@@ -31,11 +35,17 @@ class Lexer {
     }
 
     convertValue(type, token) {
-        if(type === 'number') {
-            return [type, Number(token)];
+        const format = {
+            type: type,
+            value: token
         }
-        return [type, token];
+        if(type === 'number') {
+            format.value = Number(token);
+        }
+        return format
     }
 }
+
+
 
 module.exports = Lexer;
