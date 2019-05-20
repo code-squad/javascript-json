@@ -7,6 +7,9 @@ const util = {
   countQuote(str) {
     return str.split('').filter(v => tc.isQuote(v)).length;
   },
+  deletFirstLastChar(str) {
+    return str.slice(1).slice(0, -1);
+  },
 };
 
 module.exports = util;

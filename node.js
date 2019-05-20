@@ -1,6 +1,7 @@
 class Node {
-  constructor(type, value) {
-    this.type = type;
+  constructor({ key, type, value }) {
+    if (key) this.key = key;
+    if (type) this.type = type;
     if (value) this.value = value;
     this.child = [];
   }
