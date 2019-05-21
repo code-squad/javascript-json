@@ -14,7 +14,7 @@ const makeLexedToken = (lexedTokens, token, index, tokens) => {
     return lexedTokens;
   }
   if (tc.isNumber(token)) {
-    return [...lexedTokens, new Node({ type: 'number', token })];
+    return [...lexedTokens, new Node({ type: 'number', value: token })];
   }
   if (tc.isNull(token)) {
     return [...lexedTokens, new Node({ type: 'null', value: token })];
@@ -30,13 +30,13 @@ const makeLexedToken = (lexedTokens, token, index, tokens) => {
     return [...lexedTokens, new Node({ type: 'undefined', value: token })];
   }
   if (tc.isOpenBraket(token)) {
-    return [...lexedTokens, new Node({ type: 'array' })];
+    return [...lexedTokens, new Node({ type: 'array', child: [] })];
   }
   if (tc.isCloseBraket(token)) {
     return [...lexedTokens, new Node({ type: 'endArray' })];
   }
   if (tc.isOpenBrace(token)) {
-    return [...lexedTokens, new Node({ type: 'object' })];
+    return [...lexedTokens, new Node({ type: 'object', child: [] })];
   }
   if (tc.isCloseBrace(token)) {
     return [...lexedTokens, new Node({ type: 'endObject' })];
