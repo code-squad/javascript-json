@@ -38,7 +38,7 @@ const makeToken = (tokens, char, index, arrOfChar) => {
 const tokenize = str => {
   return (
     str
-      .slice(0) // 첫번재 [ 를 지워야 parser 함수가 작동함 추후 개선할 요소
+      .slice(1) // 첫번재 [ 를 지워야 parser 함수가 작동함 추후 개선할 요소
       .split('')
       .reduce(makeToken, [])
       // Todo  로직 추후 개선할 것
