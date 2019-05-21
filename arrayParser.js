@@ -91,3 +91,4 @@ const jsonStr3 = "['1a3', [22, 23, [11, [112233], 112], 55], 3d3]"; // 3d3ì€ ì•
 const arrayParser = new ArrayParser(jsonStr);
 const result = arrayParser.run();
 console.log(JSON.stringify(result, null, 2));
+
