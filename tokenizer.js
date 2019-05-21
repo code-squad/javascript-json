@@ -3,17 +3,20 @@ const util = require('./util');
 const ec = require('./errorCheck');
 
 let tempStr = '';
-let isInQuote = false;
+let isCharInQuote = false;
 
 const makeToken = (tokens, char, index, arrOfChar) => {
   // 다음 문자라는 표현을 전달하기 위해 설명변수 사용
   const nextChar = arrOfChar[index + 1];
 
-  if (tc.isQuote(char) && !ec.trippleQuote(tempStr + char)) {
-    isInQuote = util.toggleBool(isInQuote);
+  if (tc.isQuote(char)) {
+    // ec.trippleQuote 는 "가 시작될때(util.toggleBool(..) === true)만 발동함
+    // " 가  시작됬을때 tempStr ""가 들어있다면 "asd"" 이므로 오류 발생
+    isCharInQuote =
+      util.toggleBool(isCharInQuote) && ec.isNotTrippleQuote(tempStr + char);
   }
 
-  if (isInQuote) {
+  if (isCharInQuote) {
     tempStr += char;
     return tokens;
   }
@@ -35,6 +38,7 @@ const makeToken = (tokens, char, index, arrOfChar) => {
 const tokenize = str => {
   return (
     str
+      .slice(0) // 첫번재 [ 를 지워야 parser 함수가 작동함 추후 개선할 요소
       .split('')
       .reduce(makeToken, [])
       // Todo  로직 추후 개선할 것
