@@ -1,6 +1,7 @@
 const tc = require('./typeChecker');
 const Node = require('./node');
 const util = require('./util');
+const errorMsg = require('./errorMsg');
 
 const makeLexedToken = (lexedTokens, token, index, tokens) => {
   const nextToken = tokens[index + 1];
@@ -45,7 +46,7 @@ const makeLexedToken = (lexedTokens, token, index, tokens) => {
     return [...lexedTokens, new Node({ type: 'boolean', value: token })];
   }
 
-  throw new TypeError(`${token} 는 존재하지 않는 데이터 타입입니다.`);
+  throw new TypeError(`${token} ${errorMsg.UNKNOWN_TYPE}`);
 };
 
 module.exports = makeLexedToken;
