@@ -1,51 +1,94 @@
-const jsonStr = "[123, 22, 33]";
+const Node = require('./token_node.js');
+const errorMesg = require('./error_message.js');
 
-function ArrayParser(jsonStr) {
-    this.jsonStr = jsonStr;
-}
+const node = new Node();
 
-ArrayParser.prototype.tokenizer = function() {
-    const token = this.jsonStr.split(',').map(el => el.trim()); 
-    return token;
-}
+class ArrayParser {
+    constructor(jsonStr) {
+        this.jsonStr = jsonStr;
+    }
 
-ArrayParser.prototype.lexer = function(token) {
-    let dataType = null;
+    tokenize() {
+        const token = this.jsonStr.replace(/\[/g, '[,').replace(/]/g, ',]').split(',').map(v => v.trim());
+        return token;
+    }
 
-    token.forEach(v => {
-        if(v.indexOf('[') !== -1){
-            dataType = 'array';
-        } else if(v.indexOf('{') !== -1){
-            dataType = 'object'
+    getTypeToken(token) {
+        if (!isNaN(token)) {
+            return new Node('number', Number(token));
+        } else if (token === 'true') {
+            return new Node('boolean', true);
+        } else if (token === 'false') {
+            return new Node('boolean', false);
+        } else if (token === 'null') {
+            return new Node('null', null);
+        } else if (token === '[') {
+            return new Node('startArray', '[');
+        } else if (token === ']') {
+            return new Node('endArray', ']');
+        } else if (typeof(token) === 'string') {
+            this.isCorrectString(token);
+            return new Node('string', token);
         }
-    })
+    }
 
-    const tokenList = token.map(v => v.replace(/(\[)|(\])|(\{)|(\})|/g, ''));
+    isCorrectString(token) {
+        let count = 0;
+        let position = token.indexOf("\'");
 
-    return [dataType, tokenList];
-}
+        while (position !== -1) {
+            count++;
+            position = token.indexOf("\'", position + 1);
+        }
 
-ArrayParser.prototype.parse = function(lexing) {
-    const [dataType, tokenList] = lexing;
-    const parseArr = [];
+        if (count !==0 && count % 2 === 0) {
+            return true;
+        } else if (count % 2 !== 0 ) {
+            throw new Error(`${token}은 ${errorMesg.NOT_VALID_STRING}`);
+        } else {
+            throw new Error(`${token}은 ${errorMesg.UNKNOWN_TYPE}`);
+        }
+    }
 
-    tokenList.filter(ele => ele.match(/[0-9]/g)).map(ele => parseArr.push({'type':'number', 'value':ele, child:[]}));
+    lex(token) {
+        const lexArr = token.map(el => this.getTypeToken(el));
+        return lexArr;
+    }
 
-    return parseObj = {
-        'type' : dataType,
-        'child' : parseArr
+    parse(lexer) {
+        const stack = [];
+        let currentNode;
+        let result;
+
+        for (let value of lexer) {
+            if (value.type === 'startArray') {
+                stack.push({type: 'array', child: []});
+            } else if (value.type === 'endArray'){
+                currentNode = stack.pop();
+                if (stack.length === 0) {
+                    result = currentNode;
+                } else {
+                    stack[stack.length-1].child.push(currentNode);
+                }
+            } else {
+                stack[stack.length-1].child.push(value);
+            }
+        }
+        return result;
+    }
+
+    run() {
+        const token = this.tokenize();
+        const lexer = this.lex(token);
+        const parser = this.parse(lexer);
+        return parser;
     }
 }
 
-/* 실행 */
-ArrayParser.prototype.run = function() {
-    const token = this.tokenizer();
-    const lexing = this.lexer(token);
-    const parser = this.parse(lexing);
-    
-    return parser;
-}
-
+const jsonStr = "['1a3',[null, false, ['11', [112233], 112], 55, '99'], 33, true]";
+const jsonStr2 = "['1a'3', [22, 23, [11, [112233], 112], 55], 33]"; // '1a'3'은 올바른 문자열이 아닙니다.
+const jsonStr3 = "['1a3', [22, 23, [11, [112233], 112], 55], 3d3]"; // 3d3은 알수 없는 타입입니다.
 const arrayParser = new ArrayParser(jsonStr);
 const result = arrayParser.run();
-console.log(JSON.stringify(result, null, 10));
+console.log(JSON.stringify(result, null, 2));
+
