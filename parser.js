@@ -1,3 +1,6 @@
+const lexer = require('./lexer');
+const validation = require('./validation')
+
 class Node {
     constructor(type, value) {
         this.type   = type;
@@ -7,52 +10,41 @@ class Node {
 }
 
 class ArrayParser {
-    tokenize(string) {
-        const noWhiteSpaceString = string.replace(/ /g, '');
-        return noWhiteSpaceString.split(/([\[\]])|,/).filter((value) => value);
-    }
+    static parse(lexedTokens) {
+        const parentNodes = [];
+        let [parentNode, arrayElement, countParentNodes] = [{}, {}, 0];
 
-    lex(tokens) {
-        let token = {};
-        return tokens.reduce((acc, value) => {
-                if(value === '[') {
-                    token = {'name' : 'ArrayOpener', 'value' : value}
-                    return acc.concat(token);
-                } else if(!isNaN(value)) {
-                    token = {'name' : 'Number', 'value' : value}
-                    return acc.concat(token);
-                } else if(value === ']') {
-                    token = {'name' : 'ArrayCloser', 'value' : value}
-                    return acc.concat(token);
-                }
-            }, []);
-    }
-
-    parse(lexedTokens) {
-        let parentNode = {};
         lexedTokens.forEach((lexedToken) => {
-            if(lexedToken.name === 'ArrayOpener') {
+            if(lexedToken.name === 'arrayOpener') {
                 const arrayNode = new Node('array');
                 delete arrayNode.value;
                 parentNode = arrayNode;
-            } else if(lexedToken.name === 'Number') {
-                const numberNode = new Node('number', lexedToken.value);
-                parentNode.child.push(numberNode);
-            } else if(lexedToken.name === 'ArrayCloser') {
+                parentNodes.push(parentNode);
+            } else if(lexedToken.name === 'arrayCloser') {
+                arrayElement = parentNodes.pop();
+                countParentNodes = parentNodes.length;
+                if(!(countParentNodes === 0)) {
+                    parentNode = parentNodes[countParentNodes-1];
+                    parentNode.child.push(arrayElement);
+                }
                 return;
+            } else {
+                const elementNode = new Node(lexedToken.name, lexedToken.value);
+                parentNode.child.push(elementNode);
             }
         });
         return parentNode;
     }
 
-    run(string) {
-        const tokens = this.tokenize(string);
-        const lexedTokens = this.lex(tokens);
+    static run(string) {
+        const lexedTokens = lexer.lex(string);
+        if(!validation.checkValidation(lexedTokens)) return;
         return this.parse(lexedTokens);
     }
 }
 
-const str = "[123, 22, 33]";
-const arrayParser = new ArrayParser();
-const result = arrayParser.run(str);
-console.log(JSON.stringify(result, null, 2));
+//const str3 = "['1a3',[null,false,['11',[112233],112],55, '99'],33, true]";
+const str = "['1 2', '3,4', 'fdsa', 33, true, false       ]";
+const result = ArrayParser.run(str);
+console.log(JSON.stringify(result, null, 2)); 
+
