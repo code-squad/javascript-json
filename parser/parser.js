@@ -1,5 +1,5 @@
-const stack = require('./stack');
-const node = require('./node');
+const stack = require('./helper/stack');
+const node = require('./helper/node');
 
 class Parser {
     constructor(lexedList) {

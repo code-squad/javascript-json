@@ -1,5 +1,5 @@
-const separators = require('./separators');
-const errorChecker = require('./error');
+const separators = require('./helper/separators');
+const errorChecker = require('./error/error');
 
 class Tokenizer {
   constructor(inputString) {
