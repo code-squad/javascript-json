@@ -26,7 +26,7 @@ class Tokenizer {
 
   isSeparator(letter) {
     for (const key in separators) {
-      if (separators[key] === letter) return true;
+      if (key === letter) return true;
     }
   }
 
@@ -38,7 +38,7 @@ class Tokenizer {
   }
 }
 
-// const tokenizer = new Tokenizer("['123',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]]");
-// console.log(tokenizer.tokenizing());
+const tokenizer = new Tokenizer("['123',[null,false,['11',112,'99'], {a:'str', b:[912,[5656,33]]}, true]]");
+console.log(tokenizer.tokenizing());
 
 module.exports = Tokenizer;

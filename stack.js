@@ -1,7 +1,7 @@
 module.exports = {
     stack: [],
     stackSize: 0,
-    lastDataType: undefined,
+    lastType: undefined,
     
     appendInStack: function(arrayFormat) {
         this.stack.push(arrayFormat);
@@ -30,7 +30,7 @@ module.exports = {
         this.lastDataType = lastInStack.type;
     },
 
-    getLastDataType: function() {
+    getLastType: function() {
         return this.lastDataType;
     },
     

@@ -1,7 +1,7 @@
 module.exports = {
-    'openArray': '[',
-    'closeArray': ']',
-    'openObject': '{',
-    'closeObject': '}',
-    'colon': ':',
+    '[' : 'openArray',
+    ']': 'closeArray',
+    '{': 'openObject',
+    '}': 'closeObject',
+    ':': 'colon',
 }
