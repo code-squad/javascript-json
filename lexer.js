@@ -9,8 +9,8 @@ class Lexer {
     lexing() {
         const newLexedList = this.tokenizedList.map( (token, idx, arr) => {
             if(arr[idx+1] === ':') return this.makeNode({type: 'key', value: token});
-                const type = this.getType(token);
-                return this.makeNode({type, value: token});
+            const type = this.getType(token);
+            return this.makeNode({type, value: token});
         });
         return newLexedList;
     }

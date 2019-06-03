@@ -14,13 +14,13 @@ class ArrayParser {
     runApp() {
         const tokenizer = new Tokenizer(this.inputStr);
         const tokenizedList = tokenizer.tokenizing();
-        // const parser = new Parser();
-        
+        console.log(tokenizedList);
         const lexer = new Lexer(tokenizedList);
         const lexedList = lexer.lexing();
         console.log(lexedList);
-        // const parsedList = parser.parsing(lexedList);
-        // console.log(JSON.stringify(parsedList, null, 2));
+        const parser = new Parser(lexedList);
+        const parsedList = parser.parsing();
+        console.log(JSON.stringify(parsedList, null, 2));
     }
 }
 
