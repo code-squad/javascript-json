@@ -1,14 +1,16 @@
 module.exports = {
     errorComment: {
         invalidString: '올바른 문자열이 아닙니다.',
-        invalidType: '올바른 타입이 아닙니다.',
         invalidData: '올바른 data형식이 아닙니다.',
-        noData: 'Parsing할 수 있는 data가 없습니다.'
+        noData: 'Parsing할 수 있는 data가 없습니다.',
+        inappropriateClose: '배열이나 객체가 정상적으로 닫히지 않았습니다.',
     },
 
-    stringValidator: function(tokenizedArr) {
+    stack: [],
+
+    stringValidator: function(tokenizedList) {
         let isString = true;
-        tokenizedArr.forEach( word => {
+        tokenizedList.forEach( word => {
             for(let i = 1; i < word.length-1; i++) {
                 if(word[i] === "'") isString = false
             }
@@ -16,34 +18,39 @@ module.exports = {
         if(!isString) throw new Error(this.errorComment.invalidString);
     },
 
-    typeValidator: function(lexedArr, indexOfType=0, indexOfData=1) {
-        const stringTypes = lexedArr.filter( dataArr => {
-            return dataArr[indexOfType] === 'string'
-        })
-        
-        const isValidType = stringTypes.every( dataArr => {
-            const data = dataArr[indexOfData];
-            if(data.startsWith("'") && data.endsWith("'")) return true;
-            let isValid = true; 
-            for(const letter of data){
-                const isNumber = Number(letter)
-                if(!isNaN(isNumber)) isValid = false;
-            }
-            return isValid;
-        })
-        if(!isValidType) throw new Error(this.errorComment.invalidType)
-    },
-
-    dataValidator: function(tokenizedItems) {
-        const firstIndex = 0;
-        const lastIndex = tokenizedItems.length
-        if(tokenizedItems.indexOf("[") !== firstIndex || 
-           tokenizedItems.lastIndexOf("]") !== lastIndex-1){
+    dataValidator: function(tokenizedList) {
+        const len = tokenizedList.length
+        if(tokenizedList[0] !== '[' && tokenizedList[len-1] !== ']') {
                throw new Error(this.errorComment.invalidData);
-           }
+        }
     },
 
-    isData: function(inputString) {
-        if(inputString === undefined) throw new Error(this.errorComment.noData);
+    isData: function(tokenizedList) {
+        if(!tokenizedList.length) throw new Error(this.errorComment.noData);
+    },
+
+    separatorChecker: function(tokenizedList) {
+        tokenizedList.forEach( token => {
+            if(token === '[' || token === '{') this.appendInStack(token);
+            else if(token === ']' || token === '}') {
+                const openSeparator = this.stack.pop();
+                if(this.getSepaType(openSeparator) !== this.getSepaType(token)) throw new Error(this.errorComment.inappropriateClose);
+            }
+        });
+        if(this.stack.length) throw new Error(this.errorComment.inappropriateClose);
+    },
+
+    getSepaType: function(token) {
+        if(token === '[' || token === ']') return 'array';
+        if(token === '{' || token === '}') return 'object';
+    },
+
+    appendInStack: function(token) {
+        this.stack.push(token);
+    },
+
+    getLastType: function() {
+        const len = this.stack.length;
+        return this.stack[len];
     }
 }

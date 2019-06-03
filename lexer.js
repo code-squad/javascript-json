@@ -7,6 +7,7 @@ class Lexer {
     }
         
     lexing() {
+        this.isValidTokenList(this.tokenizedList);
         const newLexedList = this.tokenizedList.map( (token, idx, arr) => {
             if(arr[idx+1] === ':') return this.makeNode({type: 'key', value: token});
             const type = this.getType(token);
@@ -29,6 +30,13 @@ class Lexer {
         if(token === 'true' || token === 'false') return 'boolean';
         if(!isNaN(token*1)) return 'number'
         return typeof token;
+    }
+
+    isValidTokenList(tokenizedList) {
+        errorChecker.isData(tokenizedList);        
+        errorChecker.dataValidator(tokenizedList);
+        errorChecker.stringValidator(tokenizedList);
+        errorChecker.separatorChecker(tokenizedList);
     }
 }
 

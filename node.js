@@ -17,12 +17,9 @@ module.exports = {
     
     getDataNode(type, value) {
         let node = Object.assign({}, this.nodeProto);
-        console.log(node);
         node.type = type;
         node.value = value;
-        console.log(node);
         node = this.deleteGarbage(node);
-        console.log(node);
         this.clearNodeProto();
         return node;
     },
